@@ -9,6 +9,7 @@ type ArticleDetail = {
   title: string
   content: string
   published: boolean
+  published_at: string | null
   created_at: string
   cluster_id: string | null
 }
@@ -22,7 +23,7 @@ export default async function ArticlePage({
 
   const { data, error } = await supabase
     .from('articles')
-    .select('id, title, content, published, created_at, cluster_id')
+    .select('id, title, content, published, published_at, created_at, cluster_id')
     .eq('id', id)
     .maybeSingle()
 
@@ -50,7 +51,11 @@ export default async function ArticlePage({
 
         <article className="mt-6">
           <div className="flex items-center gap-2 mb-3 text-xs text-zinc-500">
-            <time>{formatDate(article.created_at)}</time>
+            {article.published_at ? (
+              <time>발행 {formatDate(article.published_at)}</time>
+            ) : (
+              <time>생성 {formatDate(article.created_at)}</time>
+            )}
             {!article.published && (
               <span className="px-1.5 py-0.5 rounded bg-zinc-200 text-zinc-600">
                 초안

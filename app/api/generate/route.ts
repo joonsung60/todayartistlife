@@ -7,6 +7,7 @@ type SourceArticle = {
   title: string
   content: string
   source: string
+  publishedAt: string | null
 }
 
 type GeneratedArticle = {
@@ -22,6 +23,7 @@ type RawArticleRow = {
   title: string | null
   content: string | null
   url: string
+  published_at: string | null
 }
 
 const RESPONSE_NOISE_PATTERNS = [
@@ -33,6 +35,24 @@ const RESPONSE_NOISE_PATTERNS = [
 
 function compactSourceText(text: string): string {
   return cleanArticleText(text, 2500).replace(/\s+/g, ' ').trim()
+}
+
+function formatSourceDate(iso: string | null): string | null {
+  if (!iso) {
+    return null
+  }
+
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) {
+    return null
+  }
+
+  return date.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'Asia/Seoul',
+  })
 }
 
 async function fetchArticleContent(url: string): Promise<string> {
@@ -98,13 +118,16 @@ function validateKoreanArticle(article: GeneratedArticle): string | null {
 
 async function generateKoreanArticle(articles: SourceArticle[]): Promise<GeneratedArticle> {
   const articlesText = articles
-    .map((article, index) => [
-      `<source index="${index + 1}">`,
-      `SOURCE_URL: ${article.source}`,
-      `SOURCE_TITLE: ${article.title}`,
-      `SOURCE_TEXT: ${compactSourceText(article.content)}`,
-      '</source>',
-    ].join('\n'))
+    .map((article, index) => {
+      const publishedAt = formatSourceDate(article.publishedAt)
+      return [
+        `[소스 ${index + 1}]`,
+        publishedAt ? `발행일: ${publishedAt}` : null,
+        `제목: ${article.title}`,
+        `URL: ${article.source}`,
+        `내용: ${compactSourceText(article.content)}`,
+      ].filter(Boolean).join('\n')
+    })
     .join('\n\n---\n\n')
 
   const ollamaUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434'
@@ -121,11 +144,13 @@ async function generateKoreanArticle(articles: SourceArticle[]): Promise<Generat
       body: JSON.stringify({
         model: 'qwen3:14b',
         system: SYSTEM_PROMPT_A,
-        prompt: `아래 SOURCE_TEXT들을 참고해 한국어 뉴스 기사를 새로 작성하세요.
+        prompt: `아래 소스들을 참고해 한국어 뉴스 기사를 새로 작성하세요.
 
 중요:
-- SOURCE_TEXT를 그대로 복사하지 마세요.
+- 소스 내용을 그대로 복사하지 마세요.
 - 영어 원문 문장, 사이트 메뉴, 태그, 공유 버튼, 관련 기사 목록은 출력하지 마세요.
+- '오늘', '어제', '최근', '며칠 전' 같은 상대적 날짜 표현을 쓰지 마세요.
+- 날짜가 필요하면 소스의 발행일처럼 구체적인 년/월/일만 쓰고, 날짜가 불명확하면 생략하세요.
 - 출력은 반드시 JSON 객체 하나만 허용됩니다.
 - JSON 키는 "title", "content" 두 개만 사용하세요.
 - title과 content 값은 한국어 기사체로 작성하세요.
@@ -194,7 +219,7 @@ export async function POST(req: NextRequest) {
 
       const { data: rawArticles, error: rawError } = await supabase
         .from('raw_articles')
-        .select('title, content, url')
+        .select('title, content, url, published_at')
         .in('id', rawArticleIds)
 
       if (rawError) throw rawError
@@ -210,6 +235,7 @@ export async function POST(req: NextRequest) {
             title: article.title || '제목 없음',
             content: cleanArticleText(content, 3000),
             source: article.url,
+            publishedAt: article.published_at,
           }
         })
       )

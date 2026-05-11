@@ -8,13 +8,14 @@ type ArticleListItem = {
   title: string
   content: string
   published: boolean
+  published_at: string | null
   created_at: string
 }
 
 export default async function Home() {
   const { data, error } = await supabase
     .from('articles')
-    .select('id, title, content, published, created_at')
+    .select('id, title, content, published, published_at, created_at')
     .order('created_at', { ascending: false })
 
   const articles = (data ?? []) as ArticleListItem[]
@@ -50,7 +51,11 @@ export default async function Home() {
             <li key={article.id} className="py-6">
               <Link href={`/articles/${article.id}`} className="block group">
                 <div className="flex items-center gap-2 mb-2 text-xs text-zinc-500">
-                  <time>{formatDate(article.created_at)}</time>
+                  {article.published_at ? (
+                    <time>발행 {formatDate(article.published_at)}</time>
+                  ) : (
+                    <time>생성 {formatDate(article.created_at)}</time>
+                  )}
                   {!article.published && (
                     <span className="px-1.5 py-0.5 rounded bg-zinc-200 text-zinc-600">
                       초안

@@ -53,6 +53,28 @@ type RawArticle = {
   url: string
 }
 
+type SuggestionStatus = 'pending' | 'approved' | 'rejected' | 'published'
+
+const ALLOWED_STATUSES: SuggestionStatus[] = ['pending', 'approved', 'rejected', 'published']
+
+type DbSuggestedCluster = {
+  id: string
+  topic: string
+  keywords: string[] | null
+  article_ids: string[] | null
+  status: SuggestionStatus
+  cluster_id: string | null
+  created_at: string
+}
+
+type PersistedSuggestion = SuggestionWithArticles & {
+  id: string
+  status: SuggestionStatus
+  clusterId: string | null
+  articleId: string | null
+  createdAt: string
+}
+
 const CATEGORY_KEYWORDS = new Set([
   'album',
   'albums',
@@ -399,6 +421,88 @@ function fallbackSuggestions(
   ).slice(0, 5)
 }
 
+async function hydrateSuggestions(rows: DbSuggestedCluster[]): Promise<PersistedSuggestion[]> {
+  if (rows.length === 0) return []
+
+  const allIds = Array.from(new Set(rows.flatMap((row) => row.article_ids ?? [])))
+  const articleMeta = new Map<string, { id: string; title: string; url: string }>()
+
+  if (allIds.length > 0) {
+    const { data: rawArticles } = await supabase
+      .from('raw_articles')
+      .select('id, title, url')
+      .in('id', allIds)
+
+    for (const article of (rawArticles ?? []) as { id: string; title: string; url: string }[]) {
+      articleMeta.set(article.id, { id: article.id, title: article.title, url: article.url })
+    }
+  }
+
+  return rows.map((row) => {
+    const articleIds = row.article_ids ?? []
+    const commonEntities = row.keywords?.filter((keyword) => !isCategoryKeyword(keyword)) ?? []
+    return {
+      id: row.id,
+      topic: row.topic,
+      keywords: row.keywords ?? [],
+      articleIds,
+      reason: commonEntities[0]
+        ? `"${commonEntities[0]}"를 기준으로 저장된 제안입니다.`
+        : undefined,
+      commonEntities: commonEntities.length > 0 ? commonEntities : undefined,
+      cohesionScore: commonEntities.length > 0
+        ? calculateCohesionScore(articleIds, commonEntities, articleIds.map((id) => {
+          const meta = articleMeta.get(id)
+          return {
+            id,
+            title: meta?.title ?? '',
+            content: null,
+            url: meta?.url ?? '',
+          }
+        }))
+        : undefined,
+      articles: articleIds
+        .map((id) => articleMeta.get(id))
+        .filter((a): a is { id: string; title: string; url: string } => Boolean(a)),
+      status: row.status,
+      clusterId: row.cluster_id,
+      articleId: null,
+      createdAt: row.created_at,
+    }
+  })
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const status = req.nextUrl.searchParams.get('status')
+
+    let query = supabase
+      .from('suggested_clusters')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (status) {
+      if (!ALLOWED_STATUSES.includes(status as SuggestionStatus)) {
+        return NextResponse.json(
+          { error: `유효하지 않은 status: ${status}` },
+          { status: 400 }
+        )
+      }
+      query = query.eq('status', status)
+    }
+
+    const { data, error } = await query
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    const suggestions = await hydrateSuggestions((data ?? []) as DbSuggestedCluster[])
+    return NextResponse.json({ suggestions })
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 })
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}))
@@ -471,10 +575,44 @@ export async function POST(req: NextRequest) {
       ? llmSuggestions
       : fallbackSuggestions(rawArticles, articleMeta)
 
+    const source = llmSuggestions.length > 0 ? 'llm' : 'fallback'
+
+    if (suggestions.length === 0) {
+      return NextResponse.json({
+        suggestions: [],
+        saved: 0,
+        total: articles.length,
+        source,
+        llmSuggestionCount: parsed.suggestions?.length ?? 0,
+      })
+    }
+
+    const insertPayload = suggestions.map((s) => ({
+      topic: s.topic,
+      keywords: s.keywords,
+      article_ids: s.articleIds,
+      status: 'pending' as const,
+    }))
+
+    const { data: inserted, error: insertError } = await supabase
+      .from('suggested_clusters')
+      .insert(insertPayload)
+      .select()
+
+    if (insertError) {
+      return NextResponse.json(
+        { error: `제안 저장 실패: ${insertError.message}` },
+        { status: 500 }
+      )
+    }
+
+    const persisted = await hydrateSuggestions((inserted ?? []) as DbSuggestedCluster[])
+
     return NextResponse.json({
-      suggestions,
+      suggestions: persisted,
+      saved: persisted.length,
       total: articles.length,
-      source: llmSuggestions.length > 0 ? 'llm' : 'fallback',
+      source,
       llmSuggestionCount: parsed.suggestions?.length ?? 0,
     })
   } catch (err) {

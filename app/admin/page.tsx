@@ -296,9 +296,16 @@ function SuggestTab() {
       } else {
         const saved = data.saved ?? 0
         const total = data.total ?? 0
+        const llmCount = data.llmSuggestionCount ?? 0
+        const normalizedCount = data.normalizedSuggestionCount ?? 0
+        const modelLabel = data.model ? ` / ${data.model}` : ''
         const sourceLabel =
           data.source === 'fallback' ? ' (자동 보정)' : data.source === 'llm' ? ' (LLM)' : ''
-        setLastGenSummary(`${total}개 기사 분석 → ${saved}개 신규 제안 저장${sourceLabel}`)
+        const debugLabel = ` / LLM ${llmCount}개, 통과 ${normalizedCount}개${modelLabel}`
+        setLastGenSummary(`${total}개 기사 분석 → ${saved}개 신규 제안 저장${sourceLabel}${debugLabel}`)
+        if (saved === 0 && data.rawResponsePreview) {
+          setError(`LLM 원 응답 미리보기: ${data.rawResponsePreview}`)
+        }
         if (subTab === 'pending') {
           await load('pending')
         } else {

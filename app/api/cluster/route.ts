@@ -60,7 +60,6 @@ export async function POST(req: NextRequest) {
         .from('raw_articles')
         .select('id, title, url')
         .in('id', articleIds)
-        .eq('is_used', false)
         .order('published_at', { ascending: false })
 
       matchedArticles = result.data as MatchedArticle[] | null
@@ -78,7 +77,6 @@ export async function POST(req: NextRequest) {
       let query = supabase
         .from('raw_articles')
         .select('id, title, url')
-        .eq('is_used', false)
         .order('published_at', { ascending: false })
         .limit(20)
 

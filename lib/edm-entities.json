@@ -1,0 +1,4491 @@
+{
+  "artists_top500_relevance_2024_2025": [
+    {
+      "rank": 1,
+      "name": "David Guetta",
+      "aliases": [
+        "Jack Back"
+      ]
+    },
+    {
+      "rank": 2,
+      "name": "Martin Garrix",
+      "aliases": [
+        "Ytram",
+        "GRX",
+        "AREA21"
+      ]
+    },
+    {
+      "rank": 3,
+      "name": "Tiësto",
+      "aliases": [
+        "VER:WEST",
+        "Allure"
+      ]
+    },
+    {
+      "rank": 4,
+      "name": "Armin van Buuren",
+      "aliases": [
+        "Rising Star",
+        "Gaia"
+      ]
+    },
+    {
+      "rank": 5,
+      "name": "Anyma",
+      "aliases": [
+        "Matteo Milleri"
+      ]
+    },
+    {
+      "rank": 6,
+      "name": "John Summit",
+      "aliases": []
+    },
+    {
+      "rank": 7,
+      "name": "Fred again..",
+      "aliases": [
+        "Fred Again"
+      ]
+    },
+    {
+      "rank": 8,
+      "name": "Skrillex",
+      "aliases": [
+        "Sonny Moore"
+      ]
+    },
+    {
+      "rank": 9,
+      "name": "Calvin Harris",
+      "aliases": [
+        "Love Regenerator",
+        "Adam Wiles"
+      ]
+    },
+    {
+      "rank": 10,
+      "name": "Swedish House Mafia",
+      "aliases": [
+        "Axwell",
+        "Steve Angello",
+        "Sebastian Ingrosso"
+      ]
+    },
+    {
+      "rank": 11,
+      "name": "Dom Dolla",
+      "aliases": []
+    },
+    {
+      "rank": 12,
+      "name": "FISHER",
+      "aliases": []
+    },
+    {
+      "rank": 13,
+      "name": "Chris Lake",
+      "aliases": []
+    },
+    {
+      "rank": 14,
+      "name": "Charlotte de Witte",
+      "aliases": []
+    },
+    {
+      "rank": 15,
+      "name": "Amelie Lens",
+      "aliases": []
+    },
+    {
+      "rank": 16,
+      "name": "Peggy Gou",
+      "aliases": []
+    },
+    {
+      "rank": 17,
+      "name": "Keinemusik",
+      "aliases": [
+        "Adam Port",
+        "&ME",
+        "Rampa"
+      ]
+    },
+    {
+      "rank": 18,
+      "name": "Adam Port",
+      "aliases": []
+    },
+    {
+      "rank": 19,
+      "name": "&ME",
+      "aliases": []
+    },
+    {
+      "rank": 20,
+      "name": "Rampa",
+      "aliases": []
+    },
+    {
+      "rank": 21,
+      "name": "Tale Of Us",
+      "aliases": [
+        "Anyma",
+        "MRAK"
+      ]
+    },
+    {
+      "rank": 22,
+      "name": "MRAK",
+      "aliases": []
+    },
+    {
+      "rank": 23,
+      "name": "Mau P",
+      "aliases": [
+        "Maurice West"
+      ]
+    },
+    {
+      "rank": 24,
+      "name": "HUGEL",
+      "aliases": []
+    },
+    {
+      "rank": 25,
+      "name": "Meduza",
+      "aliases": []
+    },
+    {
+      "rank": 26,
+      "name": "Alok",
+      "aliases": []
+    },
+    {
+      "rank": 27,
+      "name": "Dimitri Vegas & Like Mike",
+      "aliases": [
+        "Dimitri Vegas",
+        "Like Mike"
+      ]
+    },
+    {
+      "rank": 28,
+      "name": "Hardwell",
+      "aliases": []
+    },
+    {
+      "rank": 29,
+      "name": "Afrojack",
+      "aliases": [
+        "NLW"
+      ]
+    },
+    {
+      "rank": 30,
+      "name": "Steve Aoki",
+      "aliases": []
+    },
+    {
+      "rank": 31,
+      "name": "Don Diablo",
+      "aliases": []
+    },
+    {
+      "rank": 32,
+      "name": "Oliver Heldens",
+      "aliases": [
+        "HI-LO"
+      ]
+    },
+    {
+      "rank": 33,
+      "name": "HI-LO",
+      "aliases": []
+    },
+    {
+      "rank": 34,
+      "name": "Vintage Culture",
+      "aliases": []
+    },
+    {
+      "rank": 35,
+      "name": "Alesso",
+      "aliases": []
+    },
+    {
+      "rank": 36,
+      "name": "Nicky Romero",
+      "aliases": []
+    },
+    {
+      "rank": 37,
+      "name": "W&W",
+      "aliases": [
+        "NWYR"
+      ]
+    },
+    {
+      "rank": 38,
+      "name": "NWYR",
+      "aliases": []
+    },
+    {
+      "rank": 39,
+      "name": "R3HAB",
+      "aliases": []
+    },
+    {
+      "rank": 40,
+      "name": "Timmy Trumpet",
+      "aliases": []
+    },
+    {
+      "rank": 41,
+      "name": "Marshmello",
+      "aliases": []
+    },
+    {
+      "rank": 42,
+      "name": "The Chainsmokers",
+      "aliases": []
+    },
+    {
+      "rank": 43,
+      "name": "Diplo",
+      "aliases": [
+        "Thomas Wesley",
+        "Major Lazer"
+      ]
+    },
+    {
+      "rank": 44,
+      "name": "Major Lazer",
+      "aliases": []
+    },
+    {
+      "rank": 45,
+      "name": "DJ Snake",
+      "aliases": []
+    },
+    {
+      "rank": 46,
+      "name": "Illenium",
+      "aliases": []
+    },
+    {
+      "rank": 47,
+      "name": "Porter Robinson",
+      "aliases": [
+        "Virtual Self",
+        "Air2Earth"
+      ]
+    },
+    {
+      "rank": 48,
+      "name": "Virtual Self",
+      "aliases": []
+    },
+    {
+      "rank": 49,
+      "name": "Madeon",
+      "aliases": []
+    },
+    {
+      "rank": 50,
+      "name": "Zedd",
+      "aliases": []
+    },
+    {
+      "rank": 51,
+      "name": "deadmau5",
+      "aliases": [
+        "testpilot"
+      ]
+    },
+    {
+      "rank": 52,
+      "name": "testpilot",
+      "aliases": []
+    },
+    {
+      "rank": 53,
+      "name": "Above & Beyond",
+      "aliases": [
+        "OceanLab"
+      ]
+    },
+    {
+      "rank": 54,
+      "name": "Aly & Fila",
+      "aliases": []
+    },
+    {
+      "rank": 55,
+      "name": "Paul van Dyk",
+      "aliases": []
+    },
+    {
+      "rank": 56,
+      "name": "Ferry Corsten",
+      "aliases": [
+        "System F",
+        "Gouryella"
+      ]
+    },
+    {
+      "rank": 57,
+      "name": "Gouryella",
+      "aliases": []
+    },
+    {
+      "rank": 58,
+      "name": "Vini Vici",
+      "aliases": [
+        "Sesto Sento"
+      ]
+    },
+    {
+      "rank": 59,
+      "name": "Andrew Rayel",
+      "aliases": []
+    },
+    {
+      "rank": 60,
+      "name": "Gareth Emery",
+      "aliases": [
+        "LSR/CITY"
+      ]
+    },
+    {
+      "rank": 61,
+      "name": "Ben Böhmer",
+      "aliases": []
+    },
+    {
+      "rank": 62,
+      "name": "Lane 8",
+      "aliases": []
+    },
+    {
+      "rank": 63,
+      "name": "Yotto",
+      "aliases": []
+    },
+    {
+      "rank": 64,
+      "name": "Tinlicker",
+      "aliases": []
+    },
+    {
+      "rank": 65,
+      "name": "ARTBAT",
+      "aliases": []
+    },
+    {
+      "rank": 66,
+      "name": "CamelPhat",
+      "aliases": []
+    },
+    {
+      "rank": 67,
+      "name": "Adriatique",
+      "aliases": []
+    },
+    {
+      "rank": 68,
+      "name": "Mind Against",
+      "aliases": []
+    },
+    {
+      "rank": 69,
+      "name": "Mathame",
+      "aliases": []
+    },
+    {
+      "rank": 70,
+      "name": "Colyn",
+      "aliases": []
+    },
+    {
+      "rank": 71,
+      "name": "Argy",
+      "aliases": []
+    },
+    {
+      "rank": 72,
+      "name": "Miss Monique",
+      "aliases": []
+    },
+    {
+      "rank": 73,
+      "name": "Korolova",
+      "aliases": []
+    },
+    {
+      "rank": 74,
+      "name": "Kevin de Vries",
+      "aliases": []
+    },
+    {
+      "rank": 75,
+      "name": "Innellea",
+      "aliases": []
+    },
+    {
+      "rank": 76,
+      "name": "Stephan Bodzin",
+      "aliases": []
+    },
+    {
+      "rank": 77,
+      "name": "Boris Brejcha",
+      "aliases": []
+    },
+    {
+      "rank": 78,
+      "name": "Solomun",
+      "aliases": []
+    },
+    {
+      "rank": 79,
+      "name": "Eric Prydz",
+      "aliases": [
+        "Pryda",
+        "Cirez D"
+      ]
+    },
+    {
+      "rank": 80,
+      "name": "Pryda",
+      "aliases": []
+    },
+    {
+      "rank": 81,
+      "name": "Cirez D",
+      "aliases": []
+    },
+    {
+      "rank": 82,
+      "name": "Carl Cox",
+      "aliases": []
+    },
+    {
+      "rank": 83,
+      "name": "Adam Beyer",
+      "aliases": []
+    },
+    {
+      "rank": 84,
+      "name": "Nina Kraviz",
+      "aliases": []
+    },
+    {
+      "rank": 85,
+      "name": "Reinier Zonneveld",
+      "aliases": []
+    },
+    {
+      "rank": 86,
+      "name": "Indira Paganotto",
+      "aliases": []
+    },
+    {
+      "rank": 87,
+      "name": "Sara Landry",
+      "aliases": []
+    },
+    {
+      "rank": 88,
+      "name": "I Hate Models",
+      "aliases": []
+    },
+    {
+      "rank": 89,
+      "name": "999999999",
+      "aliases": []
+    },
+    {
+      "rank": 90,
+      "name": "Klangkuenstler",
+      "aliases": []
+    },
+    {
+      "rank": 91,
+      "name": "Alignment",
+      "aliases": []
+    },
+    {
+      "rank": 92,
+      "name": "Shlømo",
+      "aliases": []
+    },
+    {
+      "rank": 93,
+      "name": "Anfisa Letyago",
+      "aliases": []
+    },
+    {
+      "rank": 94,
+      "name": "Deborah De Luca",
+      "aliases": []
+    },
+    {
+      "rank": 95,
+      "name": "Lilly Palmer",
+      "aliases": []
+    },
+    {
+      "rank": 96,
+      "name": "Eli Brown",
+      "aliases": []
+    },
+    {
+      "rank": 97,
+      "name": "Layton Giordani",
+      "aliases": []
+    },
+    {
+      "rank": 98,
+      "name": "Maddix",
+      "aliases": []
+    },
+    {
+      "rank": 99,
+      "name": "MORTEN",
+      "aliases": []
+    },
+    {
+      "rank": 100,
+      "name": "KAAZE",
+      "aliases": []
+    },
+    {
+      "rank": 101,
+      "name": "Blasterjaxx",
+      "aliases": []
+    },
+    {
+      "rank": 102,
+      "name": "Bassjackers",
+      "aliases": []
+    },
+    {
+      "rank": 103,
+      "name": "VINAI",
+      "aliases": []
+    },
+    {
+      "rank": 104,
+      "name": "Quintino",
+      "aliases": []
+    },
+    {
+      "rank": 105,
+      "name": "Matisse & Sadko",
+      "aliases": []
+    },
+    {
+      "rank": 106,
+      "name": "DubVision",
+      "aliases": []
+    },
+    {
+      "rank": 107,
+      "name": "Third Party",
+      "aliases": []
+    },
+    {
+      "rank": 108,
+      "name": "Sick Individuals",
+      "aliases": []
+    },
+    {
+      "rank": 109,
+      "name": "Lucas & Steve",
+      "aliases": []
+    },
+    {
+      "rank": 110,
+      "name": "Mike Williams",
+      "aliases": []
+    },
+    {
+      "rank": 111,
+      "name": "Brooks",
+      "aliases": []
+    },
+    {
+      "rank": 112,
+      "name": "Mesto",
+      "aliases": []
+    },
+    {
+      "rank": 113,
+      "name": "Curbi",
+      "aliases": []
+    },
+    {
+      "rank": 114,
+      "name": "Tujamo",
+      "aliases": []
+    },
+    {
+      "rank": 115,
+      "name": "KSHMR",
+      "aliases": []
+    },
+    {
+      "rank": 116,
+      "name": "Dimitri Vangelis & Wyman",
+      "aliases": []
+    },
+    {
+      "rank": 117,
+      "name": "Nervo",
+      "aliases": []
+    },
+    {
+      "rank": 118,
+      "name": "Krewella",
+      "aliases": []
+    },
+    {
+      "rank": 119,
+      "name": "Galantis",
+      "aliases": []
+    },
+    {
+      "rank": 120,
+      "name": "Lost Frequencies",
+      "aliases": []
+    },
+    {
+      "rank": 121,
+      "name": "Kygo",
+      "aliases": []
+    },
+    {
+      "rank": 122,
+      "name": "Sigala",
+      "aliases": []
+    },
+    {
+      "rank": 123,
+      "name": "Robin Schulz",
+      "aliases": []
+    },
+    {
+      "rank": 124,
+      "name": "Felix Jaehn",
+      "aliases": []
+    },
+    {
+      "rank": 125,
+      "name": "Purple Disco Machine",
+      "aliases": []
+    },
+    {
+      "rank": 126,
+      "name": "MK",
+      "aliases": [
+        "Marc Kinchen"
+      ]
+    },
+    {
+      "rank": 127,
+      "name": "Sonny Fodera",
+      "aliases": []
+    },
+    {
+      "rank": 128,
+      "name": "Jamie Jones",
+      "aliases": []
+    },
+    {
+      "rank": 129,
+      "name": "Michael Bibi",
+      "aliases": []
+    },
+    {
+      "rank": 130,
+      "name": "Pawsa",
+      "aliases": []
+    },
+    {
+      "rank": 131,
+      "name": "Hot Since 82",
+      "aliases": []
+    },
+    {
+      "rank": 132,
+      "name": "Green Velvet",
+      "aliases": [
+        "Cajmere"
+      ]
+    },
+    {
+      "rank": 133,
+      "name": "Claude VonStroke",
+      "aliases": [
+        "Barclay Crenshaw"
+      ]
+    },
+    {
+      "rank": 134,
+      "name": "Barclay Crenshaw",
+      "aliases": []
+    },
+    {
+      "rank": 135,
+      "name": "Patrick Topping",
+      "aliases": []
+    },
+    {
+      "rank": 136,
+      "name": "Dennis Cruz",
+      "aliases": []
+    },
+    {
+      "rank": 137,
+      "name": "Loco Dice",
+      "aliases": []
+    },
+    {
+      "rank": 138,
+      "name": "Marco Carola",
+      "aliases": []
+    },
+    {
+      "rank": 139,
+      "name": "The Martinez Brothers",
+      "aliases": []
+    },
+    {
+      "rank": 140,
+      "name": "Joseph Capriati",
+      "aliases": []
+    },
+    {
+      "rank": 141,
+      "name": "Fleur Shore",
+      "aliases": []
+    },
+    {
+      "rank": 142,
+      "name": "Cloonee",
+      "aliases": []
+    },
+    {
+      "rank": 143,
+      "name": "Chris Lorenzo",
+      "aliases": []
+    },
+    {
+      "rank": 144,
+      "name": "AC Slater",
+      "aliases": []
+    },
+    {
+      "rank": 145,
+      "name": "Tchami",
+      "aliases": []
+    },
+    {
+      "rank": 146,
+      "name": "Malaa",
+      "aliases": []
+    },
+    {
+      "rank": 147,
+      "name": "Habstrakt",
+      "aliases": []
+    },
+    {
+      "rank": 148,
+      "name": "Jauz",
+      "aliases": []
+    },
+    {
+      "rank": 149,
+      "name": "Joyryde",
+      "aliases": []
+    },
+    {
+      "rank": 150,
+      "name": "Dr. Fresch",
+      "aliases": []
+    },
+    {
+      "rank": 151,
+      "name": "Matroda",
+      "aliases": []
+    },
+    {
+      "rank": 152,
+      "name": "Noizu",
+      "aliases": []
+    },
+    {
+      "rank": 153,
+      "name": "Chris Stussy",
+      "aliases": []
+    },
+    {
+      "rank": 154,
+      "name": "ANOTR",
+      "aliases": []
+    },
+    {
+      "rank": 155,
+      "name": "Odd Mob",
+      "aliases": []
+    },
+    {
+      "rank": 156,
+      "name": "Westend",
+      "aliases": []
+    },
+    {
+      "rank": 157,
+      "name": "Max Styler",
+      "aliases": []
+    },
+    {
+      "rank": 158,
+      "name": "James Hype",
+      "aliases": []
+    },
+    {
+      "rank": 159,
+      "name": "SIDEPIECE",
+      "aliases": []
+    },
+    {
+      "rank": 160,
+      "name": "SOFI TUKKER",
+      "aliases": []
+    },
+    {
+      "rank": 161,
+      "name": "Disclosure",
+      "aliases": []
+    },
+    {
+      "rank": 162,
+      "name": "Bicep",
+      "aliases": []
+    },
+    {
+      "rank": 163,
+      "name": "Overmono",
+      "aliases": []
+    },
+    {
+      "rank": 164,
+      "name": "Four Tet",
+      "aliases": []
+    },
+    {
+      "rank": 165,
+      "name": "Caribou",
+      "aliases": [
+        "Daphni"
+      ]
+    },
+    {
+      "rank": 166,
+      "name": "Daphni",
+      "aliases": []
+    },
+    {
+      "rank": 167,
+      "name": "Jamie xx",
+      "aliases": []
+    },
+    {
+      "rank": 168,
+      "name": "Floating Points",
+      "aliases": []
+    },
+    {
+      "rank": 169,
+      "name": "Bonobo",
+      "aliases": []
+    },
+    {
+      "rank": 170,
+      "name": "Maribou State",
+      "aliases": []
+    },
+    {
+      "rank": 171,
+      "name": "RÜFÜS DU SOL",
+      "aliases": []
+    },
+    {
+      "rank": 172,
+      "name": "ODESZA",
+      "aliases": []
+    },
+    {
+      "rank": 173,
+      "name": "Tycho",
+      "aliases": []
+    },
+    {
+      "rank": 174,
+      "name": "Tourist",
+      "aliases": []
+    },
+    {
+      "rank": 175,
+      "name": "SG Lewis",
+      "aliases": []
+    },
+    {
+      "rank": 176,
+      "name": "Barry Can't Swim",
+      "aliases": []
+    },
+    {
+      "rank": 177,
+      "name": "DJ Seinfeld",
+      "aliases": []
+    },
+    {
+      "rank": 178,
+      "name": "Ross From Friends",
+      "aliases": []
+    },
+    {
+      "rank": 179,
+      "name": "Mall Grab",
+      "aliases": []
+    },
+    {
+      "rank": 180,
+      "name": "Logic1000",
+      "aliases": []
+    },
+    {
+      "rank": 181,
+      "name": "Jayda G",
+      "aliases": []
+    },
+    {
+      "rank": 182,
+      "name": "TSHA",
+      "aliases": []
+    },
+    {
+      "rank": 183,
+      "name": "Honey Dijon",
+      "aliases": []
+    },
+    {
+      "rank": 184,
+      "name": "The Blessed Madonna",
+      "aliases": []
+    },
+    {
+      "rank": 185,
+      "name": "Carlita",
+      "aliases": []
+    },
+    {
+      "rank": 186,
+      "name": "Chloé Caillet",
+      "aliases": []
+    },
+    {
+      "rank": 187,
+      "name": "Sama' Abdulhadi",
+      "aliases": []
+    },
+    {
+      "rank": 188,
+      "name": "HAAi",
+      "aliases": []
+    },
+    {
+      "rank": 189,
+      "name": "Helena Hauff",
+      "aliases": []
+    },
+    {
+      "rank": 190,
+      "name": "VTSS",
+      "aliases": []
+    },
+    {
+      "rank": 191,
+      "name": "SPFDJ",
+      "aliases": []
+    },
+    {
+      "rank": 192,
+      "name": "Ellen Allien",
+      "aliases": []
+    },
+    {
+      "rank": 193,
+      "name": "Paula Temple",
+      "aliases": []
+    },
+    {
+      "rank": 194,
+      "name": "Dax J",
+      "aliases": []
+    },
+    {
+      "rank": 195,
+      "name": "Perc",
+      "aliases": []
+    },
+    {
+      "rank": 196,
+      "name": "Blawan",
+      "aliases": []
+    },
+    {
+      "rank": 197,
+      "name": "Surgeon",
+      "aliases": []
+    },
+    {
+      "rank": 198,
+      "name": "Regal",
+      "aliases": []
+    },
+    {
+      "rank": 199,
+      "name": "FJAAK",
+      "aliases": []
+    },
+    {
+      "rank": 200,
+      "name": "Âme",
+      "aliases": []
+    },
+    {
+      "rank": 201,
+      "name": "Dixon",
+      "aliases": []
+    },
+    {
+      "rank": 202,
+      "name": "Joris Voorn",
+      "aliases": []
+    },
+    {
+      "rank": 203,
+      "name": "ANNA",
+      "aliases": []
+    },
+    {
+      "rank": 204,
+      "name": "Nicole Moudaber",
+      "aliases": []
+    },
+    {
+      "rank": 205,
+      "name": "Pan-Pot",
+      "aliases": []
+    },
+    {
+      "rank": 206,
+      "name": "Tiga",
+      "aliases": []
+    },
+    {
+      "rank": 207,
+      "name": "Maceo Plex",
+      "aliases": [
+        "Maetrik",
+        "Mariel Ito"
+      ]
+    },
+    {
+      "rank": 208,
+      "name": "Richie Hawtin",
+      "aliases": [
+        "Plastikman"
+      ]
+    },
+    {
+      "rank": 209,
+      "name": "Plastikman",
+      "aliases": []
+    },
+    {
+      "rank": 210,
+      "name": "Jeff Mills",
+      "aliases": [
+        "The Wizard"
+      ]
+    },
+    {
+      "rank": 211,
+      "name": "Robert Hood",
+      "aliases": [
+        "Floorplan"
+      ]
+    },
+    {
+      "rank": 212,
+      "name": "Floorplan",
+      "aliases": []
+    },
+    {
+      "rank": 213,
+      "name": "Ben Klock",
+      "aliases": []
+    },
+    {
+      "rank": 214,
+      "name": "Marcel Dettmann",
+      "aliases": []
+    },
+    {
+      "rank": 215,
+      "name": "DVS1",
+      "aliases": []
+    },
+    {
+      "rank": 216,
+      "name": "Luke Slater",
+      "aliases": [
+        "Planetary Assault Systems"
+      ]
+    },
+    {
+      "rank": 217,
+      "name": "Planetary Assault Systems",
+      "aliases": []
+    },
+    {
+      "rank": 218,
+      "name": "Oscar Mulero",
+      "aliases": []
+    },
+    {
+      "rank": 219,
+      "name": "Sven Väth",
+      "aliases": []
+    },
+    {
+      "rank": 220,
+      "name": "Kölsch",
+      "aliases": []
+    },
+    {
+      "rank": 221,
+      "name": "Booka Shade",
+      "aliases": []
+    },
+    {
+      "rank": 222,
+      "name": "Röyksopp",
+      "aliases": []
+    },
+    {
+      "rank": 223,
+      "name": "The Chemical Brothers",
+      "aliases": []
+    },
+    {
+      "rank": 224,
+      "name": "Underworld",
+      "aliases": []
+    },
+    {
+      "rank": 225,
+      "name": "Orbital",
+      "aliases": []
+    },
+    {
+      "rank": 226,
+      "name": "The Prodigy",
+      "aliases": []
+    },
+    {
+      "rank": 227,
+      "name": "Justice",
+      "aliases": []
+    },
+    {
+      "rank": 228,
+      "name": "Gesaffelstein",
+      "aliases": []
+    },
+    {
+      "rank": 229,
+      "name": "Boys Noize",
+      "aliases": []
+    },
+    {
+      "rank": 230,
+      "name": "Soulwax",
+      "aliases": [
+        "2manydjs"
+      ]
+    },
+    {
+      "rank": 231,
+      "name": "2manydjs",
+      "aliases": []
+    },
+    {
+      "rank": 232,
+      "name": "Moderat",
+      "aliases": [
+        "Modeselektor",
+        "Apparat"
+      ]
+    },
+    {
+      "rank": 233,
+      "name": "Modeselektor",
+      "aliases": []
+    },
+    {
+      "rank": 234,
+      "name": "Apparat",
+      "aliases": []
+    },
+    {
+      "rank": 235,
+      "name": "Aphex Twin",
+      "aliases": [
+        "AFX"
+      ]
+    },
+    {
+      "rank": 236,
+      "name": "AFX",
+      "aliases": []
+    },
+    {
+      "rank": 237,
+      "name": "Squarepusher",
+      "aliases": []
+    },
+    {
+      "rank": 238,
+      "name": "Autechre",
+      "aliases": []
+    },
+    {
+      "rank": 239,
+      "name": "Boards of Canada",
+      "aliases": []
+    },
+    {
+      "rank": 240,
+      "name": "Burial",
+      "aliases": []
+    },
+    {
+      "rank": 241,
+      "name": "Skee Mask",
+      "aliases": []
+    },
+    {
+      "rank": 242,
+      "name": "Objekt",
+      "aliases": []
+    },
+    {
+      "rank": 243,
+      "name": "Shed",
+      "aliases": [
+        "Head High"
+      ]
+    },
+    {
+      "rank": 244,
+      "name": "Kiasmos",
+      "aliases": []
+    },
+    {
+      "rank": 245,
+      "name": "Max Cooper",
+      "aliases": []
+    },
+    {
+      "rank": 246,
+      "name": "Jon Hopkins",
+      "aliases": []
+    },
+    {
+      "rank": 247,
+      "name": "Christian Löffler",
+      "aliases": []
+    },
+    {
+      "rank": 248,
+      "name": "Nils Hoffmann",
+      "aliases": []
+    },
+    {
+      "rank": 249,
+      "name": "Parra for Cuva",
+      "aliases": []
+    },
+    {
+      "rank": 250,
+      "name": "Jan Blomqvist",
+      "aliases": []
+    },
+    {
+      "rank": 251,
+      "name": "WhoMadeWho",
+      "aliases": []
+    },
+    {
+      "rank": 252,
+      "name": "Monolink",
+      "aliases": []
+    },
+    {
+      "rank": 253,
+      "name": "Bob Moses",
+      "aliases": []
+    },
+    {
+      "rank": 254,
+      "name": "Elderbrook",
+      "aliases": []
+    },
+    {
+      "rank": 255,
+      "name": "Ben Hemsley",
+      "aliases": []
+    },
+    {
+      "rank": 256,
+      "name": "Marlon Hoffstadt",
+      "aliases": [
+        "DJ Daddy Trance"
+      ]
+    },
+    {
+      "rank": 257,
+      "name": "DJ Heartstring",
+      "aliases": []
+    },
+    {
+      "rank": 258,
+      "name": "Malugi",
+      "aliases": []
+    },
+    {
+      "rank": 259,
+      "name": "Narciss",
+      "aliases": []
+    },
+    {
+      "rank": 260,
+      "name": "Funk Tribu",
+      "aliases": []
+    },
+    {
+      "rank": 261,
+      "name": "KI/KI",
+      "aliases": []
+    },
+    {
+      "rank": 262,
+      "name": "Pegassi",
+      "aliases": []
+    },
+    {
+      "rank": 263,
+      "name": "Trance Wax",
+      "aliases": [
+        "Ejeca"
+      ]
+    },
+    {
+      "rank": 264,
+      "name": "Ejeca",
+      "aliases": []
+    },
+    {
+      "rank": 265,
+      "name": "Anetha",
+      "aliases": []
+    },
+    {
+      "rank": 266,
+      "name": "Courtesy",
+      "aliases": []
+    },
+    {
+      "rank": 267,
+      "name": "Cera Khin",
+      "aliases": []
+    },
+    {
+      "rank": 268,
+      "name": "Nastia",
+      "aliases": []
+    },
+    {
+      "rank": 269,
+      "name": "Daria Kolosova",
+      "aliases": []
+    },
+    {
+      "rank": 270,
+      "name": "Mama Snake",
+      "aliases": []
+    },
+    {
+      "rank": 271,
+      "name": "Juliet Fox",
+      "aliases": []
+    },
+    {
+      "rank": 272,
+      "name": "Ida Engberg",
+      "aliases": []
+    },
+    {
+      "rank": 273,
+      "name": "Eli & Fur",
+      "aliases": []
+    },
+    {
+      "rank": 274,
+      "name": "Giolì & Assia",
+      "aliases": []
+    },
+    {
+      "rank": 275,
+      "name": "Sultan + Shepard",
+      "aliases": []
+    },
+    {
+      "rank": 276,
+      "name": "Le Youth",
+      "aliases": []
+    },
+    {
+      "rank": 277,
+      "name": "Marsh",
+      "aliases": []
+    },
+    {
+      "rank": 278,
+      "name": "Jerro",
+      "aliases": []
+    },
+    {
+      "rank": 279,
+      "name": "Luttrell",
+      "aliases": []
+    },
+    {
+      "rank": 280,
+      "name": "Qrion",
+      "aliases": []
+    },
+    {
+      "rank": 281,
+      "name": "Durante",
+      "aliases": []
+    },
+    {
+      "rank": 282,
+      "name": "CRi",
+      "aliases": []
+    },
+    {
+      "rank": 283,
+      "name": "Nora En Pure",
+      "aliases": []
+    },
+    {
+      "rank": 284,
+      "name": "Eelke Kleijn",
+      "aliases": []
+    },
+    {
+      "rank": 285,
+      "name": "Guy J",
+      "aliases": []
+    },
+    {
+      "rank": 286,
+      "name": "Hernan Cattaneo",
+      "aliases": []
+    },
+    {
+      "rank": 287,
+      "name": "Nick Warren",
+      "aliases": []
+    },
+    {
+      "rank": 288,
+      "name": "Guy Mantzur",
+      "aliases": []
+    },
+    {
+      "rank": 289,
+      "name": "Sasha",
+      "aliases": []
+    },
+    {
+      "rank": 290,
+      "name": "John Digweed",
+      "aliases": []
+    },
+    {
+      "rank": 291,
+      "name": "Cristoph",
+      "aliases": []
+    },
+    {
+      "rank": 292,
+      "name": "Franky Wah",
+      "aliases": []
+    },
+    {
+      "rank": 293,
+      "name": "Yousef",
+      "aliases": []
+    },
+    {
+      "rank": 294,
+      "name": "Enrico Sangiuliano",
+      "aliases": []
+    },
+    {
+      "rank": 295,
+      "name": "UMEK",
+      "aliases": []
+    },
+    {
+      "rank": 296,
+      "name": "Space 92",
+      "aliases": []
+    },
+    {
+      "rank": 297,
+      "name": "Sub Focus",
+      "aliases": []
+    },
+    {
+      "rank": 298,
+      "name": "Dimension",
+      "aliases": []
+    },
+    {
+      "rank": 299,
+      "name": "Wilkinson",
+      "aliases": []
+    },
+    {
+      "rank": 300,
+      "name": "Netsky",
+      "aliases": []
+    },
+    {
+      "rank": 301,
+      "name": "Chase & Status",
+      "aliases": []
+    },
+    {
+      "rank": 302,
+      "name": "Pendulum",
+      "aliases": []
+    },
+    {
+      "rank": 303,
+      "name": "Kanine",
+      "aliases": []
+    },
+    {
+      "rank": 304,
+      "name": "Metrik",
+      "aliases": []
+    },
+    {
+      "rank": 305,
+      "name": "Culture Shock",
+      "aliases": []
+    },
+    {
+      "rank": 306,
+      "name": "1991",
+      "aliases": []
+    },
+    {
+      "rank": 307,
+      "name": "Delta Heavy",
+      "aliases": []
+    },
+    {
+      "rank": 308,
+      "name": "Camo & Krooked",
+      "aliases": []
+    },
+    {
+      "rank": 309,
+      "name": "Noisia",
+      "aliases": []
+    },
+    {
+      "rank": 310,
+      "name": "Spor",
+      "aliases": [
+        "Feed Me"
+      ]
+    },
+    {
+      "rank": 311,
+      "name": "Feed Me",
+      "aliases": []
+    },
+    {
+      "rank": 312,
+      "name": "Andy C",
+      "aliases": []
+    },
+    {
+      "rank": 313,
+      "name": "A.M.C",
+      "aliases": []
+    },
+    {
+      "rank": 314,
+      "name": "Hybrid Minds",
+      "aliases": []
+    },
+    {
+      "rank": 315,
+      "name": "Benny L",
+      "aliases": []
+    },
+    {
+      "rank": 316,
+      "name": "Bou",
+      "aliases": []
+    },
+    {
+      "rank": 317,
+      "name": "Hedex",
+      "aliases": []
+    },
+    {
+      "rank": 318,
+      "name": "Mozey",
+      "aliases": []
+    },
+    {
+      "rank": 319,
+      "name": "Turno",
+      "aliases": []
+    },
+    {
+      "rank": 320,
+      "name": "Serum",
+      "aliases": []
+    },
+    {
+      "rank": 321,
+      "name": "DJ Marky",
+      "aliases": []
+    },
+    {
+      "rank": 322,
+      "name": "Goldie",
+      "aliases": []
+    },
+    {
+      "rank": 323,
+      "name": "LTJ Bukem",
+      "aliases": []
+    },
+    {
+      "rank": 324,
+      "name": "High Contrast",
+      "aliases": []
+    },
+    {
+      "rank": 325,
+      "name": "London Elektricity",
+      "aliases": []
+    },
+    {
+      "rank": 326,
+      "name": "Calibre",
+      "aliases": []
+    },
+    {
+      "rank": 327,
+      "name": "Alix Perez",
+      "aliases": []
+    },
+    {
+      "rank": 328,
+      "name": "Ivy Lab",
+      "aliases": []
+    },
+    {
+      "rank": 329,
+      "name": "dBridge",
+      "aliases": []
+    },
+    {
+      "rank": 330,
+      "name": "S.P.Y",
+      "aliases": []
+    },
+    {
+      "rank": 331,
+      "name": "Koven",
+      "aliases": []
+    },
+    {
+      "rank": 332,
+      "name": "REAPER",
+      "aliases": []
+    },
+    {
+      "rank": 333,
+      "name": "Zeds Dead",
+      "aliases": []
+    },
+    {
+      "rank": 334,
+      "name": "Excision",
+      "aliases": []
+    },
+    {
+      "rank": 335,
+      "name": "Subtronics",
+      "aliases": []
+    },
+    {
+      "rank": 336,
+      "name": "SVDDEN DEATH",
+      "aliases": []
+    },
+    {
+      "rank": 337,
+      "name": "Wooli",
+      "aliases": []
+    },
+    {
+      "rank": 338,
+      "name": "Sullivan King",
+      "aliases": []
+    },
+    {
+      "rank": 339,
+      "name": "Kayzo",
+      "aliases": []
+    },
+    {
+      "rank": 340,
+      "name": "SLANDER",
+      "aliases": []
+    },
+    {
+      "rank": 341,
+      "name": "Seven Lions",
+      "aliases": []
+    },
+    {
+      "rank": 342,
+      "name": "Jason Ross",
+      "aliases": []
+    },
+    {
+      "rank": 343,
+      "name": "Trivecta",
+      "aliases": []
+    },
+    {
+      "rank": 344,
+      "name": "Gryffin",
+      "aliases": []
+    },
+    {
+      "rank": 345,
+      "name": "Dabin",
+      "aliases": []
+    },
+    {
+      "rank": 346,
+      "name": "Said The Sky",
+      "aliases": []
+    },
+    {
+      "rank": 347,
+      "name": "Nurko",
+      "aliases": []
+    },
+    {
+      "rank": 348,
+      "name": "William Black",
+      "aliases": []
+    },
+    {
+      "rank": 349,
+      "name": "ARMNHMR",
+      "aliases": []
+    },
+    {
+      "rank": 350,
+      "name": "San Holo",
+      "aliases": []
+    },
+    {
+      "rank": 351,
+      "name": "Taska Black",
+      "aliases": []
+    },
+    {
+      "rank": 352,
+      "name": "Kasbo",
+      "aliases": []
+    },
+    {
+      "rank": 353,
+      "name": "Petit Biscuit",
+      "aliases": []
+    },
+    {
+      "rank": 354,
+      "name": "Flume",
+      "aliases": []
+    },
+    {
+      "rank": 355,
+      "name": "What So Not",
+      "aliases": []
+    },
+    {
+      "rank": 356,
+      "name": "RL Grime",
+      "aliases": []
+    },
+    {
+      "rank": 357,
+      "name": "Baauer",
+      "aliases": []
+    },
+    {
+      "rank": 358,
+      "name": "Hudson Mohawke",
+      "aliases": []
+    },
+    {
+      "rank": 359,
+      "name": "Rustie",
+      "aliases": []
+    },
+    {
+      "rank": 360,
+      "name": "Mr. Carmack",
+      "aliases": []
+    },
+    {
+      "rank": 361,
+      "name": "TroyBoi",
+      "aliases": []
+    },
+    {
+      "rank": 362,
+      "name": "ISOxo",
+      "aliases": []
+    },
+    {
+      "rank": 363,
+      "name": "Knock2",
+      "aliases": []
+    },
+    {
+      "rank": 364,
+      "name": "Moore Kismet",
+      "aliases": []
+    },
+    {
+      "rank": 365,
+      "name": "Juelz",
+      "aliases": []
+    },
+    {
+      "rank": 366,
+      "name": "NGHTMRE",
+      "aliases": []
+    },
+    {
+      "rank": 367,
+      "name": "Boombox Cartel",
+      "aliases": []
+    },
+    {
+      "rank": 368,
+      "name": "Yellow Claw",
+      "aliases": []
+    },
+    {
+      "rank": 369,
+      "name": "Valentino Khan",
+      "aliases": []
+    },
+    {
+      "rank": 370,
+      "name": "Party Favor",
+      "aliases": []
+    },
+    {
+      "rank": 371,
+      "name": "Dillon Francis",
+      "aliases": []
+    },
+    {
+      "rank": 372,
+      "name": "A-Trak",
+      "aliases": []
+    },
+    {
+      "rank": 373,
+      "name": "Duck Sauce",
+      "aliases": [
+        "A-Trak",
+        "Armand Van Helden"
+      ]
+    },
+    {
+      "rank": 374,
+      "name": "Armand Van Helden",
+      "aliases": []
+    },
+    {
+      "rank": 375,
+      "name": "Todd Terry",
+      "aliases": []
+    },
+    {
+      "rank": 376,
+      "name": "Roger Sanchez",
+      "aliases": []
+    },
+    {
+      "rank": 377,
+      "name": "David Morales",
+      "aliases": []
+    },
+    {
+      "rank": 378,
+      "name": "Louie Vega",
+      "aliases": []
+    },
+    {
+      "rank": 379,
+      "name": "Masters At Work",
+      "aliases": [
+        "Louie Vega",
+        "Kenny Dope"
+      ]
+    },
+    {
+      "rank": 380,
+      "name": "Kerri Chandler",
+      "aliases": []
+    },
+    {
+      "rank": 381,
+      "name": "Moodymann",
+      "aliases": []
+    },
+    {
+      "rank": 382,
+      "name": "Theo Parrish",
+      "aliases": []
+    },
+    {
+      "rank": 383,
+      "name": "Carl Craig",
+      "aliases": []
+    },
+    {
+      "rank": 384,
+      "name": "Kevin Saunderson",
+      "aliases": [
+        "Inner City"
+      ]
+    },
+    {
+      "rank": 385,
+      "name": "Inner City",
+      "aliases": []
+    },
+    {
+      "rank": 386,
+      "name": "Derrick May",
+      "aliases": []
+    },
+    {
+      "rank": 387,
+      "name": "Juan Atkins",
+      "aliases": [
+        "Model 500"
+      ]
+    },
+    {
+      "rank": 388,
+      "name": "Model 500",
+      "aliases": []
+    },
+    {
+      "rank": 389,
+      "name": "Octave One",
+      "aliases": []
+    },
+    {
+      "rank": 390,
+      "name": "Underground Resistance",
+      "aliases": []
+    },
+    {
+      "rank": 391,
+      "name": "DJ Stingray 313",
+      "aliases": []
+    },
+    {
+      "rank": 392,
+      "name": "Drexciya",
+      "aliases": []
+    },
+    {
+      "rank": 393,
+      "name": "DJ Bone",
+      "aliases": []
+    },
+    {
+      "rank": 394,
+      "name": "The Advent",
+      "aliases": []
+    },
+    {
+      "rank": 395,
+      "name": "Dave Clarke",
+      "aliases": []
+    },
+    {
+      "rank": 396,
+      "name": "Laurent Garnier",
+      "aliases": []
+    },
+    {
+      "rank": 397,
+      "name": "Miss Kittin",
+      "aliases": []
+    },
+    {
+      "rank": 398,
+      "name": "The Hacker",
+      "aliases": []
+    },
+    {
+      "rank": 399,
+      "name": "Vitalic",
+      "aliases": []
+    },
+    {
+      "rank": 400,
+      "name": "Etienne de Crécy",
+      "aliases": []
+    },
+    {
+      "rank": 401,
+      "name": "Daft Punk",
+      "aliases": []
+    },
+    {
+      "rank": 402,
+      "name": "Alan Braxe",
+      "aliases": []
+    },
+    {
+      "rank": 403,
+      "name": "Stardust",
+      "aliases": [
+        "Thomas Bangalter",
+        "Alan Braxe",
+        "Benjamin Diamond"
+      ]
+    },
+    {
+      "rank": 404,
+      "name": "Cassius",
+      "aliases": []
+    },
+    {
+      "rank": 405,
+      "name": "Breakbot",
+      "aliases": []
+    },
+    {
+      "rank": 406,
+      "name": "Busy P",
+      "aliases": []
+    },
+    {
+      "rank": 407,
+      "name": "DJ Mehdi",
+      "aliases": []
+    },
+    {
+      "rank": 408,
+      "name": "SebastiAn",
+      "aliases": []
+    },
+    {
+      "rank": 409,
+      "name": "Mr. Oizo",
+      "aliases": []
+    },
+    {
+      "rank": 410,
+      "name": "Brodinski",
+      "aliases": []
+    },
+    {
+      "rank": 411,
+      "name": "Agents Of Time",
+      "aliases": []
+    },
+    {
+      "rank": 412,
+      "name": "Recondite",
+      "aliases": []
+    },
+    {
+      "rank": 413,
+      "name": "Rodriguez Jr.",
+      "aliases": []
+    },
+    {
+      "rank": 414,
+      "name": "Sebastian Leger",
+      "aliases": []
+    },
+    {
+      "rank": 415,
+      "name": "Tim Green",
+      "aliases": []
+    },
+    {
+      "rank": 416,
+      "name": "Patrice Bäumel",
+      "aliases": []
+    },
+    {
+      "rank": 417,
+      "name": "Guy Gerber",
+      "aliases": []
+    },
+    {
+      "rank": 418,
+      "name": "Lee Burridge",
+      "aliases": []
+    },
+    {
+      "rank": 419,
+      "name": "Traumer",
+      "aliases": []
+    },
+    {
+      "rank": 420,
+      "name": "Priku",
+      "aliases": []
+    },
+    {
+      "rank": 421,
+      "name": "Raresh",
+      "aliases": []
+    },
+    {
+      "rank": 422,
+      "name": "Ricardo Villalobos",
+      "aliases": []
+    },
+    {
+      "rank": 423,
+      "name": "Zip",
+      "aliases": []
+    },
+    {
+      "rank": 424,
+      "name": "Sonja Moonear",
+      "aliases": []
+    },
+    {
+      "rank": 425,
+      "name": "Seth Troxler",
+      "aliases": []
+    },
+    {
+      "rank": 426,
+      "name": "Damian Lazarus",
+      "aliases": []
+    },
+    {
+      "rank": 427,
+      "name": "Bedouin",
+      "aliases": []
+    },
+    {
+      "rank": 428,
+      "name": "Blond:ish",
+      "aliases": []
+    },
+    {
+      "rank": 429,
+      "name": "Black Coffee",
+      "aliases": []
+    },
+    {
+      "rank": 430,
+      "name": "Shimza",
+      "aliases": []
+    },
+    {
+      "rank": 431,
+      "name": "Caiiro",
+      "aliases": []
+    },
+    {
+      "rank": 432,
+      "name": "Da Capo",
+      "aliases": []
+    },
+    {
+      "rank": 433,
+      "name": "Culoe De Song",
+      "aliases": []
+    },
+    {
+      "rank": 434,
+      "name": "Sun-El Musician",
+      "aliases": []
+    },
+    {
+      "rank": 435,
+      "name": "Kabza De Small",
+      "aliases": []
+    },
+    {
+      "rank": 436,
+      "name": "DJ Maphorisa",
+      "aliases": []
+    },
+    {
+      "rank": 437,
+      "name": "Major League DJz",
+      "aliases": []
+    },
+    {
+      "rank": 438,
+      "name": "Uncle Waffles",
+      "aliases": []
+    },
+    {
+      "rank": 439,
+      "name": "DBN Gogo",
+      "aliases": []
+    },
+    {
+      "rank": 440,
+      "name": "Musa Keys",
+      "aliases": []
+    },
+    {
+      "rank": 441,
+      "name": "Kelvin Momo",
+      "aliases": []
+    },
+    {
+      "rank": 442,
+      "name": "Vanco",
+      "aliases": []
+    },
+    {
+      "rank": 443,
+      "name": "Francis Mercier",
+      "aliases": []
+    },
+    {
+      "rank": 444,
+      "name": "AMÉMÉ",
+      "aliases": []
+    },
+    {
+      "rank": 445,
+      "name": "MoBlack",
+      "aliases": []
+    },
+    {
+      "rank": 446,
+      "name": "Satori",
+      "aliases": []
+    },
+    {
+      "rank": 447,
+      "name": "Acid Pauli",
+      "aliases": []
+    },
+    {
+      "rank": 448,
+      "name": "Mira",
+      "aliases": []
+    },
+    {
+      "rank": 449,
+      "name": "Nicola Cruz",
+      "aliases": []
+    },
+    {
+      "rank": 450,
+      "name": "Dengue Dengue Dengue",
+      "aliases": []
+    },
+    {
+      "rank": 451,
+      "name": "Chancha Via Circuito",
+      "aliases": []
+    },
+    {
+      "rank": 452,
+      "name": "Bomba Estéreo",
+      "aliases": []
+    },
+    {
+      "rank": 453,
+      "name": "Nic Fanciulli",
+      "aliases": []
+    },
+    {
+      "rank": 454,
+      "name": "Dennis Ferrer",
+      "aliases": []
+    },
+    {
+      "rank": 455,
+      "name": "Franky Rizardo",
+      "aliases": []
+    },
+    {
+      "rank": 456,
+      "name": "Low Steppa",
+      "aliases": []
+    },
+    {
+      "rank": 457,
+      "name": "Duke Dumont",
+      "aliases": []
+    },
+    {
+      "rank": 458,
+      "name": "Gorgon City",
+      "aliases": []
+    },
+    {
+      "rank": 459,
+      "name": "Claptone",
+      "aliases": []
+    },
+    {
+      "rank": 460,
+      "name": "Folamour",
+      "aliases": []
+    },
+    {
+      "rank": 461,
+      "name": "Dan Shake",
+      "aliases": []
+    },
+    {
+      "rank": 462,
+      "name": "Bellaire",
+      "aliases": []
+    },
+    {
+      "rank": 463,
+      "name": "Motor City Drum Ensemble",
+      "aliases": []
+    },
+    {
+      "rank": 464,
+      "name": "Hunee",
+      "aliases": []
+    },
+    {
+      "rank": 465,
+      "name": "Palms Trax",
+      "aliases": []
+    },
+    {
+      "rank": 466,
+      "name": "Antal",
+      "aliases": []
+    },
+    {
+      "rank": 467,
+      "name": "Shanti Celeste",
+      "aliases": []
+    },
+    {
+      "rank": 468,
+      "name": "Midland",
+      "aliases": []
+    },
+    {
+      "rank": 469,
+      "name": "Ben UFO",
+      "aliases": []
+    },
+    {
+      "rank": 470,
+      "name": "Pearson Sound",
+      "aliases": []
+    },
+    {
+      "rank": 471,
+      "name": "Pangaea",
+      "aliases": []
+    },
+    {
+      "rank": 472,
+      "name": "Joy Orbison",
+      "aliases": []
+    },
+    {
+      "rank": 473,
+      "name": "Sicaria",
+      "aliases": []
+    },
+    {
+      "rank": 474,
+      "name": "Sherelle",
+      "aliases": []
+    },
+    {
+      "rank": 475,
+      "name": "Tim Reaper",
+      "aliases": []
+    },
+    {
+      "rank": 476,
+      "name": "Special Request",
+      "aliases": [
+        "Paul Woolford"
+      ]
+    },
+    {
+      "rank": 477,
+      "name": "Paul Woolford",
+      "aliases": []
+    },
+    {
+      "rank": 478,
+      "name": "Skream",
+      "aliases": []
+    },
+    {
+      "rank": 479,
+      "name": "Benga",
+      "aliases": []
+    },
+    {
+      "rank": 480,
+      "name": "Coki",
+      "aliases": []
+    },
+    {
+      "rank": 481,
+      "name": "Mala",
+      "aliases": []
+    },
+    {
+      "rank": 482,
+      "name": "Digital Mystikz",
+      "aliases": []
+    },
+    {
+      "rank": 483,
+      "name": "Loefah",
+      "aliases": []
+    },
+    {
+      "rank": 484,
+      "name": "Kode9",
+      "aliases": []
+    },
+    {
+      "rank": 485,
+      "name": "Mount Kimbie",
+      "aliases": []
+    },
+    {
+      "rank": 486,
+      "name": "George FitzGerald",
+      "aliases": []
+    },
+    {
+      "rank": 487,
+      "name": "Dusky",
+      "aliases": []
+    },
+    {
+      "rank": 488,
+      "name": "Kettama",
+      "aliases": []
+    },
+    {
+      "rank": 489,
+      "name": "X CLUB.",
+      "aliases": []
+    },
+    {
+      "rank": 490,
+      "name": "Skin On Skin",
+      "aliases": []
+    },
+    {
+      "rank": 491,
+      "name": "Partiboi69",
+      "aliases": []
+    },
+    {
+      "rank": 492,
+      "name": "Prospa",
+      "aliases": []
+    },
+    {
+      "rank": 493,
+      "name": "DJ Boring",
+      "aliases": []
+    },
+    {
+      "rank": 494,
+      "name": "KiNK",
+      "aliases": []
+    },
+    {
+      "rank": 495,
+      "name": "Octo Octa",
+      "aliases": []
+    },
+    {
+      "rank": 496,
+      "name": "Eris Drew",
+      "aliases": []
+    },
+    {
+      "rank": 497,
+      "name": "Avalon Emerson",
+      "aliases": []
+    },
+    {
+      "rank": 498,
+      "name": "Bambounou",
+      "aliases": []
+    },
+    {
+      "rank": 499,
+      "name": "Batu",
+      "aliases": []
+    },
+    {
+      "rank": 500,
+      "name": "Ploy",
+      "aliases": []
+    }
+  ],
+  "major_edm_festivals_worldwide": [
+    {
+      "name": "Tomorrowland",
+      "country": "Belgium",
+      "typical_month": "July"
+    },
+    {
+      "name": "Ultra Music Festival",
+      "country": "United States",
+      "typical_month": "March"
+    },
+    {
+      "name": "EDC Las Vegas",
+      "country": "United States",
+      "typical_month": "May"
+    },
+    {
+      "name": "UNTOLD Festival",
+      "country": "Romania",
+      "typical_month": "August"
+    },
+    {
+      "name": "Creamfields",
+      "country": "United Kingdom",
+      "typical_month": "August"
+    },
+    {
+      "name": "Amsterdam Dance Event",
+      "country": "Netherlands",
+      "typical_month": "October"
+    },
+    {
+      "name": "Sónar Barcelona",
+      "country": "Spain",
+      "typical_month": "June"
+    },
+    {
+      "name": "Movement Detroit",
+      "country": "United States",
+      "typical_month": "May"
+    },
+    {
+      "name": "Electric Forest",
+      "country": "United States",
+      "typical_month": "June"
+    },
+    {
+      "name": "Ultra Europe",
+      "country": "Croatia",
+      "typical_month": "July"
+    },
+    {
+      "name": "Parookaville",
+      "country": "Germany",
+      "typical_month": "July"
+    },
+    {
+      "name": "Airbeat One",
+      "country": "Germany",
+      "typical_month": "July"
+    },
+    {
+      "name": "Time Warp Mannheim",
+      "country": "Germany",
+      "typical_month": "April"
+    },
+    {
+      "name": "Awakenings Festival",
+      "country": "Netherlands",
+      "typical_month": "July"
+    },
+    {
+      "name": "Dekmantel Festival",
+      "country": "Netherlands",
+      "typical_month": "July/August"
+    },
+    {
+      "name": "DGTL Amsterdam",
+      "country": "Netherlands",
+      "typical_month": "March/April"
+    },
+    {
+      "name": "Mysteryland",
+      "country": "Netherlands",
+      "typical_month": "August"
+    },
+    {
+      "name": "Loveland Festival",
+      "country": "Netherlands",
+      "typical_month": "August"
+    },
+    {
+      "name": "Kappa FuturFestival",
+      "country": "Italy",
+      "typical_month": "July"
+    },
+    {
+      "name": "MOGA Festival",
+      "country": "Morocco/Portugal",
+      "typical_month": "October"
+    },
+    {
+      "name": "Houghton Festival",
+      "country": "United Kingdom",
+      "typical_month": "August"
+    },
+    {
+      "name": "Field Day London",
+      "country": "United Kingdom",
+      "typical_month": "August"
+    },
+    {
+      "name": "Junction 2",
+      "country": "United Kingdom",
+      "typical_month": "July"
+    },
+    {
+      "name": "Parklife",
+      "country": "United Kingdom",
+      "typical_month": "June"
+    },
+    {
+      "name": "We Are FSTVL",
+      "country": "United Kingdom",
+      "typical_month": "May"
+    },
+    {
+      "name": "Hideout Festival",
+      "country": "Croatia",
+      "typical_month": "June"
+    },
+    {
+      "name": "Sonus Festival",
+      "country": "Croatia",
+      "typical_month": "August"
+    },
+    {
+      "name": "Outlook Origins",
+      "country": "Croatia",
+      "typical_month": "July"
+    },
+    {
+      "name": "Dimensions Festival",
+      "country": "Croatia",
+      "typical_month": "August/September"
+    },
+    {
+      "name": "EXIT Festival",
+      "country": "Serbia",
+      "typical_month": "July"
+    },
+    {
+      "name": "Sea Dance Festival",
+      "country": "Montenegro",
+      "typical_month": "August"
+    },
+    {
+      "name": "Balaton Sound",
+      "country": "Hungary",
+      "typical_month": "July"
+    },
+    {
+      "name": "Sziget Festival",
+      "country": "Hungary",
+      "typical_month": "August"
+    },
+    {
+      "name": "Electric Love Festival",
+      "country": "Austria",
+      "typical_month": "July"
+    },
+    {
+      "name": "Snowbombing",
+      "country": "Austria",
+      "typical_month": "April"
+    },
+    {
+      "name": "Melt Festival",
+      "country": "Germany",
+      "typical_month": "June"
+    },
+    {
+      "name": "PollerWiesen",
+      "country": "Germany",
+      "typical_month": "May-September"
+    },
+    {
+      "name": "Nature One",
+      "country": "Germany",
+      "typical_month": "August"
+    },
+    {
+      "name": "Love Family Park",
+      "country": "Germany",
+      "typical_month": "July"
+    },
+    {
+      "name": "Nuits Sonores",
+      "country": "France",
+      "typical_month": "May"
+    },
+    {
+      "name": "Peacock Society",
+      "country": "France",
+      "typical_month": "July"
+    },
+    {
+      "name": "Les Plages Électroniques",
+      "country": "France",
+      "typical_month": "August"
+    },
+    {
+      "name": "I Love Techno Europe",
+      "country": "France/Belgium",
+      "typical_month": "December"
+    },
+    {
+      "name": "Brunch Electronik Festival",
+      "country": "Spain",
+      "typical_month": "August"
+    },
+    {
+      "name": "Monegros Desert Festival",
+      "country": "Spain",
+      "typical_month": "July"
+    },
+    {
+      "name": "Medusa Festival",
+      "country": "Spain",
+      "typical_month": "August"
+    },
+    {
+      "name": "Dreambeach Villaricos",
+      "country": "Spain",
+      "typical_month": "August"
+    },
+    {
+      "name": "BBF Barcelona Beach Festival",
+      "country": "Spain",
+      "typical_month": "July"
+    },
+    {
+      "name": "DGTL Barcelona",
+      "country": "Spain",
+      "typical_month": "August"
+    },
+    {
+      "name": "Caprices Festival",
+      "country": "Switzerland",
+      "typical_month": "April"
+    },
+    {
+      "name": "Street Parade Zurich",
+      "country": "Switzerland",
+      "typical_month": "August"
+    },
+    {
+      "name": "SXM Festival",
+      "country": "Sint Maarten",
+      "typical_month": "March"
+    },
+    {
+      "name": "Holy Ship! Wrecked",
+      "country": "Mexico",
+      "typical_month": "December"
+    },
+    {
+      "name": "Zamna Festival",
+      "country": "Mexico",
+      "typical_month": "January"
+    },
+    {
+      "name": "EDC Mexico",
+      "country": "Mexico",
+      "typical_month": "February"
+    },
+    {
+      "name": "Beyond Wonderland SoCal",
+      "country": "United States",
+      "typical_month": "March"
+    },
+    {
+      "name": "Beyond Wonderland at The Gorge",
+      "country": "United States",
+      "typical_month": "June"
+    },
+    {
+      "name": "Nocturnal Wonderland",
+      "country": "United States",
+      "typical_month": "September"
+    },
+    {
+      "name": "Escape Halloween",
+      "country": "United States",
+      "typical_month": "October"
+    },
+    {
+      "name": "Dreamstate SoCal",
+      "country": "United States",
+      "typical_month": "November"
+    },
+    {
+      "name": "Hard Summer",
+      "country": "United States",
+      "typical_month": "August"
+    },
+    {
+      "name": "HARD Day of the Dead",
+      "country": "United States",
+      "typical_month": "November"
+    },
+    {
+      "name": "Ultra Music Festival Miami",
+      "country": "United States",
+      "typical_month": "March"
+    },
+    {
+      "name": "EDC Orlando",
+      "country": "United States",
+      "typical_month": "November"
+    },
+    {
+      "name": "Electric Zoo",
+      "country": "United States",
+      "typical_month": "September"
+    },
+    {
+      "name": "Elements Music & Arts Festival",
+      "country": "United States",
+      "typical_month": "August"
+    },
+    {
+      "name": "ARC Music Festival",
+      "country": "United States",
+      "typical_month": "August/September"
+    },
+    {
+      "name": "North Coast Music Festival",
+      "country": "United States",
+      "typical_month": "August"
+    },
+    {
+      "name": "CRSSD Festival",
+      "country": "United States",
+      "typical_month": "March/September"
+    },
+    {
+      "name": "Lightning in a Bottle",
+      "country": "United States",
+      "typical_month": "May"
+    },
+    {
+      "name": "Coachella",
+      "country": "United States",
+      "typical_month": "April"
+    },
+    {
+      "name": "Portola Festival",
+      "country": "United States",
+      "typical_month": "September"
+    },
+    {
+      "name": "Seismic Dance Event",
+      "country": "United States",
+      "typical_month": "November"
+    },
+    {
+      "name": "III Points",
+      "country": "United States",
+      "typical_month": "October"
+    },
+    {
+      "name": "Project GLOW",
+      "country": "United States",
+      "typical_month": "April"
+    },
+    {
+      "name": "Shambhala Music Festival",
+      "country": "Canada",
+      "typical_month": "July"
+    },
+    {
+      "name": "îLESONIQ",
+      "country": "Canada",
+      "typical_month": "August"
+    },
+    {
+      "name": "Veld Music Festival",
+      "country": "Canada",
+      "typical_month": "August"
+    },
+    {
+      "name": "Escapade Music Festival",
+      "country": "Canada",
+      "typical_month": "June"
+    },
+    {
+      "name": "Bass Coast",
+      "country": "Canada",
+      "typical_month": "July"
+    },
+    {
+      "name": "Mutek Montréal",
+      "country": "Canada",
+      "typical_month": "August"
+    },
+    {
+      "name": "Igloofest",
+      "country": "Canada",
+      "typical_month": "January/February"
+    },
+    {
+      "name": "Tomorrowland Brasil",
+      "country": "Brazil",
+      "typical_month": "October"
+    },
+    {
+      "name": "Universo Paralello",
+      "country": "Brazil",
+      "typical_month": "December/January"
+    },
+    {
+      "name": "Ultra Brasil",
+      "country": "Brazil",
+      "typical_month": "April"
+    },
+    {
+      "name": "Lollapalooza Brasil",
+      "country": "Brazil",
+      "typical_month": "March"
+    },
+    {
+      "name": "Baum Festival",
+      "country": "Colombia",
+      "typical_month": "May"
+    },
+    {
+      "name": "Estéreo Picnic",
+      "country": "Colombia",
+      "typical_month": "March"
+    },
+    {
+      "name": "Creamfields Chile",
+      "country": "Chile",
+      "typical_month": "October/November"
+    },
+    {
+      "name": "Ultra Chile",
+      "country": "Chile",
+      "typical_month": "April"
+    },
+    {
+      "name": "EDC China",
+      "country": "China",
+      "typical_month": "October"
+    },
+    {
+      "name": "Ultra Korea",
+      "country": "South Korea",
+      "typical_month": "June"
+    },
+    {
+      "name": "World DJ Festival",
+      "country": "South Korea",
+      "typical_month": "June"
+    },
+    {
+      "name": "S2O Korea",
+      "country": "South Korea",
+      "typical_month": "July"
+    },
+    {
+      "name": "Ultra Japan",
+      "country": "Japan",
+      "typical_month": "September"
+    },
+    {
+      "name": "Fuji Rock Festival",
+      "country": "Japan",
+      "typical_month": "July"
+    },
+    {
+      "name": "Rainbow Disco Club",
+      "country": "Japan",
+      "typical_month": "April/May"
+    },
+    {
+      "name": "EDC Thailand",
+      "country": "Thailand",
+      "typical_month": "January"
+    },
+    {
+      "name": "S2O Songkran Music Festival",
+      "country": "Thailand",
+      "typical_month": "April"
+    },
+    {
+      "name": "808 Festival",
+      "country": "Thailand",
+      "typical_month": "December"
+    },
+    {
+      "name": "Wonderfruit",
+      "country": "Thailand",
+      "typical_month": "December"
+    },
+    {
+      "name": "Djakarta Warehouse Project",
+      "country": "Indonesia",
+      "typical_month": "December"
+    },
+    {
+      "name": "We The Fest",
+      "country": "Indonesia",
+      "typical_month": "July"
+    },
+    {
+      "name": "ZoukOut",
+      "country": "Singapore",
+      "typical_month": "December"
+    },
+    {
+      "name": "Sunburn Festival",
+      "country": "India",
+      "typical_month": "December"
+    },
+    {
+      "name": "VH1 Supersonic",
+      "country": "India",
+      "typical_month": "February"
+    },
+    {
+      "name": "Magnetic Fields Festival",
+      "country": "India",
+      "typical_month": "December"
+    },
+    {
+      "name": "Creamfields Hong Kong",
+      "country": "Hong Kong",
+      "typical_month": "April"
+    },
+    {
+      "name": "Electric Daisy Carnival China",
+      "country": "China",
+      "typical_month": "October"
+    },
+    {
+      "name": "Transmission Festival Prague",
+      "country": "Czech Republic",
+      "typical_month": "October"
+    },
+    {
+      "name": "Let It Roll",
+      "country": "Czech Republic",
+      "typical_month": "August"
+    },
+    {
+      "name": "Rampage Open Air",
+      "country": "Belgium",
+      "typical_month": "July"
+    },
+    {
+      "name": "Rampage Weekend",
+      "country": "Belgium",
+      "typical_month": "February/March"
+    },
+    {
+      "name": "Boomtown Fair",
+      "country": "United Kingdom",
+      "typical_month": "August"
+    },
+    {
+      "name": "No Bounds Festival",
+      "country": "United Kingdom",
+      "typical_month": "October"
+    },
+    {
+      "name": "Unsound Kraków",
+      "country": "Poland",
+      "typical_month": "October"
+    },
+    {
+      "name": "Audioriver",
+      "country": "Poland",
+      "typical_month": "July"
+    },
+    {
+      "name": "Open’er Festival",
+      "country": "Poland",
+      "typical_month": "July"
+    },
+    {
+      "name": "Nyege Nyege Festival",
+      "country": "Uganda",
+      "typical_month": "November"
+    },
+    {
+      "name": "Cape Town Electronic Music Festival",
+      "country": "South Africa",
+      "typical_month": "April"
+    },
+    {
+      "name": "Ultra South Africa",
+      "country": "South Africa",
+      "typical_month": "March"
+    },
+    {
+      "name": "Oasis Festival",
+      "country": "Morocco",
+      "typical_month": "September"
+    },
+    {
+      "name": "Rewire Festival",
+      "country": "Netherlands",
+      "typical_month": "April"
+    },
+    {
+      "name": "Berlin Atonal",
+      "country": "Germany",
+      "typical_month": "August/September"
+    },
+    {
+      "name": "CTM Festival",
+      "country": "Germany",
+      "typical_month": "January/February"
+    },
+    {
+      "name": "Mutek Mexico",
+      "country": "Mexico",
+      "typical_month": "October"
+    },
+    {
+      "name": "Mutek Japan",
+      "country": "Japan",
+      "typical_month": "December"
+    },
+    {
+      "name": "Mutek Barcelona",
+      "country": "Spain",
+      "typical_month": "March"
+    },
+    {
+      "name": "Pitch Music & Arts",
+      "country": "Australia",
+      "typical_month": "March"
+    },
+    {
+      "name": "Strawberry Fields",
+      "country": "Australia",
+      "typical_month": "November"
+    },
+    {
+      "name": "Beyond The Valley",
+      "country": "Australia",
+      "typical_month": "December"
+    },
+    {
+      "name": "Listen Out",
+      "country": "Australia",
+      "typical_month": "September/October"
+    },
+    {
+      "name": "Lost Paradise",
+      "country": "Australia",
+      "typical_month": "December"
+    },
+    {
+      "name": "Rainbow Serpent",
+      "country": "Australia",
+      "typical_month": "January"
+    },
+    {
+      "name": "Laneway Festival",
+      "country": "Australia/New Zealand",
+      "typical_month": "February"
+    },
+    {
+      "name": "Rhythm and Vines",
+      "country": "New Zealand",
+      "typical_month": "December"
+    },
+    {
+      "name": "Splore Festival",
+      "country": "New Zealand",
+      "typical_month": "February"
+    },
+    {
+      "name": "Epizode",
+      "country": "Vietnam",
+      "typical_month": "December/January"
+    },
+    {
+      "name": "Equation Festival",
+      "country": "Vietnam",
+      "typical_month": "April"
+    },
+    {
+      "name": "Wonderland Festival",
+      "country": "Thailand",
+      "typical_month": "December"
+    }
+  ],
+  "edm_labels_key_artists": [
+    {
+      "name": "Spinnin' Records",
+      "key_artists": [
+        "Tiësto",
+        "Oliver Heldens",
+        "KSHMR",
+        "Lucas & Steve",
+        "Mesto"
+      ]
+    },
+    {
+      "name": "Armada Music",
+      "key_artists": [
+        "Armin van Buuren",
+        "Ferry Corsten",
+        "Andrew Rayel",
+        "Ben Gold",
+        "Aly & Fila"
+      ]
+    },
+    {
+      "name": "Anjunabeats",
+      "key_artists": [
+        "Above & Beyond",
+        "ilan Bluestone",
+        "Andrew Bayer",
+        "Genix",
+        "Mat Zo"
+      ]
+    },
+    {
+      "name": "Anjunadeep",
+      "key_artists": [
+        "Lane 8",
+        "Yotto",
+        "Ben Böhmer",
+        "Tinlicker",
+        "Marsh"
+      ]
+    },
+    {
+      "name": "Monstercat",
+      "key_artists": [
+        "Koven",
+        "Pegboard Nerds",
+        "Stonebank",
+        "Tokyo Machine",
+        "Crankdat"
+      ]
+    },
+    {
+      "name": "STMPD RCRDS",
+      "key_artists": [
+        "Martin Garrix",
+        "Matisse & Sadko",
+        "DubVision",
+        "Brooks",
+        "Julian Jordan"
+      ]
+    },
+    {
+      "name": "Revealed Recordings",
+      "key_artists": [
+        "Hardwell",
+        "KAAZE",
+        "Maddix",
+        "Sick Individuals",
+        "Blasterjaxx"
+      ]
+    },
+    {
+      "name": "mau5trap",
+      "key_artists": [
+        "deadmau5",
+        "REZZ",
+        "No Mana",
+        "i_o",
+        "EDDIE"
+      ]
+    },
+    {
+      "name": "Ophelia Records",
+      "key_artists": [
+        "Seven Lions",
+        "Jason Ross",
+        "Trivecta",
+        "Kill The Noise",
+        "Crystal Skies"
+      ]
+    },
+    {
+      "name": "OWSLA",
+      "key_artists": [
+        "Skrillex",
+        "Porter Robinson",
+        "Zedd",
+        "Kill The Noise",
+        "Getter"
+      ]
+    },
+    {
+      "name": "Mad Decent",
+      "key_artists": [
+        "Diplo",
+        "Major Lazer",
+        "Dillon Francis",
+        "Yellow Claw",
+        "Valentino Khan"
+      ]
+    },
+    {
+      "name": "Dim Mak",
+      "key_artists": [
+        "Steve Aoki",
+        "The Bloody Beetroots",
+        "Autoerotique",
+        "Borgore",
+        "Keys N Krates"
+      ]
+    },
+    {
+      "name": "Ultra Records",
+      "key_artists": [
+        "Calvin Harris",
+        "Kaskade",
+        "deadmau5",
+        "Kygo",
+        "Sofi Tukker"
+      ]
+    },
+    {
+      "name": "Astralwerks",
+      "key_artists": [
+        "The Chemical Brothers",
+        "Swedish House Mafia",
+        "Illenium",
+        "Surf Mesa",
+        "Alison Wonderland"
+      ]
+    },
+    {
+      "name": "Defected Records",
+      "key_artists": [
+        "Sam Divine",
+        "The Shapeshifters",
+        "Purple Disco Machine",
+        "Dennis Ferrer",
+        "Folamour"
+      ]
+    },
+    {
+      "name": "Toolroom Records",
+      "key_artists": [
+        "Mark Knight",
+        "Weiss",
+        "Leftwing : Kody",
+        "Illyus & Barrientos",
+        "Gene Farris"
+      ]
+    },
+    {
+      "name": "Dirtybird",
+      "key_artists": [
+        "Claude VonStroke",
+        "Justin Martin",
+        "Walker & Royce",
+        "Ardalan",
+        "VNSSA"
+      ]
+    },
+    {
+      "name": "Black Book Records",
+      "key_artists": [
+        "Chris Lake",
+        "Cloonee",
+        "Miane",
+        "Nostalgix",
+        "Harry Romero"
+      ]
+    },
+    {
+      "name": "Experts Only",
+      "key_artists": [
+        "John Summit",
+        "Max Styler",
+        "Cassian",
+        "Ayybo",
+        "Hayla"
+      ]
+    },
+    {
+      "name": "Fisher's Catch & Release",
+      "key_artists": [
+        "FISHER",
+        "Mele",
+        "Martin Ikin",
+        "Piero Pirupa",
+        "Deeper Purpose"
+      ]
+    },
+    {
+      "name": "Hot Creations",
+      "key_artists": [
+        "Jamie Jones",
+        "Patrick Topping",
+        "Richy Ahmed",
+        "Lee Foss",
+        "wAFF"
+      ]
+    },
+    {
+      "name": "Solid Grooves",
+      "key_artists": [
+        "Michael Bibi",
+        "Pawsa",
+        "Dennis Cruz",
+        "Reelow",
+        "ANOTR"
+      ]
+    },
+    {
+      "name": "Crosstown Rebels",
+      "key_artists": [
+        "Damian Lazarus",
+        "Maceo Plex",
+        "Art Department",
+        "Bedouin",
+        "Satori"
+      ]
+    },
+    {
+      "name": "Diynamic",
+      "key_artists": [
+        "Solomun",
+        "Adriatique",
+        "Kollektiv Turmstrasse",
+        "Stimming",
+        "HOSH"
+      ]
+    },
+    {
+      "name": "Afterlife",
+      "key_artists": [
+        "Tale Of Us",
+        "Anyma",
+        "MRAK",
+        "Kevin de Vries",
+        "Colyn"
+      ]
+    },
+    {
+      "name": "Kompakt",
+      "key_artists": [
+        "Kölsch",
+        "Michael Mayer",
+        "Gui Boratto",
+        "The Field",
+        "Patrice Bäumel"
+      ]
+    },
+    {
+      "name": "Drumcode",
+      "key_artists": [
+        "Adam Beyer",
+        "Layton Giordani",
+        "ANNA",
+        "Enrico Sangiuliano",
+        "Bart Skils"
+      ]
+    },
+    {
+      "name": "KNTXT",
+      "key_artists": [
+        "Charlotte de Witte",
+        "Alignment",
+        "Indira Paganotto",
+        "Amazingblaze",
+        "Acid Asian"
+      ]
+    },
+    {
+      "name": "Filth on Acid",
+      "key_artists": [
+        "Reinier Zonneveld",
+        "Space 92",
+        "HI-LO",
+        "T78",
+        "UMEK"
+      ]
+    },
+    {
+      "name": "Second State",
+      "key_artists": [
+        "Pan-Pot",
+        "Amelie Lens",
+        "ANNA",
+        "Michael Klein",
+        "Joyhauser"
+      ]
+    },
+    {
+      "name": "Terminal M",
+      "key_artists": [
+        "Monika Kruse",
+        "UMEK",
+        "Pig&Dan",
+        "Teenage Mutants",
+        "Drunken Kong"
+      ]
+    },
+    {
+      "name": "Suara",
+      "key_artists": [
+        "Coyu",
+        "ANNA",
+        "Dosem",
+        "Ramiro Lopez",
+        "Bastian Bux"
+      ]
+    },
+    {
+      "name": "Ninja Tune",
+      "key_artists": [
+        "Bonobo",
+        "Bicep",
+        "Floating Points",
+        "The Bug",
+        "Machinedrum"
+      ]
+    },
+    {
+      "name": "Warp Records",
+      "key_artists": [
+        "Aphex Twin",
+        "Autechre",
+        "Boards of Canada",
+        "Squarepusher",
+        "Hudson Mohawke"
+      ]
+    },
+    {
+      "name": "Hyperdub",
+      "key_artists": [
+        "Kode9",
+        "Burial",
+        "Ikonika",
+        "Laurel Halo",
+        "DJ Rashad"
+      ]
+    },
+    {
+      "name": "XL Recordings",
+      "key_artists": [
+        "The Prodigy",
+        "Overmono",
+        "Jamie xx",
+        "Peggy Gou",
+        "Arca"
+      ]
+    },
+    {
+      "name": "Young",
+      "key_artists": [
+        "Jamie xx",
+        "FKA twigs",
+        "Koreless",
+        "The xx",
+        "Romy"
+      ]
+    },
+    {
+      "name": "R&S Records",
+      "key_artists": [
+        "Aphex Twin",
+        "James Blake",
+        "Lone",
+        "Space Dimension Controller",
+        "Paula Temple"
+      ]
+    },
+    {
+      "name": "Hessle Audio",
+      "key_artists": [
+        "Ben UFO",
+        "Pearson Sound",
+        "Pangaea",
+        "Joe",
+        "Ploy"
+      ]
+    },
+    {
+      "name": "AD 93",
+      "key_artists": [
+        "Overmono",
+        "Moin",
+        "Lanark Artefax",
+        "Minor Science",
+        "Pangaea"
+      ]
+    },
+    {
+      "name": "Ilian Tape",
+      "key_artists": [
+        "Skee Mask",
+        "Andrea",
+        "Stenny",
+        "Zenker Brothers",
+        "Atrice"
+      ]
+    },
+    {
+      "name": "Ostgut Ton",
+      "key_artists": [
+        "Ben Klock",
+        "Marcel Dettmann",
+        "Barker",
+        "Steffi",
+        "Answer Code Request"
+      ]
+    },
+    {
+      "name": "Tresor",
+      "key_artists": [
+        "Jeff Mills",
+        "Surgeon",
+        "Regis",
+        "Drexciya",
+        "Function"
+      ]
+    },
+    {
+      "name": "Plus 8",
+      "key_artists": [
+        "Richie Hawtin",
+        "Speedy J",
+        "Plastikman",
+        "Kenny Larkin",
+        "F.U.S.E."
+      ]
+    },
+    {
+      "name": "M-Plant",
+      "key_artists": [
+        "Robert Hood",
+        "Floorplan",
+        "Lyric Hood",
+        "Mark Broom",
+        "James Ruskin"
+      ]
+    },
+    {
+      "name": "Axis Records",
+      "key_artists": [
+        "Jeff Mills",
+        "The Beneficiaries",
+        "Millsart",
+        "Purpose Maker",
+        "Spiral Deluxe"
+      ]
+    },
+    {
+      "name": "Hospital Records",
+      "key_artists": [
+        "London Elektricity",
+        "Netsky",
+        "High Contrast",
+        "Camo & Krooked",
+        "Metrik"
+      ]
+    },
+    {
+      "name": "RAM Records",
+      "key_artists": [
+        "Andy C",
+        "Sub Focus",
+        "Wilkinson",
+        "Culture Shock",
+        "Delta Heavy"
+      ]
+    },
+    {
+      "name": "Critical Music",
+      "key_artists": [
+        "Kasra",
+        "Enei",
+        "Halogenix",
+        "Ivy Lab",
+        "Sam Binga"
+      ]
+    },
+    {
+      "name": "Metalheadz",
+      "key_artists": [
+        "Goldie",
+        "Doc Scott",
+        "Dillinja",
+        "Om Unit",
+        "Grey Code"
+      ]
+    },
+    {
+      "name": "Shogun Audio",
+      "key_artists": [
+        "Friction",
+        "Technimatic",
+        "Polaris",
+        "Monrroe",
+        "GLXY"
+      ]
+    },
+    {
+      "name": "UKF",
+      "key_artists": [
+        "Camo & Krooked",
+        "Sub Focus",
+        "Netsky",
+        "Hybrid Minds",
+        "Dimension"
+      ]
+    },
+    {
+      "name": "Vision Recordings",
+      "key_artists": [
+        "Noisia",
+        "Skrillex",
+        "The Upbeats",
+        "Phace",
+        "Former"
+      ]
+    },
+    {
+      "name": "Disciple",
+      "key_artists": [
+        "Virtual Riot",
+        "Barely Alive",
+        "Dodge & Fuski",
+        "Modestep",
+        "Eliminate"
+      ]
+    },
+    {
+      "name": "Never Say Die",
+      "key_artists": [
+        "SKisM",
+        "Zomboy",
+        "Eptic",
+        "MUST DIE!",
+        "Space Laces"
+      ]
+    },
+    {
+      "name": "Subsidia",
+      "key_artists": [
+        "Excision",
+        "Wooli",
+        "Ray Volpe",
+        "Sullivan King",
+        "Dion Timmer"
+      ]
+    },
+    {
+      "name": "Cyclops Recordings",
+      "key_artists": [
+        "Subtronics",
+        "LEVEL UP",
+        "Leotrix",
+        "Austeria",
+        "Ace Aura"
+      ]
+    },
+    {
+      "name": "Wakaan",
+      "key_artists": [
+        "Liquid Stranger",
+        "LSDREAM",
+        "CloZee",
+        "Champagne Drip",
+        "Mersiv"
+      ]
+    },
+    {
+      "name": "Sable Valley",
+      "key_artists": [
+        "RL Grime",
+        "ISOxo",
+        "Knock2",
+        "Juelz",
+        "Montell2099"
+      ]
+    },
+    {
+      "name": "Night Bass",
+      "key_artists": [
+        "AC Slater",
+        "Malaa",
+        "Chris Lorenzo",
+        "Taiki Nulight",
+        "Jack Beats"
+      ]
+    },
+    {
+      "name": "Confession",
+      "key_artists": [
+        "Tchami",
+        "Malaa",
+        "Habstrakt",
+        "Dombresky",
+        "Mercer"
+      ]
+    },
+    {
+      "name": "Insomniac Records",
+      "key_artists": [
+        "Habstrakt",
+        "Noizu",
+        "Matroda",
+        "Dombresky",
+        "Westend"
+      ]
+    },
+    {
+      "name": "Future Classic",
+      "key_artists": [
+        "Flume",
+        "G Flip",
+        "Flight Facilities",
+        "Touch Sensitive",
+        "Jagwar Ma"
+      ]
+    },
+    {
+      "name": "Foreign Family Collective",
+      "key_artists": [
+        "ODESZA",
+        "Golden Features",
+        "Kasbo",
+        "Big Wild",
+        "RÜFÜS DU SOL"
+      ]
+    },
+    {
+      "name": "This Never Happened",
+      "key_artists": [
+        "Lane 8",
+        "Sultan + Shepard",
+        "Le Youth",
+        "Jerro",
+        "Massane"
+      ]
+    },
+    {
+      "name": "Enhanced Music",
+      "key_artists": [
+        "Tritonal",
+        "Estiva",
+        "Farius",
+        "Matt Fax",
+        "Dezza"
+      ]
+    },
+    {
+      "name": "Black Hole Recordings",
+      "key_artists": [
+        "Tiësto",
+        "Ferry Corsten",
+        "Cosmic Gate",
+        "Markus Schulz",
+        "Solarstone"
+      ]
+    },
+    {
+      "name": "Perfecto Records",
+      "key_artists": [
+        "Paul Oakenfold",
+        "BT",
+        "Man With No Name",
+        "Liquid Soul",
+        "Jordan Suckley"
+      ]
+    },
+    {
+      "name": "Vandit Records",
+      "key_artists": [
+        "Paul van Dyk",
+        "Alex M.O.R.P.H.",
+        "Chris Bekker",
+        "Kinetica",
+        "Sue McLaren"
+      ]
+    },
+    {
+      "name": "Future Sound of Egypt",
+      "key_artists": [
+        "Aly & Fila",
+        "Ferry Tayle",
+        "Dan Stone",
+        "James Dymond",
+        "Ciaran McAuley"
+      ]
+    },
+    {
+      "name": "Anjunadeep Explorations",
+      "key_artists": [
+        "Marsh",
+        "Qrion",
+        "Nox Vahn",
+        "Luttrell",
+        "Durante"
+      ]
+    },
+    {
+      "name": "Selected.",
+      "key_artists": [
+        "Lost Frequencies",
+        "Yves V",
+        "Glockenbach",
+        "Topic",
+        "Deepend"
+      ]
+    },
+    {
+      "name": "NoCopyrightSounds",
+      "key_artists": [
+        "Alan Walker",
+        "Tobu",
+        "Elektronomia",
+        "Rival",
+        "Jim Yosef"
+      ]
+    },
+    {
+      "name": "Future House Music",
+      "key_artists": [
+        "Don Diablo",
+        "Brooks",
+        "Mike Williams",
+        "Mesto",
+        "Curbi"
+      ]
+    },
+    {
+      "name": "HEXAGON",
+      "key_artists": [
+        "Don Diablo",
+        "King Arthur",
+        "Madison Mars",
+        "RetroVision",
+        "CID"
+      ]
+    },
+    {
+      "name": "Spinnin' Deep",
+      "key_artists": [
+        "Oliver Heldens",
+        "Watermät",
+        "EDX",
+        "Sam Feldt",
+        "Chocolate Puma"
+      ]
+    },
+    {
+      "name": "Musical Freedom",
+      "key_artists": [
+        "Tiësto",
+        "Oliver Heldens",
+        "Dzeko",
+        "Mike Williams",
+        "Jauz"
+      ]
+    },
+    {
+      "name": "Protocol Recordings",
+      "key_artists": [
+        "Nicky Romero",
+        "Stadiumx",
+        "Raiden",
+        "Teamworx",
+        "Florian Picasso"
+      ]
+    },
+    {
+      "name": "Smash The House",
+      "key_artists": [
+        "Dimitri Vegas & Like Mike",
+        "Bassjackers",
+        "Wolfpack",
+        "Quintino",
+        "MATTN"
+      ]
+    },
+    {
+      "name": "Axtone",
+      "key_artists": [
+        "Axwell",
+        "Shapov",
+        "D.O.D",
+        "Tom Staar",
+        "Chocolate Puma"
+      ]
+    },
+    {
+      "name": "SIZE Records",
+      "key_artists": [
+        "Steve Angello",
+        "AN21",
+        "Max Vangeli",
+        "Third Party",
+        "Still Young"
+      ]
+    },
+    {
+      "name": "Refune",
+      "key_artists": [
+        "Sebastian Ingrosso",
+        "Alesso",
+        "Otto Knows",
+        "Style of Eye",
+        "LIOHN"
+      ]
+    },
+    {
+      "name": "PRMD Music",
+      "key_artists": [
+        "Avicii",
+        "Cazzette",
+        "iSHi",
+        "Syn Cole",
+        "Didrick"
+      ]
+    },
+    {
+      "name": "Ministry of Sound",
+      "key_artists": [
+        "Sigala",
+        "London Grammar",
+        "Duke Dumont",
+        "DJ Fresh",
+        "Example"
+      ]
+    },
+    {
+      "name": "Sweat It Out",
+      "key_artists": [
+        "RÜFÜS DU SOL",
+        "What So Not",
+        "Purple Disco Machine",
+        "Dom Dolla",
+        "Yolanda Be Cool"
+      ]
+    },
+    {
+      "name": "Futureboogie",
+      "key_artists": [
+        "Crazy P",
+        "Christophe",
+        "PBR Streetgang",
+        "Felix Dickinson",
+        "Ron Basejam"
+      ]
+    },
+    {
+      "name": "Shall Not Fade",
+      "key_artists": [
+        "KETTAMA",
+        "DJ Boring",
+        "LK",
+        "Harrison BDP",
+        "Cody Currie"
+      ]
+    },
+    {
+      "name": "Lobster Theremin",
+      "key_artists": [
+        "Palms Trax",
+        "Ross From Friends",
+        "Route 8",
+        "ASOK",
+        "Daze"
+      ]
+    },
+    {
+      "name": "Nervous Records",
+      "key_artists": [
+        "Louie Vega",
+        "Kerri Chandler",
+        "Armand Van Helden",
+        "Todd Terry",
+        "Danny Tenaglia"
+      ]
+    },
+    {
+      "name": "Glasgow Underground",
+      "key_artists": [
+        "Kevin McKay",
+        "Illyus & Barrientos",
+        "Claptone",
+        "Dennis Ferrer",
+        "Piem"
+      ]
+    },
+    {
+      "name": "Cecille Records",
+      "key_artists": [
+        "Nick Curly",
+        "Butch",
+        "Reboot",
+        "SIS",
+        "Markus Fix"
+      ]
+    },
+    {
+      "name": "Aus Music",
+      "key_artists": [
+        "Bicep",
+        "Midland",
+        "Dusky",
+        "George FitzGerald",
+        "Huxley"
+      ]
+    },
+    {
+      "name": "Hotflush Recordings",
+      "key_artists": [
+        "Scuba",
+        "Mount Kimbie",
+        "Joy Orbison",
+        "Sepalcure",
+        "Dense & Pika"
+      ]
+    },
+    {
+      "name": "Running Back",
+      "key_artists": [
+        "Gerd Janson",
+        "Todd Terje",
+        "Redshape",
+        "KiNK",
+        "Roman Flügel"
+      ]
+    },
+    {
+      "name": "Innervisions",
+      "key_artists": [
+        "Dixon",
+        "Âme",
+        "Henrik Schwarz",
+        "Trikk",
+        "Jimi Jules"
+      ]
+    },
+    {
+      "name": "Life and Death",
+      "key_artists": [
+        "DJ Tennis",
+        "Tale Of Us",
+        "Mind Against",
+        "Recondite",
+        "Vaal"
+      ]
+    },
+    {
+      "name": "Keinemusik",
+      "key_artists": [
+        "Adam Port",
+        "&ME",
+        "Rampa",
+        "Reznik",
+        "Sofia Kourtesis"
+      ]
+    },
+    {
+      "name": "MoBlack Records",
+      "key_artists": [
+        "MoBlack",
+        "Caiiro",
+        "Da Capo",
+        "Vanco",
+        "Francis Mercier"
+      ]
+    },
+    {
+      "name": "Get Physical Music",
+      "key_artists": [
+        "Booka Shade",
+        "M.A.N.D.Y.",
+        "DJ T.",
+        "WhoMadeWho",
+        "Patrice Bäumel"
+      ]
+    },
+    {
+      "name": "Cocoon Recordings",
+      "key_artists": [
+        "Sven Väth",
+        "Ricardo Villalobos",
+        "Roman Flügel",
+        "Gregor Tresher",
+        "Ilario Alicante"
+      ]
+    },
+    {
+      "name": "Mobilee Records",
+      "key_artists": [
+        "Anja Schneider",
+        "Pan-Pot",
+        "Rodriguez Jr.",
+        "Ray Okpara",
+        "Kevin Over"
+      ]
+    },
+    {
+      "name": "Bedrock Records",
+      "key_artists": [
+        "John Digweed",
+        "Nick Muir",
+        "Guy J",
+        "Sasha",
+        "Cristoph"
+      ]
+    },
+    {
+      "name": "Lost & Found",
+      "key_artists": [
+        "Guy J",
+        "Guy Mantzur",
+        "Roy Rosenfeld",
+        "Eli Nissan",
+        "Khen"
+      ]
+    },
+    {
+      "name": "Anjunadeep Reflections",
+      "key_artists": [
+        "Yotto",
+        "Croquet Club",
+        "Nils Hoffmann",
+        "Cephas Azariah",
+        "Luttrell"
+      ]
+    },
+    {
+      "name": "Nyege Nyege Tapes",
+      "key_artists": [
+        "Kampire",
+        "Slikback",
+        "Nihiloxica",
+        "MC Yallah",
+        "DJ Diaki"
+      ]
+    },
+    {
+      "name": "PAN",
+      "key_artists": [
+        "Amnesia Scanner",
+        "Arca",
+        "Lee Gamble",
+        "Eartheater",
+        "Errorsmith"
+      ]
+    },
+    {
+      "name": "PC Music",
+      "key_artists": [
+        "A. G. Cook",
+        "SOPHIE",
+        "Hannah Diamond",
+        "Danny L Harle",
+        "GFOTY"
+      ]
+    },
+    {
+      "name": "Brainfeeder",
+      "key_artists": [
+        "Flying Lotus",
+        "Thundercat",
+        "Teebs",
+        "The Gaslamp Killer",
+        "Lapalux"
+      ]
+    },
+    {
+      "name": "Ghostly International",
+      "key_artists": [
+        "Tycho",
+        "Matthew Dear",
+        "Com Truise",
+        "Shigeto",
+        "Telefon Tel Aviv"
+      ]
+    },
+    {
+      "name": "Planet Mu",
+      "key_artists": [
+        "µ-Ziq",
+        "Jlin",
+        "Machinedrum",
+        "Ital Tek",
+        "Kuedo"
+      ]
+    },
+    {
+      "name": "LuckyMe",
+      "key_artists": [
+        "Hudson Mohawke",
+        "TNGHT",
+        "Jacques Greene",
+        "Baauer",
+        "Lunice"
+      ]
+    },
+    {
+      "name": "Ed Banger Records",
+      "key_artists": [
+        "Justice",
+        "Busy P",
+        "Mr. Oizo",
+        "Breakbot",
+        "SebastiAn"
+      ]
+    },
+    {
+      "name": "Kitsuné Musique",
+      "key_artists": [
+        "Digitalism",
+        "Two Door Cinema Club",
+        "Parcels",
+        "La Roux",
+        "Kungs"
+      ]
+    },
+    {
+      "name": "Bromance Records",
+      "key_artists": [
+        "Brodinski",
+        "Gesaffelstein",
+        "Louisahhh",
+        "Club Cheval",
+        "Maelstrom"
+      ]
+    },
+    {
+      "name": "Beatservice Records",
+      "key_artists": [
+        "Röyksopp",
+        "Biosphere",
+        "Flunk",
+        "Xploding Plastix",
+        "Mental Overdrive"
+      ]
+    },
+    {
+      "name": "Smalltown Supersound",
+      "key_artists": [
+        "Lindstrøm",
+        "Prins Thomas",
+        "Todd Terje",
+        "Kelly Lee Owens",
+        "Bjørn Torske"
+      ]
+    },
+    {
+      "name": "Aterral",
+      "key_artists": [
+        "Black Loops",
+        "Intr0beatz",
+        "Carlo",
+        "Lavan",
+        "Petals In Sound"
+      ]
+    }
+  ]
+}

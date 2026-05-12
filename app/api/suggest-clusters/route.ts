@@ -1,42 +1,24 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { cleanArticleText } from '@/lib/article-extraction'
-import { getSourceTier, isAllTierC } from '@/lib/source-tiers'
 
-const SUGGEST_SYSTEM = `당신은 EDM 뉴스 에디터입니다. 최근 영문 EDM 뉴스 기사 목록을 받아 한국어 기사 1개로 재구성할 수 있는 후보만 제안하세요.
+const SUGGEST_SYSTEM = `당신은 EDM 뉴스 에디터입니다. 영문 EDM 뉴스 원문을 한 편 또는 여러 편 받아 한국어 기사로 작성할 만한 소재인지 판단합니다.
 
-	핵심 원칙:
-	- 카테고리 클러스터 금지: festival, synth, preview, release, new music, house, techno, club, lineup 같은 넓은 단어만 공유하는 묶음은 절대 제안하지 마세요.
-	- 반드시 같은 사건, 같은 릴리즈, 같은 행사, 같은 인물, 같은 제품 단위로만 묶으세요.
-	- Tier C 소스만으로 구성된 그룹은 제안하지 마세요. Tier C는 보조 신호로만 사용하세요.
-	- Tier A 소스가 포함된 구체적 사건/릴리즈/행사를 우선 제안하세요.
-	- 연도 단독(2025, 2026 등), 매체명, 사이트명, 시리즈명, 인터뷰 형식 표현(catches up with, chats to, talks to 등), 연말 결산/차트/베스트 목록 문구는 절대 클러스터 기준으로 사용하지 마세요.
-	- 좋은 예: "Music On Festival 취소 사태", "EDC Las Vegas 2026 관련 소식", "Armin van Buuren 'A State of Trance 2026' 발매"
+핵심 원칙:
+- 카테고리 거절: festival, synth, preview, release, new music, house, techno, club, lineup 같은 넓은 단어만으로는 절대 승인하지 마세요. 같은 카테고리/장르를 다룬다는 이유만으로 묶지도 마세요.
+- 구체적 단위만 승인: 반드시 같은 사건, 같은 릴리즈, 같은 행사, 같은 인물, 같은 제품을 구체적으로 다루는 경우에만 승인하세요.
+- 단독 기사도 같은 기준: 입력이 한 편이어도 그 기사가 구체적 사건/릴리즈/행사/인물/제품을 다룬다면 승인하세요. 단독이라는 이유만으로 거절하지 마세요. 복수 기사라면 모두 같은 사건/릴리즈/행사/인물/제품에 대한 것인지 함께 판단하세요.
+- 모든 소스를 동등하게 취급하세요. 특정 매체의 등급이나 권위를 기준으로 거르지 마세요.
+- 연도 단독(2025, 2026 등), 매체명, 사이트명, 시리즈명, 인터뷰 형식 표현(catches up with, chats to, talks to 등), 연말 결산/차트/베스트 목록 문구는 절대 승인 기준으로 사용하지 마세요.
+- 좋은 예: "Music On Festival 취소 사태", "EDC Las Vegas 2026 관련 소식", "Armin van Buuren 'A State of Trance 2026' 발매", "John Summit 신곡 'Light Years' 공개"
 - 나쁜 예: "주요 페스티벌 소식", "신시사이저 뉴스", "preview 관련 EDM 뉴스", "2025 관련 소식", "catches up with 관련 소식", "Best Electronic Music 관련 소식"
 
-반드시 아래 JSON 형식으로만 응답하세요. 그 외의 설명이나 마크다운 금지.
-
-{
-  "suggestions": [
-    {
-      "topic": "한국어 토픽 (40자 이내)",
-      "keywords": ["english", "keyword", "list"],
-      "articleIds": ["uuid", "uuid"],
-      "reason": "같은 사건/릴리즈/행사/인물로 판단한 이유",
-      "commonEntities": ["Music On Festival", "Amsterdam"]
-    }
-  ]
-}
-
-규칙:
-- 0~5개의 그룹을 제안하되, 각 그룹은 최소 2개의 기사를 포함
-- 같은 사건/릴리즈/행사/인물/제품이라는 근거가 부족하면 억지로 묶지 말고 빈 배열을 반환하세요.
-- topic: 한국어, 구체적이고 명확하게 (예: "Music On Festival 취소 사태")
-- keywords: 3~6개의 영문 키워드. 카테고리 단어 단독 금지
-- articleIds: 반드시 제공된 목록의 UUID만 사용
-- reason: 왜 하나의 기사로 묶을 수 있는지 설명
-- commonEntities: 기사 제목/요약에서 반복되는 구체적 고유명사 또는 사건 문구
-- 어느 그룹에도 명확히 속하지 않는 단일 기사는 제외`
+응답 작성 시:
+- topic은 한국어로, 구체적이고 명확하게 작성하세요.
+- keywords는 3~6개의 영문 키워드로, 카테고리 단어 단독 사용 금지.
+- 응답 JSON 스키마는 별도로 강제되므로 그 형식을 그대로 따르세요.`
 
 type Suggestion = {
   topic: string
@@ -58,17 +40,44 @@ type RawArticle = {
   url: string
   source_id: string | number | null
   sourceName?: string
-  sourceTier?: SourceTier
 }
-
-type SourceTier = 'A' | 'B' | 'C' | 'manual' | 'unknown'
 
 type SuggestionStatus = 'pending' | 'approved' | 'rejected' | 'published'
 
 const ALLOWED_STATUSES: SuggestionStatus[] = ['pending', 'approved', 'rejected', 'published']
-const MIN_COHESION_SCORE = 40
-const DEFAULT_ANALYSIS_LIMIT = 100
-const MAX_ANALYSIS_LIMIT = 150
+const MIN_COHESION_SCORE = 20
+const DEFAULT_ANALYSIS_LIMIT = 500
+const MAX_ANALYSIS_LIMIT = 500
+const DEFAULT_SUGGEST_MODEL = 'qwen3:14b'
+const SUGGEST_RESPONSE_FORMAT = {
+  type: 'object',
+  properties: {
+    suggestions: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          topic: { type: 'string' },
+          keywords: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          articleIds: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          reason: { type: 'string' },
+          commonEntities: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+        },
+        required: ['topic', 'keywords', 'articleIds', 'reason', 'commonEntities'],
+      },
+    },
+  },
+  required: ['suggestions'],
+}
 
 type DbSuggestedCluster = {
   id: string
@@ -211,10 +220,10 @@ async function attachSourceMeta(articles: RawArticle[]): Promise<RawArticle[]> {
   ))
 
   if (sourceIds.length === 0) {
-    return articles.map((article) => ({ ...article, sourceTier: 'unknown' }))
+    return articles
   }
 
-  const sourceMeta = new Map<string, { name: string; tier: SourceTier }>()
+  const sourceMeta = new Map<string, { name: string }>()
   const { data } = await supabase
     .from('rss_sources')
     .select('id, name')
@@ -224,7 +233,6 @@ async function attachSourceMeta(articles: RawArticle[]): Promise<RawArticle[]> {
     const name = source.name ?? '알 수 없는 소스'
     sourceMeta.set(String(source.id), {
       name,
-      tier: getSourceTier(name),
     })
   }
 
@@ -233,7 +241,6 @@ async function attachSourceMeta(articles: RawArticle[]): Promise<RawArticle[]> {
     return {
       ...article,
       sourceName: meta?.name,
-      sourceTier: meta?.tier ?? 'unknown',
     }
   })
 }
@@ -328,7 +335,11 @@ function calculateCohesionScore(articleIds: string[], commonEntities: string[], 
     const normalizedEntity = normalizeText(entity)
     const hits = articleIds.filter((id) => {
       const article = articleById.get(id)
-      return article ? normalizeText(article.title).includes(normalizedEntity) : false
+      if (!article) {
+        return false
+      }
+      const searchableText = normalizeText(`${article.title} ${articleSnippet(article)}`)
+      return searchableText.includes(normalizedEntity)
     }).length
     return total + hits / articleIds.length
   }, 0)
@@ -337,27 +348,6 @@ function calculateCohesionScore(articleIds: string[], commonEntities: string[], 
   const categoryPenalty = commonEntities.every((entity) => isCategoryKeyword(entity)) ? 45 : 0
 
   return Math.max(0, Math.min(100, Math.round(averageEntityCoverage * 80 + sizeBonus - categoryPenalty)))
-}
-
-function isTierCOnlySuggestion(suggestion: Pick<Suggestion, 'articleIds'>, articleById: Map<string, RawArticle>): boolean {
-  const articles = suggestion.articleIds
-    .map((id) => articleById.get(id))
-    .filter((article): article is RawArticle => Boolean(article))
-
-  if (articles.length < 2) {
-    return false
-  }
-
-  const sourceNames = articles
-    .map((article) => article.sourceName)
-    .filter((name): name is string => Boolean(name))
-
-  return articles.every((article) => article.sourceTier === 'C') || isAllTierC(sourceNames)
-}
-
-function applySourcePolicy(suggestions: SuggestionWithArticles[], rawArticles: RawArticle[]): SuggestionWithArticles[] {
-  const articleById = new Map(rawArticles.map((article) => [article.id, article]))
-  return suggestions.filter((suggestion) => !isTierCOnlySuggestion(suggestion, articleById))
 }
 
 function normalizeSuggestion(
@@ -398,7 +388,7 @@ function normalizeSuggestion(
     || isUrlOrDomainText(topic)
     || isSourceOrSeriesEntity(topic)
     || isLowSignalClusterText(topic)
-    || articleIds.length < 2
+    || articleIds.length < 1
     || cohesionScore < MIN_COHESION_SCORE
   ) {
     return null
@@ -471,6 +461,327 @@ async function hydrateSuggestions(rows: DbSuggestedCluster[]): Promise<Persisted
   })
 }
 
+// ============ Entity dictionary (2-stage 후보 생성용) ============
+
+type EntityEntry = {
+  canonical: string
+  surfaces: string[]
+  weight: number
+}
+
+type EntityDataset = {
+  artists_top500_relevance_2024_2025?: Array<{ name?: string; aliases?: string[] }>
+  major_edm_festivals_worldwide?: Array<{ name?: string }>
+  edm_labels_key_artists?: Array<{ name?: string }>
+}
+
+type CandidateCluster = {
+  articleIds: string[]
+  sharedEntities: string[]
+  weightSum: number
+}
+
+type ApprovalResponse = {
+  approved: boolean
+  topic?: string
+  keywords?: string[]
+  reason?: string
+}
+
+const ENTITY_DICT_CANDIDATE_PATHS = [
+  'lib/edm-entities.json',
+]
+
+const MIN_ENTITY_WEIGHT_SUM = 0.6
+const ENTITY_HAYSTACK_CONTENT_LIMIT = 500
+const MAX_CANDIDATES_FOR_LLM = 30
+const STAGE2_DEFAULT_COHESION = 50
+
+const APPROVAL_RESPONSE_FORMAT = {
+  type: 'object',
+  properties: {
+    approved: { type: 'boolean' },
+    topic: { type: 'string' },
+    keywords: { type: 'array', items: { type: 'string' } },
+    reason: { type: 'string' },
+  },
+  required: ['approved'],
+}
+
+function loadEntityDictionary(): EntityEntry[] | null {
+  for (const rel of ENTITY_DICT_CANDIDATE_PATHS) {
+    const abs = path.join(process.cwd(), rel)
+    try {
+      const raw = fs.readFileSync(abs, 'utf-8')
+      const data = JSON.parse(raw) as EntityDataset
+      const entries: EntityEntry[] = []
+      for (const artist of data.artists_top500_relevance_2024_2025 ?? []) {
+        const name = artist?.name
+        if (!name) continue
+        const surfaces = [name, ...(artist.aliases ?? [])]
+          .map((s) => (typeof s === 'string' ? s.toLowerCase() : ''))
+          .filter((s) => s.length >= 2)
+        if (surfaces.length === 0) continue
+        entries.push({ canonical: name, surfaces, weight: 1.0 })
+      }
+      for (const festival of data.major_edm_festivals_worldwide ?? []) {
+        const name = festival?.name
+        if (!name || name.length < 2) continue
+        entries.push({ canonical: name, surfaces: [name.toLowerCase()], weight: 1.0 })
+      }
+      for (const label of data.edm_labels_key_artists ?? []) {
+        const name = label?.name
+        if (!name || name.length < 2) continue
+        entries.push({ canonical: name, surfaces: [name.toLowerCase()], weight: 0.6 })
+      }
+      console.log(`[suggest-clusters] entity dict loaded from ${rel}: ${entries.length} entries`)
+      return entries
+    } catch {
+      // 다음 후보 경로 시도
+    }
+  }
+  return null
+}
+
+function findSurfaceInText(text: string, surface: string): boolean {
+  if (!surface || surface.length < 2) return false
+  let from = 0
+  while (true) {
+    const i = text.indexOf(surface, from)
+    if (i < 0) return false
+    const before = i === 0 ? ' ' : text[i - 1]
+    const after = i + surface.length >= text.length ? ' ' : text[i + surface.length]
+    if (!/[a-z0-9]/.test(before) && !/[a-z0-9]/.test(after)) return true
+    from = i + 1
+  }
+}
+
+function buildEntityIndex(
+  articles: RawArticle[],
+  dict: EntityEntry[],
+): { articleEntities: Map<string, Set<string>>; entityArticles: Map<string, Set<string>> } {
+  const articleEntities = new Map<string, Set<string>>()
+  const entityArticles = new Map<string, Set<string>>()
+  for (const article of articles) {
+    const haystack = `${article.title ?? ''}\n${(article.content ?? '').slice(0, ENTITY_HAYSTACK_CONTENT_LIMIT)}`.toLowerCase()
+    const matched = new Set<string>()
+    for (const entry of dict) {
+      for (const surface of entry.surfaces) {
+        if (findSurfaceInText(haystack, surface)) {
+          matched.add(entry.canonical)
+          break
+        }
+      }
+    }
+    articleEntities.set(article.id, matched)
+    for (const canonical of matched) {
+      if (!entityArticles.has(canonical)) entityArticles.set(canonical, new Set())
+      entityArticles.get(canonical)!.add(article.id)
+    }
+  }
+  return { articleEntities, entityArticles }
+}
+
+function buildCandidateClusters(
+  articles: RawArticle[],
+  dict: EntityEntry[],
+): CandidateCluster[] {
+  const weightByCanonical = new Map(dict.map((e) => [e.canonical, e.weight]))
+  const { articleEntities, entityArticles } = buildEntityIndex(articles, dict)
+
+  const candidates: CandidateCluster[] = []
+  const seenIdSets = new Set<string>()
+
+  for (const ids of entityArticles.values()) {
+    const sorted = [...ids].sort()
+    const key = sorted.join(',')
+    if (seenIdSets.has(key)) continue
+    seenIdSets.add(key)
+
+    let shared: Set<string> | null = null
+    for (const id of sorted) {
+      const entitiesForArticle = articleEntities.get(id) ?? new Set<string>()
+      if (shared === null) {
+        shared = new Set<string>(entitiesForArticle)
+      } else {
+        const current: Set<string> = shared
+        shared = new Set<string>([...current].filter((e) => entitiesForArticle.has(e)))
+      }
+    }
+    const sharedEntities: string[] = shared === null ? [] : [...shared]
+    const weightSum = sharedEntities.reduce((sum, e) => sum + (weightByCanonical.get(e) ?? 0), 0)
+    if (weightSum < MIN_ENTITY_WEIGHT_SUM) continue
+
+    candidates.push({ articleIds: sorted, sharedEntities, weightSum })
+  }
+  return candidates
+}
+
+function parseApproval(responseText: string): ApprovalResponse | null {
+  try {
+    return JSON.parse(responseText) as ApprovalResponse
+  } catch {
+    const match = responseText.match(/\{[\s\S]*\}/)
+    if (!match) return null
+    try {
+      return JSON.parse(match[0]) as ApprovalResponse
+    } catch {
+      return null
+    }
+  }
+}
+
+async function approveCandidateWithLlm(
+  candidate: CandidateCluster,
+  rawArticles: RawArticle[],
+  ollamaUrl: string,
+  suggestModel: string,
+): Promise<ApprovalResponse | null> {
+  const articleById = new Map(rawArticles.map((a) => [a.id, a]))
+  const articlesText = candidate.articleIds
+    .map((id) => {
+      const a = articleById.get(id)
+      if (!a) return null
+      return [
+        `[${a.id}]`,
+        a.sourceName ? `매체: ${a.sourceName}` : null,
+        `제목: ${a.title}`,
+        `요약: ${articleSnippet(a) || '(본문 없음)'}`,
+      ].filter(Boolean).join('\n')
+    })
+    .filter((s): s is string => s !== null)
+    .join('\n---\n')
+
+  const prompt = `이 기사가 한국어 EDM 뉴스 기사로 작성할 만한 가치가 있는가?
+yes면 topic과 keywords 반환, no면 approved: false 반환.
+
+응답 포맷:
+{"approved": true, "topic": "...", "keywords": [...], "reason": "..."}
+또는
+{"approved": false}
+
+공유 엔터티: ${candidate.sharedEntities.join(', ') || '(없음)'}
+
+기사 목록:
+${articlesText}`
+
+  try {
+    const res = await fetch(`${ollamaUrl}/api/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: suggestModel,
+        system: SUGGEST_SYSTEM,
+        prompt,
+        format: APPROVAL_RESPONSE_FORMAT,
+        stream: false,
+        think: true,
+      }),
+    })
+    if (!res.ok) {
+      console.error(`[suggest-clusters] stage2 LLM HTTP ${res.status} (cluster size ${candidate.articleIds.length})`)
+      return null
+    }
+    const data = await res.json()
+    const text: string = data.response ?? ''
+    return parseApproval(text)
+  } catch (err) {
+    console.error('[suggest-clusters] stage2 LLM error:', err)
+    return null
+  }
+}
+
+async function runLlmOnlyPath(
+  rawArticles: RawArticle[],
+  totalCount: number,
+  suggestModel: string,
+  ollamaUrl: string,
+  validIds: Set<string>,
+  articleMeta: Map<string, { id: string; title: string; url: string }>,
+): Promise<NextResponse> {
+  const articlesText = rawArticles
+    .map((article) =>
+      [
+        `[${article.id}]`,
+        article.sourceName ? `매체: ${article.sourceName}` : null,
+        `제목: ${article.title}`,
+        `요약: ${articleSnippet(article) || '(본문 없음)'}`,
+      ].filter(Boolean).join('\n')
+    )
+    .join('\n---\n')
+
+  const ollamaRes = await fetch(`${ollamaUrl}/api/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: suggestModel,
+      system: SUGGEST_SYSTEM,
+      prompt: `다음 기사 목록(${rawArticles.length}개)을 분석해 토픽 그룹을 제안하세요.\n\n${articlesText}`,
+      format: SUGGEST_RESPONSE_FORMAT,
+      stream: false,
+      think: true,
+    }),
+  })
+
+  if (!ollamaRes.ok) {
+    return NextResponse.json({ error: `Ollama 응답 오류: ${ollamaRes.status}` }, { status: 502 })
+  }
+
+  const ollamaData = await ollamaRes.json()
+  const responseText: string = ollamaData.response ?? ''
+
+  let parsed: { suggestions?: Suggestion[] }
+  try {
+    parsed = parseSuggestions(responseText)
+  } catch (err) {
+    return NextResponse.json({ error: String(err), raw: responseText.slice(0, 500) }, { status: 502 })
+  }
+
+  const llmSuggestions = (parsed.suggestions ?? [])
+    .map((suggestion) => normalizeSuggestion(suggestion, validIds, articleMeta, rawArticles))
+    .filter((suggestion): suggestion is SuggestionWithArticles => suggestion !== null)
+
+  if (llmSuggestions.length === 0) {
+    return NextResponse.json({
+      suggestions: [],
+      saved: 0,
+      total: totalCount,
+      source: 'llm',
+      model: suggestModel,
+      llmSuggestionCount: parsed.suggestions?.length ?? 0,
+      normalizedSuggestionCount: 0,
+      rawResponsePreview: responseText.slice(0, 500),
+    })
+  }
+
+  const insertPayload = llmSuggestions.map((s) => ({
+    topic: s.topic,
+    keywords: s.keywords,
+    article_ids: s.articleIds,
+    status: 'pending' as const,
+  }))
+
+  const { data: inserted, error: insertError } = await supabase
+    .from('suggested_clusters')
+    .insert(insertPayload)
+    .select()
+
+  if (insertError) {
+    return NextResponse.json({ error: `제안 저장 실패: ${insertError.message}` }, { status: 500 })
+  }
+
+  const persisted = await hydrateSuggestions((inserted ?? []) as DbSuggestedCluster[])
+  return NextResponse.json({
+    suggestions: persisted,
+    saved: persisted.length,
+    total: totalCount,
+    source: 'llm',
+    model: suggestModel,
+    llmSuggestionCount: parsed.suggestions?.length ?? 0,
+    normalizedSuggestionCount: llmSuggestions.length,
+  })
+}
+
 export async function GET(req: NextRequest) {
   try {
     const status = req.nextUrl.searchParams.get('status')
@@ -511,10 +822,9 @@ export async function POST(req: NextRequest) {
 
     const { data: articles, error } = await supabase
       .from('raw_articles')
-      .select('id, title, content, url, source_id')
-      .eq('is_used', false)
-	      .order('published_at', { ascending: false })
-	      .limit(limit)
+      .select('id, title, content, url, source_id, published_at')
+      .order('published_at', { ascending: false })
+      .limit(limit)
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
@@ -524,75 +834,67 @@ export async function POST(req: NextRequest) {
     }
 
     const rawArticles = await attachSourceMeta(articles as RawArticle[])
-    // Tier C 기사는 입력에서 제외하지 않는다. 최종 제안이 Tier C만으로 구성될 때만 차단한다.
-    const articlesText = rawArticles
-      .map((article) =>
-        [
-          `[${article.id}]`,
-          article.sourceName ? `매체: ${article.sourceName}` : null,
-          article.sourceTier && article.sourceTier !== 'unknown' ? `소스 등급: Tier ${article.sourceTier}` : null,
-          `제목: ${article.title}`,
-          `요약: ${articleSnippet(article) || '(본문 없음)'}`,
-        ].filter(Boolean).join('\n')
-      )
-      .join('\n---\n')
-
     const ollamaUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434'
-    const ollamaRes = await fetch(`${ollamaUrl}/api/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'qwen3:14b',
-        system: SUGGEST_SYSTEM,
-        prompt: `다음 기사 목록(${articles.length}개)을 분석해 토픽 그룹을 제안하세요.\n\n${articlesText}`,
-        format: 'json',
-        stream: false,
-        think: true,
-      }),
-    })
-
-    if (!ollamaRes.ok) {
-      return NextResponse.json(
-        { error: `Ollama 응답 오류: ${ollamaRes.status}` },
-        { status: 502 }
-      )
-    }
-
-    const ollamaData = await ollamaRes.json()
-    const responseText: string = ollamaData.response ?? ''
-
-    let parsed: { suggestions?: Suggestion[] }
-    try {
-      parsed = parseSuggestions(responseText)
-    } catch (err) {
-      return NextResponse.json(
-        { error: String(err), raw: responseText.slice(0, 500) },
-        { status: 502 }
-      )
-    }
-
-    const validIds = new Set(rawArticles.map((article) => article.id))
+    const suggestModel = process.env.SUGGEST_MODEL || DEFAULT_SUGGEST_MODEL
+    const validIds = new Set(rawArticles.map((a) => a.id))
     const articleMeta = new Map(
-      rawArticles.map((article) => [article.id, { id: article.id, title: article.title, url: article.url }])
+      rawArticles.map((a) => [a.id, { id: a.id, title: a.title, url: a.url }])
     )
 
-    const llmSuggestions = applySourcePolicy((parsed.suggestions ?? [])
-      .map((suggestion) => normalizeSuggestion(suggestion, validIds, articleMeta, rawArticles))
-      .filter((suggestion): suggestion is SuggestionWithArticles => suggestion !== null), rawArticles)
-    const suggestions = llmSuggestions
-    const source = 'llm'
+    const dict = loadEntityDictionary()
+    if (!dict) {
+      console.error('[suggest-clusters] entity dictionary 로드 실패 — 단일 LLM 경로로 fallback')
+      return await runLlmOnlyPath(rawArticles, articles.length, suggestModel, ollamaUrl, validIds, articleMeta)
+    }
 
-    if (suggestions.length === 0) {
+    // ───── Stage 1: 엔터티 기반 후보 클러스터 ─────
+    const candidates = buildCandidateClusters(rawArticles, dict)
+    console.log(`[suggest-clusters] stage1 후보 클러스터: ${candidates.length}`)
+    const candidatesForLlm = candidates
+      .sort((a, b) => b.weightSum - a.weightSum)
+      .slice(0, MAX_CANDIDATES_FOR_LLM)
+
+    // ───── Stage 2: LLM 승인 ─────
+    let approvedCount = 0
+    const normalized: SuggestionWithArticles[] = []
+    for (const candidate of candidatesForLlm) {
+      const approval = await approveCandidateWithLlm(candidate, rawArticles, ollamaUrl, suggestModel)
+      if (!approval || !approval.approved) continue
+      approvedCount++
+
+      const ns = normalizeSuggestion(
+        {
+          topic: approval.topic,
+          keywords: approval.keywords,
+          articleIds: candidate.articleIds,
+          reason: approval.reason,
+          commonEntities: candidate.sharedEntities,
+          cohesionScore: STAGE2_DEFAULT_COHESION,
+        },
+        validIds,
+        articleMeta,
+        rawArticles,
+      )
+      if (ns) normalized.push(ns)
+    }
+    console.log(`[suggest-clusters] stage2 LLM 승인: ${approvedCount}, 정규화 통과: ${normalized.length}`)
+
+    if (normalized.length === 0) {
+      console.log('[suggest-clusters] 저장 0건')
       return NextResponse.json({
         suggestions: [],
         saved: 0,
         total: articles.length,
-        source,
-        llmSuggestionCount: parsed.suggestions?.length ?? 0,
+        source: 'entity+llm',
+        model: suggestModel,
+        candidateCount: candidates.length,
+        candidateReviewCount: candidatesForLlm.length,
+        approvedCount,
+        normalizedSuggestionCount: 0,
       })
     }
 
-    const insertPayload = suggestions.map((s) => ({
+    const insertPayload = normalized.map((s) => ({
       topic: s.topic,
       keywords: s.keywords,
       article_ids: s.articleIds,
@@ -605,20 +907,22 @@ export async function POST(req: NextRequest) {
       .select()
 
     if (insertError) {
-      return NextResponse.json(
-        { error: `제안 저장 실패: ${insertError.message}` },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: `제안 저장 실패: ${insertError.message}` }, { status: 500 })
     }
 
     const persisted = await hydrateSuggestions((inserted ?? []) as DbSuggestedCluster[])
+    console.log(`[suggest-clusters] 저장: ${persisted.length}건`)
 
     return NextResponse.json({
       suggestions: persisted,
       saved: persisted.length,
       total: articles.length,
-      source,
-      llmSuggestionCount: parsed.suggestions?.length ?? 0,
+      source: 'entity+llm',
+      model: suggestModel,
+      candidateCount: candidates.length,
+      candidateReviewCount: candidatesForLlm.length,
+      approvedCount,
+      normalizedSuggestionCount: normalized.length,
     })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })

@@ -54,5 +54,5 @@ export async function verifyAdminSession(token: string, password: string): Promi
     return false
   }
   const key = await importKey(password)
-  return crypto.subtle.verify('HMAC', key, signature, encoder.encode(payload))
+  return crypto.subtle.verify('HMAC', key, new Uint8Array(signature), encoder.encode(payload))
 }

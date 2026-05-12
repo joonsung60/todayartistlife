@@ -8,11 +8,8 @@ type SourceArticle = {
   content: string
   source: string
   sourceName: string
-  sourceTier: SourceTier
   publishedAt: string | null
 }
-
-type SourceTier = 'A' | 'B' | 'C' | 'manual' | 'unknown'
 
 type GeneratedArticle = {
   title: string
@@ -34,7 +31,6 @@ type RawArticleRow = {
 
 type SourceMeta = {
   name: string
-  tier: SourceTier
 }
 
 const RESPONSE_NOISE_PATTERNS = [
@@ -48,15 +44,6 @@ function compactSourceText(text: string): string {
   return cleanArticleText(text, 2500).replace(/\s+/g, ' ').trim()
 }
 
-function normalizeTier(value: unknown): SourceTier {
-  const normalized = typeof value === 'string' ? value.trim().toLowerCase() : ''
-  if (normalized === 'a') return 'A'
-  if (normalized === 'b') return 'B'
-  if (normalized === 'c') return 'C'
-  if (normalized === 'manual') return 'manual'
-  return 'unknown'
-}
-
 async function fetchSourceMeta(sourceIds: Array<string | number | null>): Promise<Map<string, SourceMeta>> {
   const ids = Array.from(new Set(sourceIds.filter((id): id is string | number => id !== null)))
   const sourceMeta = new Map<string, SourceMeta>()
@@ -65,30 +52,14 @@ async function fetchSourceMeta(sourceIds: Array<string | number | null>): Promis
     return sourceMeta
   }
 
-  const withTier = await supabase
-    .from('rss_sources')
-    .select('id, name, tier')
-    .in('id', ids)
-
-  if (!withTier.error) {
-    for (const source of (withTier.data ?? []) as { id: string | number; name: string | null; tier: string | null }[]) {
-      sourceMeta.set(String(source.id), {
-        name: source.name ?? '알 수 없는 소스',
-        tier: normalizeTier(source.tier),
-      })
-    }
-    return sourceMeta
-  }
-
-  const withoutTier = await supabase
+  const { data } = await supabase
     .from('rss_sources')
     .select('id, name')
     .in('id', ids)
 
-  for (const source of (withoutTier.data ?? []) as { id: string | number; name: string | null }[]) {
+  for (const source of (data ?? []) as { id: string | number; name: string | null }[]) {
     sourceMeta.set(String(source.id), {
       name: source.name ?? '알 수 없는 소스',
-      tier: 'unknown',
     })
   }
 
@@ -181,7 +152,6 @@ async function generateKoreanArticle(articles: SourceArticle[]): Promise<Generat
       return [
         `[소스 ${index + 1}]`,
         `매체: ${article.sourceName}`,
-        article.sourceTier !== 'unknown' ? `소스 등급: Tier ${article.sourceTier}` : null,
         publishedAt ? `발행일: ${publishedAt}` : null,
         `제목: ${article.title}`,
         `URL: ${article.source}`,
@@ -209,8 +179,9 @@ async function generateKoreanArticle(articles: SourceArticle[]): Promise<Generat
 중요:
 - 소스 내용을 그대로 복사하지 마세요.
 - 영어 원문 문장, 사이트 메뉴, 태그, 공유 버튼, 관련 기사 목록은 출력하지 마세요.
-- Tier A 소스를 핵심 근거로 우선하고, Tier B/C 소스는 보조 근거로만 사용하세요.
-- Tier C 소스의 표현이나 판단을 단독 사실처럼 확대하지 마세요.
+- 모든 소스를 동등하게 참고하되, 어느 한 소스의 표현이나 판단을 검증 없이 확대하지 마세요.
+- 영어 곡명, 아티스트명, 앨범명, 레이블명은 영어 원문 그대로 표기하고 한글 발음 표기를 붙이지 마세요.
+- 단, 한국어명이 실제 한국에서 널리 쓰이는 아티스트나 행사명은 자연스럽게 한국어명을 병기할 수 있습니다. 임의로 한국어명을 만들어 붙이지 마세요.
 - '오늘', '어제', '최근', '며칠 전' 같은 상대적 날짜 표현을 쓰지 마세요.
 - 날짜가 필요하면 소스의 발행일처럼 구체적인 년/월/일만 쓰고, 날짜가 불명확하면 생략하세요.
 - 출력은 반드시 JSON 객체 하나만 허용됩니다.
@@ -302,7 +273,6 @@ export async function POST(req: NextRequest) {
             content: cleanArticleText(content, 3000),
             source: article.url,
             sourceName: meta?.name ?? '알 수 없는 소스',
-            sourceTier: meta?.tier ?? 'unknown',
             publishedAt: article.published_at,
           }
         })
@@ -311,10 +281,6 @@ export async function POST(req: NextRequest) {
 
       if (usableArticles.length === 0) {
         throw new Error('생성에 사용할 수 있는 원문 본문이 없습니다.')
-      }
-
-      if (usableArticles.every((article) => article.sourceTier === 'C')) {
-        throw new Error('Tier C 소스만으로 구성된 클러스터는 기사 생성이 차단됩니다.')
       }
 
       // 한국어 종합 기사 생성
@@ -333,12 +299,6 @@ export async function POST(req: NextRequest) {
         .single()
 
       if (error) throw error
-
-      // 사용된 원문 기사 is_used 업데이트
-      await supabase
-        .from('raw_articles')
-        .update({ is_used: true })
-        .in('id', rawArticleIds)
 
       results.push({ success: true, clusterId, article: data })
 

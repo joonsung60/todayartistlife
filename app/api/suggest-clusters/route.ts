@@ -48,7 +48,6 @@ const ALLOWED_STATUSES: SuggestionStatus[] = ['pending', 'approved', 'rejected',
 const MIN_COHESION_SCORE = 20
 const DEFAULT_ANALYSIS_LIMIT = 500
 const MAX_ANALYSIS_LIMIT = 500
-const DEFAULT_SUGGEST_MODEL = 'qwen3:14b'
 const SUGGEST_RESPONSE_FORMAT = {
   type: 'object',
   properties: {
@@ -929,7 +928,7 @@ export async function POST(req: NextRequest) {
 
     const rawArticles = await attachSourceMeta(articles as RawArticle[])
     const ollamaUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434'
-    const suggestModel = process.env.SUGGEST_MODEL || process.env.OLLAMA_MODEL || DEFAULT_SUGGEST_MODEL
+    const suggestModel = process.env.SUGGEST_MODEL || process.env.OLLAMA_MODEL || 'qwen3:14b'
     const validIds = new Set(rawArticles.map((a) => a.id))
     const articleMeta = new Map(
       rawArticles.map((a) => [a.id, { id: a.id, title: a.title, url: a.url }])

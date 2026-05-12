@@ -2,9 +2,81 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://edmstarnews.com/</loc>
-    <lastmod>2026-05-12T12:06:16.072Z</lastmod>
+    <lastmod>2026-05-12T13:51:26.041Z</lastmod>
     <changefreq>hourly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/category/festival/</loc>
+    <lastmod>2026-05-12T13:51:26.047Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/category/artist/</loc>
+    <lastmod>2026-05-12T13:51:26.047Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/category/release/</loc>
+    <lastmod>2026-05-12T13:51:26.047Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/category/news/</loc>
+    <lastmod>2026-05-12T13:51:26.047Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/category/interview/</loc>
+    <lastmod>2026-05-12T13:51:26.047Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/genre/house/</loc>
+    <lastmod>2026-05-12T13:51:26.047Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/genre/techno/</loc>
+    <lastmod>2026-05-12T13:51:26.047Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/genre/trance/</loc>
+    <lastmod>2026-05-12T13:51:26.047Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/genre/drum-and-bass/</loc>
+    <lastmod>2026-05-12T13:51:26.047Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/genre/dubstep/</loc>
+    <lastmod>2026-05-12T13:51:26.047Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/genre/ambient/</loc>
+    <lastmod>2026-05-12T13:51:26.047Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://edmstarnews.com/articles/deep-dish-gu49-dublin-mix-2026/</loc>
+    <lastmod>2026-05-12T13:19:26.764Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edmstarnews.com/articles/1803c26c-b3f4-47d4-bb45-c751bf8d69bd/</loc>

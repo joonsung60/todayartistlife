@@ -248,12 +248,16 @@ type ProcessingState = { state: 'pending' | 'success' | 'error'; message: string
 
 type AdminArticle = {
   id: string
+  slug: string | null
   title: string
   content: string
   published: boolean
   published_at: string | null
   created_at: string
+  updated_at: string | null
   cluster_id: string | null
+  category: string | null
+  genre: string | null
 }
 
 type GenerateResult = {
@@ -595,6 +599,8 @@ function ArticlesReviewTab() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editTitle, setEditTitle] = useState('')
   const [editContent, setEditContent] = useState('')
+  const [editCategory, setEditCategory] = useState('')
+  const [editGenre, setEditGenre] = useState('')
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
 
@@ -654,6 +660,8 @@ function ArticlesReviewTab() {
     setEditingId(article.id)
     setEditTitle(article.title)
     setEditContent(article.content)
+    setEditCategory(article.category ?? '')
+    setEditGenre(article.genre ?? '')
     setError('')
     setMessage('')
   }
@@ -662,6 +670,17 @@ function ArticlesReviewTab() {
     setEditingId(null)
     setEditTitle('')
     setEditContent('')
+    setEditCategory('')
+    setEditGenre('')
+  }
+
+  const insertImageMarkdown = () => {
+    const url = window.prompt('삽입할 이미지 URL을 입력하세요.')
+    if (!url?.trim()) return
+
+    const alt = window.prompt('이미지 설명(alt)을 입력하세요.')?.trim() || '이미지'
+    const imageMarkdown = `\n\n![${alt}](${url.trim()})\n\n`
+    setEditContent((content) => `${content}${imageMarkdown}`)
   }
 
   const handleSaveEdit = async (article: AdminArticle) => {
@@ -673,7 +692,12 @@ function ArticlesReviewTab() {
       const res = await fetch(`/api/articles/${article.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: editTitle, content: editContent }),
+        body: JSON.stringify({
+          title: editTitle,
+          content: editContent,
+          category: editCategory,
+          genre: editGenre,
+        }),
       })
       const data = await res.json()
 
@@ -726,7 +750,7 @@ function ArticlesReviewTab() {
   return (
     <div>
       <p className="text-gray-600 mb-6">
-        자동 토픽 제안에서 생성된 기사 초안을 검토한 뒤, 공개 뉴스 사이트에 노출할 기사를 게시합니다.
+        생성된 기사 초안과 게시된 기사를 검토하고 수정합니다. 게시된 기사를 저장하면 Cloudflare 재빌드가 자동으로 요청됩니다.
       </p>
 
       <div className="flex gap-2 mb-4 border-b text-sm">
@@ -766,6 +790,7 @@ function ArticlesReviewTab() {
                   <div className="min-w-0 flex-1">
                     <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
                       <span>{article.published ? '게시일' : '생성일'} {formatDate(article.published_at ?? article.created_at)}</span>
+                      {article.updated_at && <span>수정일 {formatDate(article.updated_at)}</span>}
                       {article.cluster_id && <span>cluster {article.cluster_id}</span>}
                     </div>
 
@@ -776,6 +801,32 @@ function ArticlesReviewTab() {
                           value={editTitle}
                           onChange={(e) => setEditTitle(e.target.value)}
                         />
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                          <input
+                            className="w-full rounded border p-3 text-sm"
+                            placeholder="카테고리 (예: 페스티벌, 아티스트, 신보)"
+                            value={editCategory}
+                            onChange={(e) => setEditCategory(e.target.value)}
+                          />
+                          <input
+                            className="w-full rounded border p-3 text-sm"
+                            placeholder="장르 (예: techno, house, trance)"
+                            value={editGenre}
+                            onChange={(e) => setEditGenre(e.target.value)}
+                          />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={insertImageMarkdown}
+                            className="px-3 py-2 border border-gray-300 text-gray-600 text-sm rounded font-semibold hover:bg-gray-50"
+                          >
+                            이미지 삽입
+                          </button>
+                          <span className="text-xs text-gray-500">
+                            본문 끝에 Markdown 이미지 문법으로 추가됩니다.
+                          </span>
+                        </div>
                         <textarea
                           className="h-72 w-full rounded border p-3 text-sm leading-6"
                           value={editContent}
@@ -784,6 +835,18 @@ function ArticlesReviewTab() {
                       </div>
                     ) : (
                       <>
+                        <div className="mb-2 flex flex-wrap gap-1.5 text-xs">
+                          {article.category && (
+                            <span className="rounded bg-gray-900 px-2 py-0.5 font-medium text-white">
+                              {article.category}
+                            </span>
+                          )}
+                          {article.genre && (
+                            <span className="rounded border border-gray-300 px-2 py-0.5 text-gray-600">
+                              {article.genre}
+                            </span>
+                          )}
+                        </div>
                         <h3 className="text-lg font-semibold leading-snug">{article.title}</h3>
                         <p className="mt-2 text-sm text-gray-600 line-clamp-3">{article.content}</p>
                       </>
@@ -811,7 +874,7 @@ function ArticlesReviewTab() {
                     ) : (
                       <>
                         <Link
-                          href={`/articles/${article.id}`}
+                          href={`/articles/${article.slug ?? article.id}`}
                           target="_blank"
                           className="px-3 py-2 border border-gray-300 text-gray-600 text-sm rounded font-semibold hover:bg-gray-50 whitespace-nowrap"
                         >

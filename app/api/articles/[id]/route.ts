@@ -5,6 +5,12 @@ function normalizeArticleInput(value: unknown): string {
   return typeof value === 'string' ? value.trim() : ''
 }
 
+function normalizeOptionalInput(value: unknown): string | null {
+  if (value === null || value === undefined) return null
+  const normalized = typeof value === 'string' ? value.trim() : ''
+  return normalized.length > 0 ? normalized : null
+}
+
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -18,6 +24,8 @@ export async function PATCH(
   const body = await req.json().catch(() => ({}))
   const title = normalizeArticleInput(body.title)
   const content = normalizeArticleInput(body.content)
+  const category = normalizeOptionalInput(body.category)
+  const genre = normalizeOptionalInput(body.genre)
 
   if (title.length < 4) {
     return NextResponse.json({ error: '제목이 너무 짧습니다.' }, { status: 400 })
@@ -43,9 +51,9 @@ export async function PATCH(
 
   const { data, error } = await supabase
     .from('articles')
-    .update({ title, content, updated_at: new Date().toISOString() })
+    .update({ title, content, category, genre, updated_at: new Date().toISOString() })
     .eq('id', id)
-    .select('id, title, content, published, published_at, created_at, updated_at, cluster_id')
+    .select('id, title, content, published, published_at, created_at, updated_at, cluster_id, slug, category, genre')
     .maybeSingle()
 
   if (error) {

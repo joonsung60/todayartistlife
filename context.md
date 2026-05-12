@@ -11,7 +11,7 @@
 1. 원문 수집: RSS 또는 URL 직접 추가
 2. 자동 토픽 제안 (2단계):
    - Stage 1: 코드가 `lib/edm-entities.json`(아티스트 500 + 페스티벌 140 + 레이블 117)을 사전으로 raw article에서 엔터티 매칭 → 후보 클러스터 생성 (단독 기사도 가능)
-   - Stage 2: 후보마다 LLM(qwen3:14b)에 "한국어 EDM 기사로 작성할 가치가 있는가?" 질의 → 승인된 것만 저장
+   - Stage 2: 후보마다 Ollama 모델(env-driven, 현재 `mistral-small3.2:24b`)에 "한국어 EDM 기사로 작성할 가치가 있는가?" 질의 → 승인된 것만 저장
 3. 인간 검토: 제안 승인 또는 거절
 4. 기사 생성: 승인된 토픽으로 한국어 기사 초안 생성
 5. 인간 검토: 초안 수정/삭제/게시
@@ -21,10 +21,10 @@
 
 ### 로컬 어드민/생성 환경
 
-- `npm run dev`로 로컬 Next.js 서버 실행
+- `npm run dev`로 로컬 Next.js 서버 실행 (`--webpack` 강제)
 - `/admin`에서 수집, 토픽 제안, 기사 생성, 검토, 게시 작업 수행
-- Ollama `qwen3:14b` 사용
-- Windows Ollama를 WSL에서 `OLLAMA_BASE_URL=http://172.25.224.1:11434`로 호출
+- Ollama 모델은 `OLLAMA_MODEL` 환경변수로 지정. 현재 `mistral-small3.2:24b`. suggest-clusters는 `SUGGEST_MODEL` 별도 오버라이드 가능.
+- `OLLAMA_BASE_URL=http://localhost:11434` — 운용 환경에 맞게 사용. WSL ↔ Windows Ollama 사용 시 게이트웨이 IP(예: `172.x.x.1`) 필요.
 - Supabase에 raw article, cluster, generated article 저장
 - `/admin/*`은 `proxy.ts`(Next.js 16에서 middleware의 새 이름)와 HMAC 쿠키 세션으로 보호
 
@@ -50,7 +50,7 @@
 - Next.js 16.2.6 App Router
 - React 19
 - Supabase PostgreSQL
-- Ollama `qwen3:14b`
+- Ollama (모델은 `OLLAMA_MODEL` env-driven, 현재 `mistral-small3.2:24b`. 폴백 하드코딩 default는 `qwen3:14b`)
 - Cloudflare Pages static export
 - Tailwind CSS
 
@@ -113,7 +113,13 @@ RSS 소스 목록.
 - `cluster_id`
 - `published`
 - `published_at`
+- `updated_at` (게시 후 수정 시점 추적용. 초기 NULL, PATCH 호출마다 now())
 - `created_at`
+- `slug` (URL 슬러그. 영문 소문자+하이픈, 30자 이내. 충돌 시 `-2`, `-3` 등 suffix)
+- `category` (페스티벌/아티스트/릴리즈/뉴스/인터뷰 중 하나)
+- `genre` (house, techno, trance 등 영문 소문자. 미상이면 `edm`)
+- `tags` (미사용)
+- `embed_url`, `source_platform` (미사용 / 향후 임베드용)
 
 현재 공개 사이트는 `published=true` 기사만 보여준다.
 
@@ -158,21 +164,23 @@ scripts/build-static.mjs
   현재 app/admin도 stash 대상이라 배포본에는 어드민 UI 자체가 없다.
 
 app/layout.tsx
-  사이트 공통 헤더와 네비게이션.
+  사이트 공통 헤더와 네비게이션 (홈|페스티벌|아티스트|릴리즈|뉴스|인터뷰|장르별 ▾,
+  현재 모두 더미 링크). Google Search Console verification 메타 태그를 metadata
+  API의 verification.google 필드로 박아둠.
 
 app/page.tsx
   공개 홈. published 기사 최대 20개를 published_at desc로 표시.
+  기사 링크는 slug 우선(`slug ?? id`).
   썸네일은 cluster -> raw article image_url에서 가져온다.
 
-app/articles/[id]/page.tsx
-  공개 기사 상세. generateStaticParams로 published 기사만 정적 생성.
+app/articles/[slug]/page.tsx
+  공개 기사 상세. params는 단일 [slug] 세그먼트지만 slug가 일치하지 않으면
+  UUID 패턴일 때 한해 id로 fallback 조회. generateStaticParams는 published
+  기사마다 slug ?? id 하나씩 emit. updated_at이 published_at과 다르면
+  "수정됨" 라벨 표시.
 
 app/robots.ts
   /robots.txt. 모든 경로 허용 + sitemap URL 명시.
-
-app/sitemap.ts
-  /sitemap.xml. articles 테이블에서 ID로 URL 생성. **작업 중**: import 경로
-  `@/utils/supabase/server`가 아직 존재하지 않아 타입체크가 깨진 상태다.
 
 app/admin/page.tsx
   로컬 어드민 UI. 6개 탭. RSS 수집 탭은 is_active=true인 소스 수를 클라이언트에서
@@ -198,13 +206,18 @@ app/api/cluster/route.ts
   articleIds 또는 keywords 기반 클러스터 생성. matchMode or/and 지원.
 
 app/api/generate/route.ts
-  한국어 기사 생성. 클러스터 원문을 정제 후 Qwen3에 전달.
+  한국어 기사 생성. 클러스터 원문을 정제 후 OLLAMA_MODEL(default qwen3:14b)
+  에 전달. LLM 응답에서 title/content/slug/category/genre 추출. slug는
+  normalize + DB 중복 검사 후 -2, -3 suffix로 유일화. articles에 INSERT.
 
 app/api/articles/route.ts
   생성 기사 목록 조회. published 필터 지원.
 
 app/api/articles/[id]/route.ts
-  게시 전 기사 초안 PATCH 수정 / DELETE 삭제. published=true 기사는 차단.
+  기사 PATCH 수정 / DELETE 삭제. PATCH는 published 여부 무관하게 허용
+  (게시 후 수정 가능). PATCH 시 updated_at=now() 세팅. published=true 기사
+  PATCH 성공 시 CLOUDFLARE_DEPLOY_HOOK_URL fire-and-forget POST. DELETE는
+  여전히 published=true 차단.
 
 app/api/articles/[id]/publish/route.ts
   published=true, published_at=now() 업데이트 후 CLOUDFLARE_DEPLOY_HOOK_URL로
@@ -246,10 +259,11 @@ lib/edm-entities.json
    - "승인 & 기사 생성" 클릭하면 클러스터 생성 + 기사 생성까지 자동 진행
 
 4. **생성 기사 검토**
-   - 생성된 초안 목록 확인
-   - 게시 전 제목/본문 수정 가능
-   - 게시 전 삭제 가능
-   - 게시 버튼을 누르면 공개 사이트 반영 대상이 됨
+   - 생성된 초안 + 게시본 모두 목록 표시 (서브탭: 게시 대기 / 게시됨)
+   - 수정 버튼은 두 서브탭 모두에서 활성 (게시 후 수정 가능)
+   - 게시/삭제 버튼은 초안 전용
+   - 게시 버튼은 published=true + published_at=now() + Cloudflare 재빌드 트리거
+   - 게시본 수정 시에도 updated_at 세팅 + Cloudflare 재빌드 트리거
 
 5. **클러스터 수동 생성**
    - 토픽/키워드로 수동 클러스터 생성
@@ -275,6 +289,7 @@ lib/edm-entities.json
 **Stage 2 — 후보별 LLM 가치 평가 (`approveCandidateWithLlm`):**
 
 - 후보 1개당 Ollama 호출 1회 (순차 처리).
+- 모델 선택 순서: `SUGGEST_MODEL` → `OLLAMA_MODEL` → 하드코딩 default `qwen3:14b`.
 - system prompt(`SUGGEST_SYSTEM`)가 카테고리/매체명/연도/인터뷰 패턴 거부 규칙을 강제.
 - user prompt는 "이 기사가 한국어 EDM 뉴스 기사로 작성할 만한 가치가 있는가? yes면 topic과 keywords 반환, no면 approved: false 반환".
 - Ollama `format` 파라미터로 `{approved, topic?, keywords?, reason?}` 스키마 강제.
@@ -305,21 +320,27 @@ lib/edm-entities.json
 - 연말 결산/차트/베스트 목록 묶음 금지
 - 모든 소스를 동등하게 취급
 
-### 응답 응답 시점에 반영되지 않는 사항
+### 현재 미구현/주의
 
 - raw article의 사용 여부(is_used 같은 컬럼)는 없다. 같은 article이 여러 번 Stage 1 후보로 반복될 수 있다. 향후 `suggested_clusters.article_ids`에 이미 들어간 raw article을 제외하는 dedupe가 필요할 수 있다.
 
 ## 8. 기사 생성 정책
 
-`/api/generate`는 클러스터에 묶인 원문들을 정제해서 Qwen3에 전달한다.
+`/api/generate`는 클러스터에 묶인 원문들을 정제해서 Ollama 모델(env-driven, 현재 mistral-small3.2:24b)에 전달한다.
 
 LLM 입력에 포함되는 정보:
 
 - 매체명
-- 발행일
+- 발행일 (한국어 'YYYY년 M월 D일' 포맷으로 정규화 후 주입)
 - 원문 제목
 - 원문 URL
 - 정제된 원문 내용
+
+LLM이 반환해야 하는 JSON 5개 필드: `title`, `content`, `slug`, `category`, `genre`.
+
+- `slug`: 영문 소문자+하이픈만, 30자 이내. 핵심 키워드 기반. 정규화 후 DB 중복 검사 → `-2`, `-3` 식 suffix로 유일화. 빈 값/실패 시 `article-{timestamp}` fallback.
+- `category`: `페스티벌`/`아티스트`/`릴리즈`/`뉴스`/`인터뷰` enum. enum 외 값은 default `뉴스`.
+- `genre`: 영문 소문자, EDM 장르(house, techno, trance, drum-and-bass, dubstep, ambient, experimental, hardstyle, future-bass, big-room 등) 중 하나. 미상 시 `edm`.
 
 검증 정책:
 
@@ -334,16 +355,19 @@ LLM 입력에 포함되는 정보:
 - 원문 그대로 복사 금지
 - `오늘`, `어제`, `최근`, `며칠 전` 같은 상대 날짜 표현 금지
 - 날짜가 필요하면 원문의 구체 날짜를 사용
-- 날짜가 불명확하면 날짜 언급 생략
+- 발표/공개/발매 시점 언급 시에는 소스 발행일을 본문에 자연스럽게 녹임 (예: "2026년 3월 12일 신곡 'XYZ'를 공개했다")
+- 소스 발행일이 없거나 불명확하면 시점 표현 자체를 생략 (추측 날짜 금지)
 
 고유명사 표기 규칙(엄격 강화됨):
 
-- 기본 원칙: 영어 아티스트명/곡명/앨범명/EP명/레이블명/페스티벌명/클럽명/행사명은 영문 원문 그대로 표기.
-- 유일한 예외: 한국 일반 언론과 팬덤에서 이미 정착된 한국어 표기가 있는 경우에만 한국어 사용 가능. 예: Martin Garrix → 마틴 게릭스, Calvin Harris → 칼빈 해리스, David Guetta → 데이비드 게타, Skrillex → 스크릴렉스, deadmau5 → 데드마우스, Tomorrowland → 투모로우랜드, Ultra → 울트라, Coachella → 코첼라.
-- 절대 금지: 임의로 한글 발음을 만들어 붙이는 행위. Anyma→아니마, John Summit→존 서밋, Dom Dolla→돔 돌라, Anjunabeats→안준비츠, KSHMR→캐슈머, Fred again..→프레드 어게인 등 새 음역 금지.
-- 곡명/앨범명은 작은따옴표로 감싼 원문 그대로 표기. 예: 'Animals', 'A State of Trance 2026'.
+- 기본 원칙: 영어 아티스트명/곡명/앨범명/EP명/레이블명/페스티벌명/클럽명/믹스명/행사명은 영문 원문 그대로 표기.
+- 아티스트/곡/앨범/레이블 예외: 한국에서 이미 정착된 표기에 한해 한국어 사용 가능. 예: Martin Garrix → 마틴 게릭스, Calvin Harris → 칼빈 해리스, David Guetta → 데이비드 게타, Skrillex → 스크릴렉스, deadmau5 → 데드마우스, Tomorrowland → 투모로우랜드, Ultra → 울트라, Coachella → 코첼라.
+- 도시명/국가명 예외: 본문에서 단독 지칭 시 한국어 표기. Dublin → 더블린, Amsterdam → 암스테르담, Berlin → 베를린, London → 런던, Paris → 파리, New York → 뉴욕, Ibiza → 이비자, Chicago → 시카고, Tokyo → 도쿄, Seoul → 서울. 단, 도시명이 고유명사의 일부일 때(예: 'GU49: Dublin', 'Boiler Room Berlin', 'ADE Amsterdam')는 영문 그대로 유지.
+- 절대 금지: 임의로 한글 발음을 만들어 붙이는 행위. Anyma→아니마, John Summit→존 서밋, Dom Dolla→돔 돌라, Anjunabeats→안준비츠, KSHMR→캐슈머, Fred again..→프레드 어게인, Deep Dish→디프 디시, Moderat→모더랫, GU49: Dublin→GU49: 더블린 등 새 음역 금지.
+- 곡명/앨범명/EP명/믹스명은 작은따옴표로 감싼 원문 그대로 표기. 예: 'Animals', 'A State of Trance 2026', 'GU49: Dublin'.
 - 영문/한글 병기(예: "Martin Garrix(마틴 게릭스)") 금지. 둘 중 하나만 사용.
 - 애매하면 영문 사용 (안전판).
+- `app/api/generate/route.ts`의 user prompt에도 SYSTEM_PROMPT_A를 따르라는 cross-reference를 박아 system/user 양쪽에서 동일 규칙이 전달되도록 정렬.
 
 ## 9. Cloudflare Pages 배포
 
@@ -360,18 +384,20 @@ Cloudflare Pages 설정:
 Cloudflare에는 넣지 않아도 되는 것:
 
 - `OLLAMA_BASE_URL`
+- `OLLAMA_MODEL`
+- `SUGGEST_MODEL`
 - `ADMIN_PASSWORD`
 - `CLOUDFLARE_DEPLOY_HOOK_URL`
 - `BUILD_STATIC`
 
 ### 자동 재빌드
 
-로컬 어드민에서 기사를 게시하면:
+다음 두 경로 모두 Cloudflare Pages 재빌드를 fire-and-forget 트리거한다:
 
-1. `/api/articles/[id]/publish`가 Supabase에서 `published=true`, `published_at=now()` 업데이트
-2. 같은 API가 `CLOUDFLARE_DEPLOY_HOOK_URL`로 POST
-3. Cloudflare Pages가 다시 빌드
-4. 새 published 기사들이 정적 HTML에 반영됨
+1. **최초 게시:** `/api/articles/[id]/publish` (PATCH)가 Supabase에 `published=true`, `published_at=now()` 업데이트 → `CLOUDFLARE_DEPLOY_HOOK_URL`로 POST.
+2. **게시 후 수정:** `/api/articles/[id]` (PATCH)가 기존 `published=true` 기사에 적용되면, `title/content/updated_at=now()` 업데이트 후 동일 deploy hook 트리거.
+
+Cloudflare Pages는 매 호출마다 새 빌드를 실행한다. 짧은 시간에 여러 번 수정하면 빌드가 누적되니 주의.
 
 ### 어드민 배포 관련 현재 판단
 
@@ -391,11 +417,12 @@ Cloudflare에는 넣지 않아도 되는 것:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `OLLAMA_BASE_URL=http://172.25.224.1:11434`
+- `OLLAMA_BASE_URL=http://localhost:11434` (운용 환경에 따라 변경. WSL에서 Windows Ollama 사용 시 WSL 게이트웨이 IP 필요)
+- `OLLAMA_MODEL=mistral-small3.2:24b` (생성/제안 공용 기본 모델. 미설정 시 `qwen3:14b`)
 - `ADMIN_PASSWORD`
 - `CLOUDFLARE_DEPLOY_HOOK_URL`
+- `SUGGEST_MODEL` 선택. suggest-clusters 전용 모델 오버라이드. 미설정 시 `OLLAMA_MODEL`에 폴백, 그 다음 `qwen3:14b`.
 - `CRON_SECRET` 선택
-- `SUGGEST_MODEL` 선택. suggest-clusters 전용 모델 오버라이드. 미설정 시 `qwen3:14b`
 
 ### Cloudflare Pages
 
@@ -409,28 +436,24 @@ Cloudflare에는 넣지 않아도 되는 것:
 - Cloudflare 배포본에서 `/admin`을 완전히 제외할지, Cloudflare Access로 보호하며 포함할지 결정
 - 현재처럼 로컬 어드민만 사용할 경우, 공개 헤더에서 어드민 링크는 숨기는 것이 맞다.
 
-### URL 구조
+### URL 구조 (구현 완료)
 
-- 현재: `/articles/[uuid]`
-- 목표 후보: `/articles/[slug]`
-- 필요 작업:
-  - `articles.slug` 컬럼 추가
-  - 기사 생성 시 slug 생성
-  - uuid/slug 병행 또는 slug 전환 결정
+- `app/articles/[slug]/page.tsx` 라우팅 적용. slug 우선 조회, UUID 패턴이면 id로 fallback.
+- 기사 생성 시 LLM이 slug 산출 → DB 중복 검사 후 unique suffix.
+- 공개 홈(`app/page.tsx`)의 기사 링크는 `slug ?? id`. 어드민의 검토 링크는 UUID 그대로 (UUID fallback으로 동작).
+- 단, 정적 export 빌드본에서는 slug가 있는 기사의 UUID URL은 prerender되지 않아 404. dev 모드에서만 fallback 동작.
 
 ### 카테고리/네비게이션
 
-- 현재 네비게이션은 더미
-- 기사 20~30개 누적 후 카테고리 체계 결정
-- 후보 컬럼:
-  - `category`
-  - `genre`
-  - `tags`
+- 네비게이션: 홈 | 페스티벌 | 아티스트 | 릴리즈 | 뉴스 | 인터뷰 | 장르별 ▾. 현재 모두 더미 링크(`href: "#"`). 실제 카테고리 페이지/필터링은 미구현.
+- 기사 생성 시 `category` (5-way enum)와 `genre` (영문 소문자) 자동 태깅 완료.
+- 남은 작업: `/category/[slug]`, `/genre/[slug]` 같은 카테고리/장르별 페이지 라우트 + 필터링 UI.
+- `tags` 컬럼 미사용 — 향후 활용 여지.
 
-### 기사 수정
+### 기사 수정 (구현 완료)
 
-- 게시 전 수정/삭제는 구현됨
-- 게시 후 수정은 아직 미구현
+- 게시 전 수정/삭제 구현됨.
+- 게시 후 수정도 구현됨. `updated_at` 컬럼 활용. 수정 시 자동 재빌드 트리거. DELETE는 여전히 게시본 차단.
 
 ### 데이터 정리
 
@@ -449,11 +472,13 @@ Cloudflare에는 넣지 않아도 되는 것:
 
 - Cloudflare 정적 export에서는 proxy/API가 실행되지 않는다.
 - 정적 배포에 `/admin`이 포함되면 인증 없이 HTML이 노출된다 (현재 stash로 제외 중).
-- `npm run build:static`은 `--webpack`을 강제한다. Next 16.2 Turbopack은 `output:'export'`를 silently 무시해 `out/`이 생성되지 않는다.
-- `app/sitemap.ts`는 미존재 import(`@/utils/supabase/server`) 사용 중이라 타입체크가 깨진다. 작업 중인 파일.
+- `npm run dev`와 `npm run build:static` 둘 다 `--webpack` 강제. Next 16.2 Turbopack은 `output:'export'`를 silently 무시해 `out/`이 생성되지 않는다.
 - `app/api/admin/login`의 rate limit은 in-memory라 dev 서버 재시작 시 초기화된다.
 - 일부 RSS 소스는 계속 실패할 수 있다. Beatportal/Resident Advisor는 수동 URL ingest가 더 현실적이다.
 - JS 렌더링 의존 사이트는 본문 추출 품질이 낮을 수 있다.
-- Ollama가 꺼져 있거나 `qwen3:14b` 모델이 없으면 기사 생성/토픽 제안이 실패한다.
-- 현재 `rss_sources` 행 수 = 42. 직전 16개 신규 소스 INSERT SQL 중 일부만 적용된 상태(이전 35 + 신규 7). 나머지 9개는 url unique 충돌이거나 SQL 실행이 부분 적용으로 끝난 것으로 추정. 다음에 한 번 더 적용해볼 여지 있음.
+- `OLLAMA_MODEL`로 지정된 모델이 Ollama 인스턴스에 pull돼 있지 않으면 generate/suggest-clusters 양쪽 모두 첫 호출에서 `model not found` 에러. fallback 안 함. 모델 교체 시 `ollama pull <model>` 먼저.
+- 현재 `rss_sources` 행 수 = 42. 직전 16개 신규 소스 INSERT SQL 중 일부만 적용된 상태(이전 35 + 신규 7). 나머지 9개는 url unique 충돌이거나 SQL 실행이 부분 적용으로 끝난 것으로 추정.
 - suggest-clusters에 raw article 중복 처리 방지 로직이 없다. 같은 article이 매번 후보로 다시 잡힐 수 있다.
+- 게시 후 수정 시 Cloudflare deploy hook이 매번 트리거된다. 짧은 시간에 여러 번 수정하면 빌드 큐가 누적될 수 있다. debounce 미구현.
+- 정적 export 빌드본에서 slug-있는 기사의 UUID URL은 prerender되지 않아 404. 옛 UUID 외부 링크를 유지해야 한다면 redirect 로직이 별도 필요.
+- `slug` 컬럼은 한 번 생성된 후 PATCH로 변경되지 않는다. 한국어 토픽이 바뀌어도 URL은 고정. 의도된 동작.

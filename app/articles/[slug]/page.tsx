@@ -115,9 +115,27 @@ export default async function ArticlePage({
           </h1>
 
           <div className="text-base leading-relaxed text-zinc-800 space-y-4">
-            {splitKoreanSentences(article.content).map((sentence, idx) => (
-              <p key={idx}>{sentence}</p>
-            ))}
+            {splitArticleBlocks(article.content).map((block, idx) => {
+              if (block.type === 'image') {
+                return (
+                  <figure key={idx} className="my-6">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={block.src}
+                      alt={block.alt}
+                      className="w-full rounded object-cover"
+                    />
+                    {block.alt && (
+                      <figcaption className="mt-2 text-sm text-zinc-500">
+                        {block.alt}
+                      </figcaption>
+                    )}
+                  </figure>
+                )
+              }
+
+              return <p key={idx}>{block.text}</p>
+            })}
           </div>
         </article>
       </main>
@@ -160,8 +178,37 @@ function CategoryBadges({
   )
 }
 
-function splitKoreanSentences(text: string): string[] {
+type ArticleBlock =
+  | { type: 'paragraph'; text: string }
+  | { type: 'image'; alt: string; src: string }
+
+function splitArticleBlocks(text: string): ArticleBlock[] {
   if (!text?.trim()) return []
+
+  const imagePattern = /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g
+  const blocks: ArticleBlock[] = []
+  let cursor = 0
+
+  for (const match of text.matchAll(imagePattern)) {
+    const index = match.index ?? 0
+    const before = text.slice(cursor, index)
+    blocks.push(...splitKoreanSentences(before).map((sentence) => ({
+      type: 'paragraph' as const,
+      text: sentence,
+    })))
+    blocks.push({ type: 'image', alt: match[1].trim(), src: match[2].trim() })
+    cursor = index + match[0].length
+  }
+
+  blocks.push(...splitKoreanSentences(text.slice(cursor)).map((sentence) => ({
+    type: 'paragraph' as const,
+    text: sentence,
+  })))
+
+  return blocks
+}
+
+function splitKoreanSentences(text: string): string[] {
   return text
     .split(/(?<=[다요까네죠][.!?])\s+/)
     .map((s) => s.trim())

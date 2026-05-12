@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+import { CATEGORY_NAV, GENRE_NAV } from "@/lib/taxonomy";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,12 +24,10 @@ export const metadata: Metadata = {
 
 const NAV_ITEMS = [
   { label: "홈", href: "/" },
-  { label: "페스티벌", href: "#" },
-  { label: "아티스트", href: "#" },
-  { label: "릴리즈", href: "#" },
-  { label: "뉴스", href: "#" },
-  { label: "인터뷰", href: "#" },
-  { label: "장르별 ▾", href: "#" },
+  ...CATEGORY_NAV.map((item) => ({
+    label: item.label,
+    href: `/category/${item.slug}`,
+  })),
 ];
 
 const showAdminLink = process.env.BUILD_STATIC !== "1";
@@ -62,16 +61,35 @@ export default function RootLayout({
                 </Link>
               )}
             </div>
-            <nav className="flex gap-1 sm:gap-3 text-sm font-medium overflow-x-auto">
+            <nav className="flex flex-wrap gap-1 sm:gap-3 text-sm font-medium">
               {NAV_ITEMS.map((item) => (
-                <a
+                <Link
                   key={item.label}
                   href={item.href}
                   className="px-3 py-3 text-zinc-600 hover:text-zinc-900 whitespace-nowrap border-b-2 border-transparent hover:border-zinc-900 transition-colors"
                 >
                   {item.label}
-                </a>
+                </Link>
               ))}
+              <div className="relative group flex-shrink-0">
+                <button
+                  type="button"
+                  className="px-3 py-3 text-zinc-600 hover:text-zinc-900 whitespace-nowrap border-b-2 border-transparent group-hover:border-zinc-900 transition-colors"
+                >
+                  장르별 ▾
+                </button>
+                <div className="absolute left-0 top-full z-20 hidden min-w-40 rounded border border-zinc-200 bg-white py-2 shadow-lg group-hover:block">
+                  {GENRE_NAV.map((item) => (
+                    <Link
+                      key={item.slug}
+                      href={`/genre/${item.slug}`}
+                      className="block px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </nav>
           </div>
         </header>

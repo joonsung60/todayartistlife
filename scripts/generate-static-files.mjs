@@ -1,6 +1,9 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createClient } from '@supabase/supabase-js'
 
+const CATEGORY_SLUGS = ['festival', 'artist', 'release', 'news', 'interview']
+const GENRE_SLUGS = ['house', 'techno', 'trance', 'drum-and-bass', 'dubstep', 'ambient']
+
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://edmstarnews.com').replace(/\/$/, '')
 
 function loadEnvLocal() {
@@ -73,6 +76,18 @@ const urls = [
     changefreq: 'hourly',
     priority: '1.0',
   },
+  ...CATEGORY_SLUGS.map((slug) => ({
+    loc: `${SITE_URL}/category/${slug}/`,
+    lastmod: new Date().toISOString(),
+    changefreq: 'daily',
+    priority: '0.7',
+  })),
+  ...GENRE_SLUGS.map((slug) => ({
+    loc: `${SITE_URL}/genre/${slug}/`,
+    lastmod: new Date().toISOString(),
+    changefreq: 'daily',
+    priority: '0.6',
+  })),
   ...(articles ?? []).map((article) => ({
     loc: `${SITE_URL}${articlePath(article)}`,
     lastmod: formatDate(article.updated_at || article.published_at || article.created_at),

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
 
 type Tab = 'collect' | 'add-urls' | 'suggest' | 'articles' | 'cluster' | 'generate'
 
@@ -51,6 +52,26 @@ function CollectTab() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<string>('')
   const [failures, setFailures] = useState<{ source: string; url: string; error: string }[]>([])
+  const [activeCount, setActiveCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    supabase
+      .from('rss_sources')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .then(({ count, error }) => {
+        if (cancelled) return
+        if (error || count === null) {
+          setActiveCount(-1)
+          return
+        }
+        setActiveCount(count)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const handleCollect = async () => {
     setIsLoading(true)
@@ -67,9 +88,16 @@ function CollectTab() {
     setIsLoading(false)
   }
 
+  const countLabel =
+    activeCount === null
+      ? '… '
+      : activeCount < 0
+        ? ''
+        : `${activeCount}개 `
+
   return (
     <div>
-      <p className="text-gray-600 mb-6">32개 RSS 소스에서 새 기사를 수집합니다.</p>
+      <p className="text-gray-600 mb-6">{countLabel}RSS 소스에서 새 기사를 수집합니다.</p>
       <button
         onClick={handleCollect}
         disabled={isLoading}

@@ -114,8 +114,9 @@ export default async function ArticlePage({
   if (!data) notFound()
 
   const article = data
-  const heroImageUrl = await loadClusterImageUrl(article.cluster_id)
+  const articleImageUrl = await loadClusterImageUrl(article.cluster_id)
     ?? extractFirstMarkdownImage(article.content)
+  const articleBlocks = splitArticleBlocks(article.content, articleImageUrl)
   const showUpdated =
     article.published_at &&
     article.updated_at &&
@@ -151,27 +152,16 @@ export default async function ArticlePage({
             {article.title}
           </h1>
 
-          {heroImageUrl && (
-            <figure className="mb-8 overflow-hidden rounded bg-zinc-100">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={heroImageUrl}
-                alt=""
-                className="w-full h-auto object-cover"
-              />
-            </figure>
-          )}
-
           <div className="text-base leading-relaxed text-zinc-800 space-y-4">
-            {splitArticleBlocks(article.content).map((block, idx) => {
+            {articleBlocks.map((block, idx) => {
               if (block.type === 'image') {
                 return (
-                  <figure key={idx} className="my-6">
+                  <figure key={idx} className="my-6 overflow-hidden rounded bg-zinc-100">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={block.src}
                       alt={block.alt}
-                      className="w-full rounded object-cover"
+                      className="w-full h-auto object-cover"
                     />
                     {block.alt && (
                       <figcaption className="mt-2 text-sm text-zinc-500">
@@ -230,11 +220,21 @@ type ArticleBlock =
   | { type: 'paragraph'; text: string }
   | { type: 'image'; alt: string; src: string }
 
-function splitArticleBlocks(text: string): ArticleBlock[] {
+function splitArticleBlocks(text: string, leadingImageUrl?: string | null): ArticleBlock[] {
   if (!text?.trim()) return []
 
   const imagePattern = /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g
   const blocks: ArticleBlock[] = []
+  const normalizedLeadingImageUrl = leadingImageUrl?.trim()
+
+  if (normalizedLeadingImageUrl && !text.includes(normalizedLeadingImageUrl)) {
+    blocks.push({
+      type: 'image',
+      alt: '',
+      src: normalizedLeadingImageUrl,
+    })
+  }
+
   let cursor = 0
 
   for (const match of text.matchAll(imagePattern)) {

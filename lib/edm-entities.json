@@ -2612,6 +2612,242 @@
       "rank": 500,
       "name": "Ploy",
       "aliases": []
+    },
+    {
+      "rank": 501,
+      "name": "Andrew Weatherall",
+      "aliases": [
+        "Lord Sabre",
+        "The Sabres of Paradise",
+        "Two Lone Swordsmen"
+      ]
+    },
+    {
+      "rank": 502,
+      "name": "Whethan",
+      "aliases": [
+        "Ethan Snoreck"
+      ]
+    },
+    {
+      "rank": 503,
+      "name": "Rolando",
+      "aliases": [
+        "The Aztec Mystic",
+        "DJ Rolando"
+      ]
+    },
+    {
+      "rank": 504,
+      "name": "Cinthie",
+      "aliases": []
+    },
+    {
+      "rank": 505,
+      "name": "Jamie Principle",
+      "aliases": []
+    },
+    {
+      "rank": 506,
+      "name": "Frankie Knuckles",
+      "aliases": [
+        "Director's Cut"
+      ]
+    },
+    {
+      "rank": 507,
+      "name": "Delon",
+      "aliases": [
+        "Delon & Dalcan"
+      ]
+    },
+    {
+      "rank": 508,
+      "name": "Avicii",
+      "aliases": [
+        "Tim Berg",
+        "Tom Hangs",
+        "Tim Bergling"
+      ]
+    },
+    {
+      "rank": 509,
+      "name": "Kaskade",
+      "aliases": [
+        "Ryan Raddon"
+      ]
+    },
+    {
+      "rank": 510,
+      "name": "REZZ",
+      "aliases": []
+    },
+    {
+      "rank": 511,
+      "name": "Alan Walker",
+      "aliases": []
+    },
+    {
+      "rank": 512,
+      "name": "Virtual Riot",
+      "aliases": []
+    },
+    {
+      "rank": 513,
+      "name": "Zomboy",
+      "aliases": []
+    },
+    {
+      "rank": 514,
+      "name": "Liquid Stranger",
+      "aliases": []
+    },
+    {
+      "rank": 515,
+      "name": "CloZee",
+      "aliases": []
+    },
+    {
+      "rank": 516,
+      "name": "LSDREAM",
+      "aliases": []
+    },
+    {
+      "rank": 517,
+      "name": "Kill The Noise",
+      "aliases": []
+    },
+    {
+      "rank": 518,
+      "name": "Getter",
+      "aliases": []
+    },
+    {
+      "rank": 519,
+      "name": "Paul Oakenfold",
+      "aliases": []
+    },
+    {
+      "rank": 520,
+      "name": "BT",
+      "aliases": []
+    },
+    {
+      "rank": 521,
+      "name": "Cosmic Gate",
+      "aliases": []
+    },
+    {
+      "rank": 522,
+      "name": "Markus Schulz",
+      "aliases": []
+    },
+    {
+      "rank": 523,
+      "name": "Solarstone",
+      "aliases": []
+    },
+    {
+      "rank": 524,
+      "name": "SOPHIE",
+      "aliases": []
+    },
+    {
+      "rank": 525,
+      "name": "A. G. Cook",
+      "aliases": [
+        "AG Cook"
+      ]
+    },
+    {
+      "rank": 526,
+      "name": "Arca",
+      "aliases": []
+    },
+    {
+      "rank": 527,
+      "name": "Jlin",
+      "aliases": []
+    },
+    {
+      "rank": 528,
+      "name": "Flying Lotus",
+      "aliases": []
+    },
+    {
+      "rank": 529,
+      "name": "TNGHT",
+      "aliases": [
+        "Hudson Mohawke",
+        "Lunice"
+      ]
+    },
+    {
+      "rank": 530,
+      "name": "Gerd Janson",
+      "aliases": []
+    },
+    {
+      "rank": 531,
+      "name": "Todd Terje",
+      "aliases": []
+    },
+    {
+      "rank": 532,
+      "name": "Roman Flügel",
+      "aliases": [
+        "Roman Flugel"
+      ]
+    },
+    {
+      "rank": 533,
+      "name": "DJ Tennis",
+      "aliases": []
+    },
+    {
+      "rank": 534,
+      "name": "Danny Tenaglia",
+      "aliases": []
+    },
+    {
+      "rank": 535,
+      "name": "Dillinja",
+      "aliases": []
+    },
+    {
+      "rank": 536,
+      "name": "Doc Scott",
+      "aliases": []
+    },
+    {
+      "rank": 537,
+      "name": "Om Unit",
+      "aliases": []
+    },
+    {
+      "rank": 538,
+      "name": "Dombresky",
+      "aliases": []
+    },
+    {
+      "rank": 539,
+      "name": "Julian Jordan",
+      "aliases": []
+    },
+    {
+      "rank": 540,
+      "name": "Mat Zo",
+      "aliases": []
+    },
+    {
+      "rank": 541,
+      "name": "Andrew Bayer",
+      "aliases": []
+    },
+    {
+      "rank": 542,
+      "name": "ilan Bluestone",
+      "aliases": []
     }
   ],
   "major_edm_festivals_worldwide": [
@@ -3314,6 +3550,51 @@
       "name": "Wonderland Festival",
       "country": "Thailand",
       "typical_month": "December"
+    },
+    {
+      "name": "IMS Ibiza",
+      "country": "Spain",
+      "typical_month": "April"
+    },
+    {
+      "name": "All Day I Dream",
+      "country": "International",
+      "typical_month": "Various"
+    },
+    {
+      "name": "Glitch Festival",
+      "country": "Malta",
+      "typical_month": "August"
+    },
+    {
+      "name": "Love International",
+      "country": "Croatia",
+      "typical_month": "July"
+    },
+    {
+      "name": "Dekmantel Selectors",
+      "country": "Croatia",
+      "typical_month": "August"
+    },
+    {
+      "name": "Draaimolen Festival",
+      "country": "Netherlands",
+      "typical_month": "September"
+    },
+    {
+      "name": "Time Warp Brazil",
+      "country": "Brazil",
+      "typical_month": "May"
+    },
+    {
+      "name": "Sonar Lisboa",
+      "country": "Portugal",
+      "typical_month": "March/April"
+    },
+    {
+      "name": "Pitchfork Music Festival London",
+      "country": "United Kingdom",
+      "typical_month": "November"
     }
   ],
   "edm_labels_key_artists": [
@@ -4486,6 +4767,642 @@
         "Lavan",
         "Petals In Sound"
       ]
+    },
+    {
+      "name": "All Day I Dream",
+      "key_artists": [
+        "Lee Burridge",
+        "Lost Desert",
+        "Tim Green",
+        "Sébastien Léger",
+        "Roy Rosenfeld"
+      ]
+    },
+    {
+      "name": "MORD Records",
+      "key_artists": [
+        "Bas Mooy",
+        "UVB",
+        "AnD",
+        "Kwartz",
+        "Ritzi Lee"
+      ]
+    },
+    {
+      "name": "Rush Hour",
+      "key_artists": [
+        "Antal",
+        "Hunee",
+        "Soichi Terada",
+        "Interstellar Funk",
+        "Ron Trent"
+      ]
+    },
+    {
+      "name": "Houndstooth",
+      "key_artists": [
+        "Special Request",
+        "Aïsha Devi",
+        "Throwing Snow",
+        "Call Super",
+        "Marquis Hawkes"
+      ]
+    },
+    {
+      "name": "Livity Sound",
+      "key_artists": [
+        "Peverelist",
+        "Kowton",
+        "Asusu",
+        "Hodge",
+        "Forest Drive West"
+      ]
+    },
+    {
+      "name": "Timedance",
+      "key_artists": [
+        "Batu",
+        "Ploy",
+        "Bruce",
+        "Metrist",
+        "Cleyra"
+      ]
+    },
+    {
+      "name": "Ninja Tune Technicolour",
+      "key_artists": [
+        "TSHA",
+        "Octo Octa",
+        "Helena Hauff",
+        "Nathan Micay",
+        "India Jordan"
+      ]
+    },
+    {
+      "name": "Clone Records",
+      "key_artists": [
+        "Drexciya",
+        "Dopplereffekt",
+        "Alden Tyrell",
+        "Legowelt",
+        "I-F"
+      ]
+    },
+    {
+      "name": "Delsin Records",
+      "key_artists": [
+        "Claro Intelecto",
+        "Delta Funktionen",
+        "Conforce",
+        "Artefakt",
+        "VC-118A"
+      ]
+    },
+    {
+      "name": "Ovum Recordings",
+      "key_artists": [
+        "Josh Wink",
+        "Steve Bug",
+        "Shlomi Aber",
+        "MANIK",
+        "David Alvarado"
+      ]
+    },
+    {
+      "name": "Because Music",
+      "key_artists": [
+        "Justice",
+        "Christine and the Queens",
+        "Metronomy",
+        "Parcels",
+        "Major Lazer"
+      ]
+    }
+  ],
+  "club_venues": [
+    {
+      "name": "Cercle",
+      "aliases": [],
+      "city": "Paris",
+      "country": "France",
+      "type": "media/event series",
+      "weight": 0.8
+    },
+    {
+      "name": "Brockwell Park",
+      "aliases": [],
+      "city": "London",
+      "country": "United Kingdom",
+      "type": "festival venue/park",
+      "weight": 0.8
+    },
+    {
+      "name": "Brooklyn Storehouse",
+      "aliases": [],
+      "city": "New York",
+      "country": "United States",
+      "type": "venue",
+      "weight": 0.8
+    },
+    {
+      "name": "Waterworks",
+      "aliases": [
+        "Waterworks Festival"
+      ],
+      "city": "London",
+      "country": "United Kingdom",
+      "type": "festival/event",
+      "weight": 0.8
+    },
+    {
+      "name": "Berghain",
+      "aliases": [
+        "Panorama Bar"
+      ],
+      "city": "Berlin",
+      "country": "Germany",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "Tresor",
+      "aliases": [],
+      "city": "Berlin",
+      "country": "Germany",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "fabric",
+      "aliases": [
+        "Fabric London"
+      ],
+      "city": "London",
+      "country": "United Kingdom",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "Printworks London",
+      "aliases": [
+        "Printworks"
+      ],
+      "city": "London",
+      "country": "United Kingdom",
+      "type": "venue",
+      "weight": 0.8
+    },
+    {
+      "name": "Drumsheds",
+      "aliases": [],
+      "city": "London",
+      "country": "United Kingdom",
+      "type": "venue",
+      "weight": 0.8
+    },
+    {
+      "name": "The Warehouse Project",
+      "aliases": [
+        "WHP"
+      ],
+      "city": "Manchester",
+      "country": "United Kingdom",
+      "type": "club series/venue",
+      "weight": 0.8
+    },
+    {
+      "name": "Amnesia Ibiza",
+      "aliases": [
+        "Amnesia"
+      ],
+      "city": "Ibiza",
+      "country": "Spain",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "Pacha Ibiza",
+      "aliases": [
+        "Pacha"
+      ],
+      "city": "Ibiza",
+      "country": "Spain",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "DC-10",
+      "aliases": [
+        "DC10"
+      ],
+      "city": "Ibiza",
+      "country": "Spain",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "Hï Ibiza",
+      "aliases": [
+        "Hi Ibiza"
+      ],
+      "city": "Ibiza",
+      "country": "Spain",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "Ushuaïa Ibiza",
+      "aliases": [
+        "Ushuaia Ibiza"
+      ],
+      "city": "Ibiza",
+      "country": "Spain",
+      "type": "club/venue",
+      "weight": 0.8
+    },
+    {
+      "name": "Nitsa",
+      "aliases": [
+        "Nitsa Club"
+      ],
+      "city": "Barcelona",
+      "country": "Spain",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "De School",
+      "aliases": [],
+      "city": "Amsterdam",
+      "country": "Netherlands",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "Shelter Amsterdam",
+      "aliases": [
+        "Shelter"
+      ],
+      "city": "Amsterdam",
+      "country": "Netherlands",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "Bassiani",
+      "aliases": [],
+      "city": "Tbilisi",
+      "country": "Georgia",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "Khidi",
+      "aliases": [
+        "KHIDI"
+      ],
+      "city": "Tbilisi",
+      "country": "Georgia",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "WOMB",
+      "aliases": [
+        "Womb Tokyo"
+      ],
+      "city": "Tokyo",
+      "country": "Japan",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "Zouk Singapore",
+      "aliases": [
+        "Zouk"
+      ],
+      "city": "Singapore",
+      "country": "Singapore",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "Output",
+      "aliases": [
+        "Output Brooklyn"
+      ],
+      "city": "New York",
+      "country": "United States",
+      "type": "club",
+      "weight": 0.8
+    },
+    {
+      "name": "Knockdown Center",
+      "aliases": [],
+      "city": "New York",
+      "country": "United States",
+      "type": "venue",
+      "weight": 0.8
+    },
+    {
+      "name": "Public Records",
+      "aliases": [],
+      "city": "New York",
+      "country": "United States",
+      "type": "venue/club",
+      "weight": 0.8
+    },
+    {
+      "name": "Elsewhere",
+      "aliases": [
+        "Elsewhere Brooklyn"
+      ],
+      "city": "New York",
+      "country": "United States",
+      "type": "venue/club",
+      "weight": 0.8
+    },
+    {
+      "name": "Red Rocks Amphitheatre",
+      "aliases": [
+        "Red Rocks"
+      ],
+      "city": "Morrison",
+      "country": "United States",
+      "type": "venue",
+      "weight": 0.8
+    }
+  ],
+  "equipment_software_brands": [
+    {
+      "name": "Native Instruments",
+      "aliases": [
+        "NI",
+        "Traktor",
+        "Kontakt",
+        "Maschine"
+      ],
+      "category": "software/hardware",
+      "weight": 0.6
+    },
+    {
+      "name": "AudioThing",
+      "aliases": [],
+      "category": "software/plugin",
+      "weight": 0.6
+    },
+    {
+      "name": "Tiptop Audio",
+      "aliases": [],
+      "category": "modular hardware",
+      "weight": 0.6
+    },
+    {
+      "name": "Enjoy Electronics",
+      "aliases": [],
+      "category": "hardware",
+      "weight": 0.6
+    },
+    {
+      "name": "Sampling Master",
+      "aliases": [],
+      "category": "software/sample library",
+      "weight": 0.6
+    },
+    {
+      "name": "Casio",
+      "aliases": [],
+      "category": "hardware/instruments",
+      "weight": 0.6
+    },
+    {
+      "name": "Ableton",
+      "aliases": [
+        "Ableton Live",
+        "Live"
+      ],
+      "category": "software/DAW",
+      "weight": 0.6
+    },
+    {
+      "name": "Steinberg",
+      "aliases": [
+        "Cubase",
+        "Nuendo"
+      ],
+      "category": "software/DAW",
+      "weight": 0.6
+    },
+    {
+      "name": "FL Studio",
+      "aliases": [
+        "Image-Line",
+        "Fruity Loops"
+      ],
+      "category": "software/DAW",
+      "weight": 0.6
+    },
+    {
+      "name": "Logic Pro",
+      "aliases": [
+        "Apple Logic Pro"
+      ],
+      "category": "software/DAW",
+      "weight": 0.6
+    },
+    {
+      "name": "Bitwig",
+      "aliases": [
+        "Bitwig Studio"
+      ],
+      "category": "software/DAW",
+      "weight": 0.6
+    },
+    {
+      "name": "Serato",
+      "aliases": [
+        "Serato DJ"
+      ],
+      "category": "software/DJ",
+      "weight": 0.6
+    },
+    {
+      "name": "Pioneer DJ",
+      "aliases": [
+        "AlphaTheta",
+        "CDJ",
+        "DJM"
+      ],
+      "category": "DJ hardware",
+      "weight": 0.6
+    },
+    {
+      "name": "Allen & Heath",
+      "aliases": [
+        "Xone"
+      ],
+      "category": "DJ/mixing hardware",
+      "weight": 0.6
+    },
+    {
+      "name": "Denon DJ",
+      "aliases": [
+        "Engine DJ"
+      ],
+      "category": "DJ hardware",
+      "weight": 0.6
+    },
+    {
+      "name": "Roland",
+      "aliases": [
+        "AIRA",
+        "TR-808",
+        "TR-909",
+        "TB-303"
+      ],
+      "category": "hardware/instruments",
+      "weight": 0.6
+    },
+    {
+      "name": "Korg",
+      "aliases": [
+        "Volca",
+        "Minilogue",
+        "Kaoss Pad"
+      ],
+      "category": "hardware/instruments",
+      "weight": 0.6
+    },
+    {
+      "name": "Elektron",
+      "aliases": [
+        "Digitakt",
+        "Octatrack",
+        "Analog Rytm"
+      ],
+      "category": "hardware/instruments",
+      "weight": 0.6
+    },
+    {
+      "name": "Moog",
+      "aliases": [
+        "Moog Music"
+      ],
+      "category": "hardware/synthesizers",
+      "weight": 0.6
+    },
+    {
+      "name": "Arturia",
+      "aliases": [],
+      "category": "software/hardware",
+      "weight": 0.6
+    },
+    {
+      "name": "Akai Professional",
+      "aliases": [
+        "Akai",
+        "MPC"
+      ],
+      "category": "hardware/controllers/samplers",
+      "weight": 0.6
+    },
+    {
+      "name": "Novation",
+      "aliases": [
+        "Launchpad"
+      ],
+      "category": "hardware/controllers/synthesizers",
+      "weight": 0.6
+    },
+    {
+      "name": "iZotope",
+      "aliases": [
+        "Ozone",
+        "RX"
+      ],
+      "category": "software/plugin",
+      "weight": 0.6
+    },
+    {
+      "name": "FabFilter",
+      "aliases": [],
+      "category": "software/plugin",
+      "weight": 0.6
+    },
+    {
+      "name": "Soundtoys",
+      "aliases": [],
+      "category": "software/plugin",
+      "weight": 0.6
+    },
+    {
+      "name": "Universal Audio",
+      "aliases": [
+        "UAD"
+      ],
+      "category": "audio hardware/software",
+      "weight": 0.6
+    },
+    {
+      "name": "Waves Audio",
+      "aliases": [
+        "Waves"
+      ],
+      "category": "software/plugin",
+      "weight": 0.6
+    },
+    {
+      "name": "Xfer Records",
+      "aliases": [
+        "Serum"
+      ],
+      "category": "software/plugin",
+      "weight": 0.6
+    },
+    {
+      "name": "Valhalla DSP",
+      "aliases": [
+        "Valhalla"
+      ],
+      "category": "software/plugin",
+      "weight": 0.6
+    },
+    {
+      "name": "u-he",
+      "aliases": [
+        "Diva",
+        "Hive",
+        "Zebra"
+      ],
+      "category": "software/plugin",
+      "weight": 0.6
+    },
+    {
+      "name": "Teenage Engineering",
+      "aliases": [
+        "OP-1",
+        "OP-Z"
+      ],
+      "category": "hardware/instruments",
+      "weight": 0.6
+    },
+    {
+      "name": "Erica Synths",
+      "aliases": [],
+      "category": "modular hardware",
+      "weight": 0.6
+    },
+    {
+      "name": "Make Noise",
+      "aliases": [],
+      "category": "modular hardware",
+      "weight": 0.6
+    },
+    {
+      "name": "Mutable Instruments",
+      "aliases": [],
+      "category": "modular hardware",
+      "weight": 0.6
     }
   ]
 }

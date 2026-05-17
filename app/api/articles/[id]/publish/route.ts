@@ -1,6 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
+type ClusterArticleRow = {
+  raw_article_id: string
+}
+
+async function markClusterRawArticlesUsed(clusterId: string, usedAt: string): Promise<string | null> {
+  const { data: clusterArticles, error: clusterError } = await supabase
+    .from('cluster_articles')
+    .select('raw_article_id')
+    .eq('cluster_id', clusterId)
+
+  if (clusterError) return clusterError.message
+
+  const rawArticleIds = Array.from(new Set(
+    ((clusterArticles ?? []) as ClusterArticleRow[])
+      .map((row) => row.raw_article_id)
+      .filter(Boolean)
+  ))
+
+  if (rawArticleIds.length === 0) return null
+
+  const { error: rawUpdateError } = await supabase
+    .from('raw_articles')
+    .update({
+      suggestion_state: 'used',
+      suggestion_used_at: usedAt,
+    })
+    .in('id', rawArticleIds)
+
+  return rawUpdateError?.message ?? null
+}
+
 export async function PATCH(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -28,6 +59,14 @@ export async function PATCH(
 
   if (!data) {
     return NextResponse.json({ error: '기사를 찾을 수 없습니다.' }, { status: 404 })
+  }
+
+  if (data.cluster_id) {
+    const rawArticleUpdateError = await markClusterRawArticlesUsed(data.cluster_id, publishedAt)
+    if (rawArticleUpdateError) {
+      console.error('[publish] raw_articles suggestion_state 업데이트 실패:', rawArticleUpdateError)
+      return NextResponse.json({ article: data, rawArticleUpdateError }, { status: 500 })
+    }
   }
 
   const deployHookUrl = process.env.CLOUDFLARE_DEPLOY_HOOK_URL

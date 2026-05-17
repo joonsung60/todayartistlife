@@ -175,6 +175,25 @@ export function extractImageUrl(html: string): string | null {
     ?? getMetaContent(html, 'name', 'twitter:image')
 }
 
+const EMBED_URL_PATTERNS = [
+  /https?:\/\/(?:www\.|m\.)?youtube\.com\/watch\?[^\s"'<>]*v=[\w-]+[^\s"'<>]*/i,
+  /https?:\/\/(?:www\.)?youtu\.be\/[\w-]+(?:[^\s"'<>]*)?/i,
+  /https?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/[\w-]+(?:[^\s"'<>]*)?/i,
+  /https?:\/\/(?:[\w-]+\.)*soundcloud\.com\/[^\s"'<>]+/i,
+  /https?:\/\/open\.spotify\.com\/(?:track|album|playlist)\/[A-Za-z0-9]+(?:[^\s"'<>]*)?/i,
+]
+
+export function extractEmbedUrl(html: string): string | null {
+  let earliest: { index: number; url: string } | null = null
+  for (const pattern of EMBED_URL_PATTERNS) {
+    const match = pattern.exec(html)
+    if (match && (earliest === null || match.index < earliest.index)) {
+      earliest = { index: match.index, url: match[0] }
+    }
+  }
+  return earliest?.url ?? null
+}
+
 function scoreArticleText(text: string, attrs = ''): number {
   const normalized = text.toLowerCase()
   const boilerplateHits = BOILERPLATE_PATTERNS.reduce((count, pattern) => {

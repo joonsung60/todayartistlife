@@ -1,8 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { cleanArticleText, extractArticleText } from '@/lib/article-extraction'
+import displayNames from '@/lib/display-names.json'
 import { SYSTEM_PROMPT_A } from '@/lib/prompts'
 import { findGenre } from '@/lib/taxonomy'
+
+const displayNameRules = Object.entries(displayNames as Record<string, string>)
+  .map(([en, ko]) => `- ${en} → ${ko}`)
+  .join('\n')
+
+const displayNameReplacements = Object.entries(displayNames as Record<string, string>)
+  .filter(([en, ko]) => en !== ko)
+  .sort((a, b) => b[0].length - a[0].length)
+
+function applyDisplayNameMapping(text: string): string {
+  let result = text
+  for (const [en, ko] of displayNameReplacements) {
+    result = result.replaceAll(en, ko)
+  }
+  return result
+}
 
 type SourceArticle = {
   title: string
@@ -36,6 +53,7 @@ type RawArticleRow = {
   url: string
   published_at: string | null
   source_id: string | number | null
+  embed_url: string | null
 }
 
 type SourceMeta = {
@@ -51,6 +69,51 @@ const RESPONSE_NOISE_PATTERNS = [
 
 function compactSourceText(text: string): string {
   return cleanArticleText(text, 2500).replace(/\s+/g, ' ').trim()
+}
+
+function domainFromUrl(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return '원문 매체'
+  }
+}
+
+function cleanSourceUrl(url: string): string {
+  try {
+    const parsed = new URL(url)
+    parsed.search = ''
+    parsed.hash = ''
+    return parsed.toString()
+  } catch {
+    return url
+  }
+}
+
+function sourceNameForAttribution(article: RawArticleRow, sourceMeta: Map<string, SourceMeta>): string {
+  if (article.source_id !== null) {
+    const sourceName = sourceMeta.get(String(article.source_id))?.name?.trim()
+    if (sourceName) {
+      return sourceName
+    }
+  }
+
+  return domainFromUrl(article.url)
+}
+
+function appendSingleSourceAttribution(
+  content: string,
+  rawArticles: RawArticleRow[],
+  sourceMeta: Map<string, SourceMeta>
+): string {
+  if (rawArticles.length !== 1) {
+    return content
+  }
+
+  const [article] = rawArticles
+  const sourceName = sourceNameForAttribution(article, sourceMeta)
+  const sourceUrl = cleanSourceUrl(article.url)
+  return `${content.trim()}\n\n*이 기사는 ${sourceName}의 원문을 바탕으로 핵심 내용을 한국어로 재구성한 것입니다. [원문 보기](${sourceUrl})*`
 }
 
 async function fetchSourceMeta(sourceIds: Array<string | number | null>): Promise<Map<string, SourceMeta>> {
@@ -104,7 +167,13 @@ async function fetchArticleContent(url: string): Promise<string> {
 }
 
 function parseGeneratedArticle(response: string): GeneratedArticle | null {
-  const jsonMatch = response.match(/\{[\s\S]*\}/)
+  const cleaned = response
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/```\s*$/i, '')
+    .trim()
+
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/)
   if (jsonMatch) {
     try {
       const parsed = JSON.parse(jsonMatch[0]) as Partial<GeneratedArticle>
@@ -122,14 +191,14 @@ function parseGeneratedArticle(response: string): GeneratedArticle | null {
     }
   }
 
-  const titleMatch = response.match(/^제목:\s*(.+)$/m)
-  const contentMatch = response.match(/^내용:\s*([\s\S]+?)(?=\n(?:슬러그|카테고리|장르):|$)/m)
+  const titleMatch = cleaned.match(/^제목:\s*(.+)$/m)
+  const contentMatch = cleaned.match(/^내용:\s*([\s\S]+?)(?=\n(?:슬러그|카테고리|장르):|$)/m)
   if (!titleMatch || !contentMatch) {
     return null
   }
-  const slugMatch = response.match(/^슬러그:\s*(.+)$/m)
-  const categoryMatch = response.match(/^카테고리:\s*(.+)$/m)
-  const genreMatch = response.match(/^장르:\s*(.+)$/m)
+  const slugMatch = cleaned.match(/^슬러그:\s*(.+)$/m)
+  const categoryMatch = cleaned.match(/^카테고리:\s*(.+)$/m)
+  const genreMatch = cleaned.match(/^장르:\s*(.+)$/m)
 
   return {
     title: titleMatch[1].trim(),
@@ -218,12 +287,12 @@ async function generateKoreanArticle(articles: SourceArticle[]): Promise<Generat
     .join('\n\n---\n\n')
 
   const ollamaUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434'
-  const ollamaModel = process.env.OLLAMA_MODEL || 'qwen3:14b'
+  const ollamaModel = process.env.OLLAMA_GENERATE_MODEL || process.env.OLLAMA_MODEL || 'qwen3:14b'
   let lastError = '생성 실패'
 
   for (let attempt = 1; attempt <= 2; attempt++) {
     const retryGuidance = attempt > 1
-      ? `\n이전 응답은 검증에 실패했습니다. 실패 이유: ${lastError}\n이번에는 영어 원문과 사이트 메뉴 문구를 절대 포함하지 말고, 자연스러운 한국어 기사만 작성하세요.\n`
+      ? `\n이전 응답은 검증에 실패했습니다. 실패 이유: ${lastError}\n이번에는 영어 원문 문장과 사이트 메뉴 문구를 절대 포함하지 말고, 자연스러운 한국어 기사로 다시 작성하세요.\n`
       : ''
 
     const res = await fetch(`${ollamaUrl}/api/generate`, {
@@ -234,28 +303,35 @@ async function generateKoreanArticle(articles: SourceArticle[]): Promise<Generat
         system: SYSTEM_PROMPT_A,
         prompt: `아래 소스들을 참고해 한국어 뉴스 기사를 새로 작성하세요.
 
-[아티스트 표기 규칙]
-아래 목록에 있는 아티스트는 반드시 지정된 표기법을 따르세요. 값이 영문과 같으면 한글 음역을 절대 하지 말고 영문 그대로 유지하세요.
+[displayNameRules]
+아래 목록은 이번 요청에서 한국어 표기가 확인된 아티스트명, 장소명 등 고유명사 목록입니다.
+- 제목에서는 목록의 한국어 표기만 사용하고 영문 병기를 하지 마세요.
+- 본문에서는 해당 고유명사가 처음 등장할 때 한 번만 "한국어(영문)" 형태로 쓰고, 이후에는 한국어만 쓰세요.
+- 값이 영문과 같으면 한국어 표기가 없는 항목이므로 영문 그대로 유지하세요.
 ${displayNameRules}
 
-중요:
+[출력 지시]
 - 소스 내용을 그대로 복사하지 마세요.
 - 영어 원문 문장, 사이트 메뉴, 태그, 공유 버튼, 관련 기사 목록은 출력하지 마세요.
 - 모든 소스를 동등하게 참고하되, 어느 한 소스의 표현이나 판단을 검증 없이 확대하지 마세요.
-- 고유명사 표기는 시스템 메시지 [고유명사 표기] 섹션을 그대로 따르세요. 아티스트/곡/앨범/레이블/페스티벌/클럽/믹스명은 영문 원문이 기본이고, 한국 정착 표기(마틴 게릭스, 칼빈 해리스, 투모로우랜드 등)와 본문에서 단독으로 지칭하는 도시·국가명(더블린, 암스테르담, 베를린 등)만 한국어로 씁니다. 도시명이 'GU49: Dublin', 'Boiler Room Berlin' 같은 고유명사의 일부일 때는 영문 그대로 유지하세요. Anyma·John Summit·Dom Dolla·Deep Dish·Moderat 같은 한국어 정착 표기가 없는 이름은 어떤 경우에도 임의로 한글 음역하지 마세요. 영문/한국어 병기("Martin Garrix(마틴 게릭스)" 등)도 금지입니다.
-- '오늘', '어제', '최근', '며칠 전' 같은 상대적 날짜 표현을 쓰지 마세요.
-- 날짜가 필요하면 소스의 발행일처럼 구체적인 년/월/일만 쓰고, 날짜가 불명확하면 생략하세요.
 - 출력은 반드시 JSON 객체 하나만 허용됩니다.
 - JSON 키는 "title", "content", "slug", "category", "genre" 다섯 개입니다.
-- title과 content는 한국어 기사체로 작성하세요.
+- category는 반드시 "페스티벌", "릴리즈", "뉴스" 셋 중 하나만 사용하세요.
+- genre는 반드시 "house", "techno", "edm" 셋 중 하나만 사용하세요.
+- 릴리즈 기사에서 house 또는 techno로 명확히 특정되는 경우에만 각각 "house", "techno"를 쓰고, 그 외 모든 경우는 "edm"으로 두세요.
+- 본문 content에 마크다운 문법을 절대 사용하지 마세요. #, ##, **, *, -, 불릿 포인트, 번호 목록 등 일체 금지입니다.
+- 날짜별 일정을 나열할 때도 불릿이나 헤더 없이 자연스러운 문장으로 이어 쓰세요.
+- 곡명, 앨범명, EP명은 번역하지 말고 원문 그대로 작은따옴표로 표기하세요. 예: 'Your Eyes', 'Light Years', 'Pure Devotion'. 절대 한국어로 번역하지 마세요.
+- 원문이 인터뷰 형식(Q&A)인 경우 질문과 답변을 그대로 나열하지 말고 기사체로 재구성하세요. 아티스트의 발언은 간접 인용 형태로 처리하세요. 예: "메 엔 유는 낯선 사람들과의 대화에서 공연의 영감을 얻는다고 밝혔다." 직접 인용이 필요한 경우에만 따옴표로 한 문장 이내로 처리하세요.
+- 실제 사실(날짜, 장소, 아티스트명, 곡명 등)이 없는 문장은 쓰지 마세요. "이러한 라인업은 ~의 역할을 보여줍니다", "특별한 경험을 선사합니다" 같은 홍보성 마무리 문장은 금지입니다.
+- content는 순수 텍스트 단락만으로 구성하세요.
 - slug: 영문 소문자와 하이픈만 사용하고 30자 이내. 기사 핵심 키워드 기반. 예: "martin-garrix-new-album-2026"
-- category: "페스티벌", "릴리즈", "뉴스" 셋 중 하나만 정확히 사용하세요. 페스티벌/행사/공연/레지던시는 "페스티벌", 신곡/앨범/EP/믹스/리믹스/컴필레이션 발매는 "릴리즈", 그 외는 모두 "뉴스"입니다.
-- genre: category가 "릴리즈"일 때만 "house", "techno", "trance", "drum-and-bass", "dubstep", "ambient" 중 하나를 사용하세요. 이 목록 중 특정하기 어렵거나 category가 "페스티벌" 또는 "뉴스"이면 반드시 "edm"으로 두세요.
 ${retryGuidance}
 
+[소스 데이터]
 ${articlesText}
 
-응답 예:
+[JSON 출력 형식]
 {"title":"한국어 기사 제목","content":"한국어 기사 본문","slug":"english-keyword-slug-2026","category":"릴리즈","genre":"house"}`,
         stream: false,
         think: false,
@@ -316,7 +392,7 @@ export async function POST(req: NextRequest) {
 
       const { data: rawArticles, error: rawError } = await supabase
         .from('raw_articles')
-        .select('id, title, content, url, published_at, source_id')
+        .select('id, title, content, url, published_at, source_id, embed_url')
         .in('id', rawArticleIds)
 
       if (rawError) throw rawError
@@ -348,22 +424,30 @@ export async function POST(req: NextRequest) {
       }
 
       // 한국어 종합 기사 생성
-      const generated = await generateKoreanArticle(usableArticles)
+      const rawGenerated = await generateKoreanArticle(usableArticles)
+      const generated = {
+        ...rawGenerated,
+        title: applyDisplayNameMapping(rawGenerated.title),
+        content: rawGenerated.content,
+      }
       const slug = await ensureUniqueSlug(normalizeSlug(generated.slug))
       const category = normalizeCategory(generated.category)
       const genre = normalizeGenreForCategory(category, generated.genre)
+      const embedUrl = typedRawArticles.find((article) => article.embed_url)?.embed_url ?? null
+      const content = appendSingleSourceAttribution(generated.content, typedRawArticles, sourceMeta)
 
       // articles 테이블에 저장
       const { data, error } = await supabase
         .from('articles')
         .insert({
           title: generated.title,
-          content: generated.content,
+          content,
           cluster_id: clusterId,
           published: false,
           slug,
           category,
           genre,
+          embed_url: embedUrl,
         })
         .select()
         .single()
@@ -378,6 +462,4 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ results })
-}
-({ results })
 }

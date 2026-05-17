@@ -9,7 +9,7 @@ import { isUsableImageUrl, loadClusterImageUrl } from "@/lib/articles";
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ARTICLE_SELECT =
-  "id, title, content, published, published_at, created_at, updated_at, cluster_id, image_url, slug, category, genre";
+  "id, title, content, published, published_at, created_at, updated_at, cluster_id, image_url, slug, category, genre, embed_url";
 
 export async function generateStaticParams() {
   const { data } = await supabase
@@ -69,6 +69,7 @@ type ArticleDetail = {
   slug: string | null;
   category: string | null;
   genre: string | null;
+  embed_url: string | null;
 };
 
 async function loadArticle(key: string): Promise<{
@@ -179,6 +180,87 @@ function formatDate(iso: string) {
   });
 }
 
+type ArticleEmbed = {
+  type: "youtube" | "soundcloud" | "spotify";
+  src: string;
+};
+
+function createArticleEmbed(embedUrl?: string | null): ArticleEmbed | null {
+  const normalized = embedUrl?.trim();
+  if (!normalized) return null;
+
+  let url: URL;
+  try {
+    url = new URL(normalized);
+  } catch {
+    return null;
+  }
+
+  const hostname = url.hostname.replace(/^www\./, "");
+
+  if (hostname === "youtu.be") {
+    const videoId = url.pathname.split("/").filter(Boolean)[0];
+    return videoId
+      ? { type: "youtube", src: `https://www.youtube.com/embed/${videoId}` }
+      : null;
+  }
+
+  if (hostname === "youtube.com" || hostname === "m.youtube.com") {
+    if (url.pathname.startsWith("/embed/")) {
+      return { type: "youtube", src: normalized };
+    }
+
+    if (url.pathname === "/watch") {
+      const videoId = url.searchParams.get("v");
+      return videoId
+        ? { type: "youtube", src: `https://www.youtube.com/embed/${videoId}` }
+        : null;
+    }
+  }
+
+  if (hostname === "soundcloud.com" || hostname.endsWith(".soundcloud.com")) {
+    const playerUrl = new URL("https://w.soundcloud.com/player/");
+    playerUrl.searchParams.set("url", normalized);
+    playerUrl.searchParams.set("color", "#ff5500");
+    playerUrl.searchParams.set("auto_play", "false");
+    playerUrl.searchParams.set("hide_related", "true");
+    playerUrl.searchParams.set("show_comments", "false");
+    playerUrl.searchParams.set("show_user", "true");
+    playerUrl.searchParams.set("show_reposts", "false");
+    return { type: "soundcloud", src: playerUrl.toString() };
+  }
+
+  if (hostname === "open.spotify.com") {
+    const [embed, embedType, embedId] = url.pathname
+      .split("/")
+      .filter(Boolean);
+
+    if (
+      embed === "embed" &&
+      ["track", "album", "playlist"].includes(embedType) &&
+      embedId
+    ) {
+      return {
+        type: "spotify",
+        src: `https://open.spotify.com/embed/${embedType}/${embedId}`,
+      };
+    }
+
+    const [spotifyType, spotifyId] = url.pathname.split("/").filter(Boolean);
+    if (
+      ["track", "album", "playlist"].includes(spotifyType) &&
+      spotifyId
+    ) {
+      return {
+        type: "spotify",
+        src: `https://open.spotify.com/embed/${spotifyType}/${spotifyId}`,
+      };
+    }
+  }
+
+  return null;
+}
+
 // ── 카테고리 배지 색상 ────────────────────────────────
 
 const CATEGORY_BADGE: Record<string, string> = {
@@ -225,6 +307,7 @@ export default async function ArticlePage({
       extractFirstMarkdownImage(article.content);
 
   const articleBlocks = splitArticleBlocks(article.content, articleImageUrl);
+  const articleEmbed = createArticleEmbed(article.embed_url);
 
   const showUpdated =
     article.published_at &&
@@ -311,6 +394,37 @@ export default async function ArticlePage({
             return <p key={idx}>{block.text}</p>;
           })}
         </div>
+
+        {articleEmbed && (
+          <div className="mt-10">
+            <iframe
+              src={articleEmbed.src}
+              title={`${article.title} ${
+                articleEmbed.type === "youtube"
+                  ? "YouTube"
+                  : articleEmbed.type === "soundcloud"
+                    ? "SoundCloud"
+                    : "Spotify"
+              } embed`}
+              className={
+                articleEmbed.type === "youtube"
+                  ? "aspect-video w-full border-0"
+                  : articleEmbed.type === "soundcloud"
+                    ? "h-[166px] w-full border-0"
+                    : "h-[152px] w-full border-0"
+              }
+              allow={
+                articleEmbed.type === "youtube"
+                  ? "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  : articleEmbed.type === "soundcloud"
+                    ? "autoplay"
+                    : "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              }
+              allowFullScreen={articleEmbed.type === "youtube"}
+              loading="lazy"
+            />
+          </div>
+        )}
 
         {/* 하단 */}
         <div className="mt-12 pt-8 border-t border-gray-200">

@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase'
 export const runtime = 'nodejs'
 
 const BUCKET_NAME = 'image-sources'
-const VISION_MODEL = 'mistral-small3.2:24b'
+const VISION_MODEL = process.env.OLLAMA_VISION_MODEL || process.env.OLLAMA_MODEL || 'mistral-small3.2:24b'
 const MAX_BASE64_LENGTH = 14_000_000
 
 type AnalyzeRequest = {

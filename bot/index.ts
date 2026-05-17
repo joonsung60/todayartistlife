@@ -6,8 +6,8 @@ import { Bot, InlineKeyboard } from "grammy";
 setDefaultResultOrder("ipv4first");
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const ALLOWED_USERS = [8322528068];
-const LOCAL_API = "http://localhost:3000";
+const ALLOWED_USERS = process.env.ALLOWED_USERS ? process.env.ALLOWED_USERS.split(",").map(Number) : [];
+const LOCAL_API = process.env.LOCAL_API ?? "http://localhost:3000";
 const ARTICLE_PREVIEW_LENGTH = 500;
 
 if (!BOT_TOKEN) {

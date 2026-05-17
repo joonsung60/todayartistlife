@@ -4,16 +4,21 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { cleanArticleText } from '@/lib/article-extraction'
 
-const SUGGEST_SYSTEM = `당신은 EDM 뉴스 에디터입니다. 영문 EDM 뉴스 원문을 한 편 또는 여러 편 받아 한국어 기사로 작성할 만한 소재인지 판단합니다.
+const SUGGEST_SYSTEM = `당신은 전세계 전자음악 씬 전반을 다루는 에디터입니다. 다국어(영어, 이탈리아어, 스페인어, 독일어, 프랑스어 등)로 된 뉴스 원문을 한 편 또는 여러 편 받아 언어에 무관하게 한국어 기사로 작성할 만한 소재인지 판단합니다.
 
 핵심 원칙:
-- 카테고리 거절: festival, synth, preview, release, new music, house, techno, club, lineup 같은 넓은 단어만으로는 절대 승인하지 마세요. 같은 카테고리/장르를 다룬다는 이유만으로 묶지도 마세요.
-- 구체적 단위만 승인: 반드시 같은 사건, 같은 릴리즈, 같은 행사, 같은 인물, 같은 제품을 구체적으로 다루는 경우에만 승인하세요.
-- 단독 기사도 같은 기준: 입력이 한 편이어도 그 기사가 구체적 사건/릴리즈/행사/인물/제품을 다룬다면 승인하세요. 단독이라는 이유만으로 거절하지 마세요. 복수 기사라면 모두 같은 사건/릴리즈/행사/인물/제품에 대한 것인지 함께 판단하세요.
+- 아래 주제 등 전자음악과 연결고리가 있으면 적극 승인하세요:
+  * 아티스트/DJ/프로듀서 관련 소식
+  * 릴리즈 (신곡, 앨범, EP, 리믹스)
+  * 페스티벌, 클럽, 이벤트
+  * 음악 장비, 신디사이저, 소프트웨어
+  * 클럽 문화, 씬 소식, 업계 동향
+  * 레이블, 스트리밍 플랫폼 관련 소식
+- 거절 기준을 높이세요. 전자음악과 완전히 무관한 경우(예: 순수 팝/록 기사, 스포츠, 정치 등)에만 거절하세요.
+- 거절 시 반드시 이유를 reason 필드에 넣으세요.
 - 모든 소스를 동등하게 취급하세요. 특정 매체의 등급이나 권위를 기준으로 거르지 마세요.
 - 연도 단독(2025, 2026 등), 매체명, 사이트명, 시리즈명, 인터뷰 형식 표현(catches up with, chats to, talks to 등), 연말 결산/차트/베스트 목록 문구는 절대 승인 기준으로 사용하지 마세요.
 - 좋은 예: "Music On Festival 취소 사태", "EDC Las Vegas 2026 관련 소식", "Armin van Buuren 'A State of Trance 2026' 발매", "John Summit 신곡 'Light Years' 공개"
-- 나쁜 예: "주요 페스티벌 소식", "신시사이저 뉴스", "preview 관련 EDM 뉴스", "2025 관련 소식", "catches up with 관련 소식", "Best Electronic Music 관련 소식"
 
 응답 작성 시:
 - topic은 한국어로, 구체적이고 명확하게 작성하세요.
@@ -27,6 +32,7 @@ type Suggestion = {
   reason?: string
   commonEntities?: string[]
   cohesionScore?: number
+  fromStage15?: boolean
 }
 
 type SuggestionWithArticles = Suggestion & {
@@ -378,9 +384,11 @@ function normalizeSuggestion(
   ))
   const topic = String(suggestion.topic ?? '').trim()
   const reason = String(suggestion.reason ?? '').trim()
-  const cohesionScore = typeof suggestion.cohesionScore === 'number'
-    ? Math.round(suggestion.cohesionScore)
-    : calculateCohesionScore(articleIds, commonEntities.length > 0 ? commonEntities : keywords, rawArticles)
+  const cohesionScore = suggestion.fromStage15
+    ? STAGE2_DEFAULT_COHESION
+    : typeof suggestion.cohesionScore === 'number'
+      ? Math.round(suggestion.cohesionScore)
+      : calculateCohesionScore(articleIds, commonEntities.length > 0 ? commonEntities : keywords, rawArticles)
 
   if (
     !topic
@@ -517,16 +525,16 @@ function matchesBlockRule(suggestion: SuggestionWithArticles, rule: TopicBlockRu
 async function loadExistingTopicKeys(): Promise<Set<string>> {
   const existingTopicKeys = new Set<string>()
 
-  const { data: pendingRows, error: pendingError } = await supabase
+  const { data: existingSuggestionRows, error: existingSuggestionError } = await supabase
     .from('suggested_clusters')
     .select('topic')
-    .eq('status', 'pending')
+    .in('status', ['pending', 'rejected'])
 
-  if (pendingError) {
-    throw new Error(`기존 pending 토픽 조회 실패: ${pendingError.message}`)
+  if (existingSuggestionError) {
+    throw new Error(`기존 제안 토픽 조회 실패: ${existingSuggestionError.message}`)
   }
 
-  for (const row of (pendingRows ?? []) as { topic: string | null }[]) {
+  for (const row of (existingSuggestionRows ?? []) as { topic: string | null }[]) {
     if (row.topic) existingTopicKeys.add(normalizeTopicKey(row.topic))
   }
 
@@ -627,6 +635,7 @@ type CandidateCluster = {
   articleIds: string[]
   sharedEntities: string[]
   weightSum: number
+  fromStage15?: boolean
 }
 
 type ApprovalResponse = {
@@ -634,6 +643,11 @@ type ApprovalResponse = {
   topic?: string
   keywords?: string[]
   reason?: string
+}
+
+type Stage15Response = {
+  new_clusters?: { article_ids?: string[]; reason?: string }[]
+  merges?: { cluster_index?: number; add_article_ids?: string[]; reason?: string }[]
 }
 
 const ENTITY_DICT_CANDIDATE_PATHS = [
@@ -644,6 +658,8 @@ const MIN_ENTITY_WEIGHT_SUM = 0.6
 const ENTITY_HAYSTACK_CONTENT_LIMIT = 500
 const MAX_CANDIDATES_FOR_LLM = 30
 const STAGE2_DEFAULT_COHESION = 50
+const STAGE15_BATCH_SIZE = 25
+const STAGE15_MAX_BATCHES = 6
 
 const APPROVAL_RESPONSE_FORMAT = {
   type: 'object',
@@ -654,6 +670,56 @@ const APPROVAL_RESPONSE_FORMAT = {
     reason: { type: 'string' },
   },
   required: ['approved'],
+}
+
+const STAGE1_5_SYSTEM = `당신은 EDM 뉴스 에디터입니다.
+주어진 단독 기사 목록을 분석하여 다음 두 가지를 수행하세요:
+1. 단독 기사들끼리 같은 주제/사건/릴리즈/인물을 다루는 경우 새 클러스터로 묶기
+2. 단독 기사가 기존 클러스터 중 하나와 같은 주제/사건/릴리즈/인물을 다루는 경우 병합하기
+
+연관도가 낮아 보여도 같은 아티스트, 같은 씬, 같은 장르 이벤트, 같은 레이블이면 적극적으로 묶어라.
+완벽한 주제 일치보다 연결 가능성이 있으면 클러스터로 제안해라.
+묶지 못하는 것을 피하고 싶으면 묶어라. 나중에 사람이 검토한다.
+
+응답은 반드시 아래 JSON 스키마를 따르세요:
+{
+  "new_clusters": [
+    { "article_ids": ["id1", "id2"], "reason": "묶은 이유" }
+  ],
+  "merges": [
+    { "cluster_index": 0, "add_article_ids": ["id3"], "reason": "병합 이유" }
+  ]
+}
+해당 사항이 없으면 빈 배열을 반환하세요.`
+
+const STAGE1_5_RESPONSE_FORMAT = {
+  type: 'object',
+  properties: {
+    new_clusters: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          article_ids: { type: 'array', items: { type: 'string' } },
+          reason: { type: 'string' }
+        },
+        required: ['article_ids', 'reason']
+      }
+    },
+    merges: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          cluster_index: { type: 'integer' },
+          add_article_ids: { type: 'array', items: { type: 'string' } },
+          reason: { type: 'string' }
+        },
+        required: ['cluster_index', 'add_article_ids', 'reason']
+      }
+    }
+  },
+  required: ['new_clusters', 'merges']
 }
 
 function loadEntityDictionary(): EntityEntry[] | null {
@@ -776,6 +842,65 @@ function parseApproval(responseText: string): ApprovalResponse | null {
     } catch {
       return null
     }
+  }
+}
+
+async function runStage15LlmMerge(
+  orphanArticles: RawArticle[],
+  candidates: CandidateCluster[],
+  ollamaUrl: string,
+  suggestModel: string
+): Promise<Stage15Response | null> {
+  const orphansText = orphanArticles.map(a => 
+    `[${a.id}] 제목: ${a.title} / 요약: ${articleSnippet(a) || '(본문 없음)'}`
+  ).join('\n')
+  
+  const clustersText = candidates.map((c, i) => {
+    const origin = c.fromStage15 ? '(LLM 묶음)' : '(엔터티 매칭)'
+    return `[${i}] ${origin} 공유엔터티: ${c.sharedEntities.join(', ') || '(없음)'} / 포함기사 수: ${c.articleIds.length}개`
+  }).join('\n')
+  
+  const prompt = `[단독 기사 목록]\n${orphansText}\n\n[Stage 1 클러스터 목록]\n${clustersText || '(없음)'}`
+  
+  try {
+    const res = await fetch(`${ollamaUrl}/api/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: suggestModel,
+        system: STAGE1_5_SYSTEM,
+        prompt,
+        format: STAGE1_5_RESPONSE_FORMAT,
+        stream: false,
+      })
+    })
+    if (!res.ok) {
+      console.error(`[suggest-clusters] stage1.5 LLM HTTP ${res.status}`)
+      return null
+    }
+    const data = await res.json()
+    const text: string = data.response ?? ''
+    console.log('[stage1.5] LLM raw 응답 앞 500자:', text.slice(0, 500))
+
+    let result: Stage15Response | null = null
+    try {
+      result = JSON.parse(text) as Stage15Response
+    } catch {
+      const match = text.match(/\{[\s\S]*\}/)
+      if (match) {
+        try {
+          result = JSON.parse(match[0]) as Stage15Response
+        } catch {
+          // ignore
+        }
+      }
+    }
+
+    console.log('[stage1.5] 파싱 결과: new_clusters', result?.new_clusters?.length ?? 0, '개, merges', result?.merges?.length ?? 0, '건')
+    return result
+  } catch (err) {
+    console.error('[suggest-clusters] stage1.5 LLM error:', err)
+    return null
   }
 }
 
@@ -1002,7 +1127,7 @@ export async function POST(req: NextRequest) {
 
     const rawArticles = await attachSourceMeta(articles as RawArticle[])
     const ollamaUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434'
-    const suggestModel = process.env.SUGGEST_MODEL || process.env.OLLAMA_MODEL || 'qwen3:14b'
+    const suggestModel = process.env.OLLAMA_SUGGEST_MODEL || process.env.OLLAMA_MODEL || 'qwen3:14b'
     const validIds = new Set(rawArticles.map((a) => a.id))
     const articleMeta = new Map(
       rawArticles.map((a) => [a.id, { id: a.id, title: a.title, url: a.url }])
@@ -1021,12 +1146,126 @@ export async function POST(req: NextRequest) {
       .sort((a, b) => b.weightSum - a.weightSum)
       .slice(0, MAX_CANDIDATES_FOR_LLM)
 
+    // ───── Stage 1.5: 단독 기사 클러스터링 및 병합 ─────
+    const clusteredArticleIds = new Set(candidatesForLlm.flatMap((c) => c.articleIds))
+    const orphanArticles = rawArticles.filter((a) => !clusteredArticleIds.has(a.id))
+
+    if (orphanArticles.length > 0) {
+      const stage15Cap = STAGE15_BATCH_SIZE * STAGE15_MAX_BATCHES
+      let pool = orphanArticles.slice(0, stage15Cap)
+      console.log(
+        `[suggest-clusters] stage1.5 단독 기사 수: ${orphanArticles.length}`
+        + ` (처리 대상: ${pool.length}, 배치 최대: ${STAGE15_MAX_BATCHES} x ${STAGE15_BATCH_SIZE})`
+      )
+
+      let totalNewClusters = 0
+      let totalMerges = 0
+      let batchFailures = 0
+      let processedBatches = 0
+
+      for (let batchIdx = 1; batchIdx <= STAGE15_MAX_BATCHES; batchIdx++) {
+        pool = pool.filter((a) => !clusteredArticleIds.has(a.id))
+        if (pool.length === 0) {
+          console.log(`[stage1.5] 남은 orphan 0개 — 배치 ${batchIdx}부터 중단`)
+          break
+        }
+
+        const batch = pool.slice(0, STAGE15_BATCH_SIZE)
+        const batchIdSet = new Set(batch.map((a) => a.id))
+        console.log(
+          `[stage1.5] 배치 ${batchIdx}/${STAGE15_MAX_BATCHES} 호출 (${batch.length}개,`
+          + ` 남은 pool: ${pool.length}, 클러스터: ${candidatesForLlm.length})`
+        )
+        processedBatches++
+
+        const stage15Result = await runStage15LlmMerge(batch, candidatesForLlm, ollamaUrl, suggestModel)
+
+        pool = pool.filter((a) => !batchIdSet.has(a.id))
+
+        if (!stage15Result) {
+          batchFailures++
+          console.log(`[stage1.5] 배치 ${batchIdx} LLM 호출/파싱 실패 (건너뜀)`)
+          continue
+        }
+
+        for (const merge of stage15Result.merges ?? []) {
+          const cIdx = Number(merge.cluster_index)
+          if (Number.isNaN(cIdx) || cIdx < 0 || cIdx >= candidatesForLlm.length) {
+            console.log(`[stage1.5] merge cluster_index 무효: ${JSON.stringify(merge.cluster_index)}`)
+            continue
+          }
+          if (!Array.isArray(merge.add_article_ids)) {
+            console.log('[stage1.5] merge add_article_ids 배열 아님')
+            continue
+          }
+
+          const rawIds = merge.add_article_ids.map((id) => String(id).trim().replace(/^\[|\]$/g, ''))
+          const invalidIds = rawIds.filter((id) => !validIds.has(id))
+          if (invalidIds.length > 0) {
+            console.log('[stage1.5] merge 환각 id 제거:', invalidIds)
+          }
+          const alreadyClustered = rawIds.filter((id) => validIds.has(id) && clusteredArticleIds.has(id))
+          if (alreadyClustered.length > 0) {
+            console.log(`[stage1.5] merge 이미 클러스터된 id 제거 (cluster_index ${cIdx}):`, alreadyClustered)
+          }
+          const validAddIds = rawIds.filter((id) => validIds.has(id) && !clusteredArticleIds.has(id))
+
+          if (validAddIds.length === 0) {
+            console.log(`[stage1.5] merge 적용 불가 — cluster_index ${cIdx}, 유효 id 0개 (원본: ${rawIds.length})`)
+            continue
+          }
+
+          const cluster = candidatesForLlm[cIdx]
+          cluster.articleIds = Array.from(new Set([...cluster.articleIds, ...validAddIds]))
+          validAddIds.forEach((id) => clusteredArticleIds.add(id))
+          totalMerges++
+          console.log(`[stage1.5] merge 적용 — cluster_index ${cIdx}에 ${validAddIds.length}개 추가`)
+        }
+
+        for (const nc of stage15Result.new_clusters ?? []) {
+          if (!Array.isArray(nc.article_ids)) continue
+
+          const rawIds = nc.article_ids.map((id) => String(id).trim().replace(/^\[|\]$/g, ''))
+          const invalidIds = rawIds.filter((id) => !validIds.has(id))
+          if (invalidIds.length > 0) {
+            console.log('[stage1.5] 환각 id 제거:', invalidIds)
+          }
+          const vIds = rawIds.filter((id) => validIds.has(id) && !clusteredArticleIds.has(id))
+
+          if (vIds.length < 2) {
+            if (vIds.length === 1) {
+              console.log('[stage1.5] size-1 new_cluster 제외:', vIds)
+            }
+            continue
+          }
+
+          candidatesForLlm.push({
+            articleIds: vIds,
+            sharedEntities: ['LLM_MERGED'],
+            weightSum: 1.0,
+            fromStage15: true,
+          })
+          vIds.forEach((id) => clusteredArticleIds.add(id))
+          totalNewClusters++
+        }
+      }
+
+      console.log(
+        `[suggest-clusters] stage1.5 결과: 새 클러스터 ${totalNewClusters}개, 병합 ${totalMerges}건 적용`
+        + ` (실행 배치: ${processedBatches}` + (batchFailures > 0 ? `, 실패: ${batchFailures}` : '') + ')'
+      )
+    }
+
     // ───── Stage 2: LLM 승인 ─────
     let approvedCount = 0
     const normalized: SuggestionWithArticles[] = []
     for (const candidate of candidatesForLlm) {
       const approval = await approveCandidateWithLlm(candidate, rawArticles, ollamaUrl, suggestModel)
-      if (!approval || !approval.approved) continue
+      if (!approval || !approval.approved) {
+        console.log('[stage2] 거절:', candidate.sharedEntities, approval?.reason)
+        continue
+      }
+      console.log('[stage2] 승인:', candidate.sharedEntities)
       approvedCount++
 
       const ns = normalizeSuggestion(
@@ -1037,6 +1276,7 @@ export async function POST(req: NextRequest) {
           reason: approval.reason,
           commonEntities: candidate.sharedEntities,
           cohesionScore: STAGE2_DEFAULT_COHESION,
+          fromStage15: candidate.fromStage15,
         },
         validIds,
         articleMeta,

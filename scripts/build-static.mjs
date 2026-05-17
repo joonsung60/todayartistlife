@@ -7,11 +7,13 @@ import { dirname } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
 const STASH = '.cf-build-stash'
-const PATHS = [
+const STATIC_ROUTE_PATHS = new Set(['app/feed.xml'])
+const STASH_CANDIDATES = [
   ['app/admin', `${STASH}/app/admin`],
   ['app/api', `${STASH}/app/api`],
   ['proxy.ts', `${STASH}/proxy.ts`],
 ]
+const PATHS = STASH_CANDIDATES.filter(([src]) => !STATIC_ROUTE_PATHS.has(src))
 
 function stash() {
   for (const [src, dst] of PATHS) {

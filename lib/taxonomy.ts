@@ -4,7 +4,7 @@ export type CategoryNavItem = {
   aliases: string[]
 }
 
-export type GenreNavItem = {
+export type ReleaseGenreNavItem = {
   slug: string
   label: string
   aliases: string[]
@@ -16,13 +16,30 @@ export const CATEGORY_NAV: CategoryNavItem[] = [
   { slug: 'news', label: '뉴스', aliases: ['news', '뉴스'] },
 ]
 
-export const GENRE_NAV: GenreNavItem[] = [
+export const RELEASE_GENRE_NAV: ReleaseGenreNavItem[] = [
   { slug: 'house', label: 'House', aliases: ['house', '하우스'] },
   { slug: 'techno', label: 'Techno', aliases: ['techno', '테크노'] },
-  { slug: 'trance', label: 'Trance', aliases: ['trance', '트랜스'] },
-  { slug: 'drum-and-bass', label: 'Drum & Bass', aliases: ['drum and bass', 'drum & bass', 'drum-and-bass', 'dnb', 'd&b'] },
-  { slug: 'dubstep', label: 'Dubstep', aliases: ['dubstep', '덥스텝'] },
-  { slug: 'ambient', label: 'Ambient', aliases: ['ambient', '앰비언트'] },
+  {
+    slug: 'edm',
+    label: 'EDM',
+    aliases: [
+      'edm',
+      'electronic dance music',
+      'electronic',
+      'dance',
+      'trance',
+      '트랜스',
+      'drum and bass',
+      'drum & bass',
+      'drum-and-bass',
+      'dnb',
+      'd&b',
+      'dubstep',
+      '덥스텝',
+      'ambient',
+      '앰비언트',
+    ],
+  },
 ]
 
 export function normalizeTaxonomySlug(value: string | null | undefined): string {
@@ -46,9 +63,9 @@ export function findCategory(slug: string): CategoryNavItem | undefined {
   )
 }
 
-export function findGenre(slug: string): GenreNavItem | undefined {
+export function findGenre(slug: string): ReleaseGenreNavItem | undefined {
   const normalized = normalizeTaxonomySlug(slug)
-  return GENRE_NAV.find((item) =>
+  return RELEASE_GENRE_NAV.find((item) =>
     item.slug === normalized || matchesAliases(normalized, item.aliases)
   )
 }

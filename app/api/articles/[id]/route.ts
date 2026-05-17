@@ -11,6 +11,37 @@ function normalizeOptionalInput(value: unknown): string | null {
   return normalized.length > 0 ? normalized : null
 }
 
+type ClusterArticleRow = {
+  raw_article_id: string
+}
+
+async function resetClusterRawArticlesForDraftDelete(clusterId: string): Promise<string | null> {
+  const { data: clusterArticles, error: clusterError } = await supabase
+    .from('cluster_articles')
+    .select('raw_article_id')
+    .eq('cluster_id', clusterId)
+
+  if (clusterError) return clusterError.message
+
+  const rawArticleIds = Array.from(new Set(
+    ((clusterArticles ?? []) as ClusterArticleRow[])
+      .map((row) => row.raw_article_id)
+      .filter(Boolean)
+  ))
+
+  if (rawArticleIds.length === 0) return null
+
+  const { error: rawUpdateError } = await supabase
+    .from('raw_articles')
+    .update({
+      suggestion_state: 'new',
+      suggestion_used_at: null,
+    })
+    .in('id', rawArticleIds)
+
+  return rawUpdateError?.message ?? null
+}
+
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -90,7 +121,7 @@ export async function DELETE(
 
   const { data: article, error: fetchError } = await supabase
     .from('articles')
-    .select('id, title, published')
+    .select('id, title, published, cluster_id')
     .eq('id', id)
     .maybeSingle()
 
@@ -107,6 +138,14 @@ export async function DELETE(
       { error: '게시된 기사는 이 화면에서 삭제할 수 없습니다.' },
       { status: 400 }
     )
+  }
+
+  if (article.cluster_id) {
+    const rawArticleUpdateError = await resetClusterRawArticlesForDraftDelete(article.cluster_id)
+    if (rawArticleUpdateError) {
+      console.error('[delete draft] raw_articles suggestion_state 초기화 실패:', rawArticleUpdateError)
+      return NextResponse.json({ error: rawArticleUpdateError }, { status: 500 })
+    }
   }
 
   const { error: imageSourceUpdateError } = await supabase

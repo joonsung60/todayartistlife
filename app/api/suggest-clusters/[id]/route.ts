@@ -82,13 +82,6 @@ export async function PATCH(
       })
     }
 
-    if (nextStatus === 'published') {
-      rawArticleUpdateError = await updateRawArticleSuggestionState(articleIds, {
-        suggestion_state: 'used',
-        suggestion_used_at: now,
-      })
-    }
-
     if (rawArticleUpdateError) {
       console.error('[suggest-clusters] raw_articles suggestion_state 업데이트 실패:', rawArticleUpdateError)
       return NextResponse.json({ suggestion: data, rawArticleUpdateError }, { status: 500 })

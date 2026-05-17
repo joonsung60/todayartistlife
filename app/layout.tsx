@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Barlow_Condensed, Noto_Sans_KR } from "next/font/google";
-import { CATEGORY_NAV, GENRE_NAV } from "@/lib/taxonomy";
+import { CATEGORY_NAV, RELEASE_GENRE_NAV } from "@/lib/taxonomy";
 import "./globals.css";
 
 const barlowCondensed = Barlow_Condensed({
@@ -116,13 +116,13 @@ export default function RootLayout({
 
               <details className="group relative shrink-0">
                 <summary className="genre-nav-summary list-none cursor-pointer px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-black whitespace-nowrap border-b-2 border-transparent group-open:border-black transition-colors">
-                  장르별 ▾
+                  릴리즈 ▾
                 </summary>
                 <div className="absolute right-0 top-full z-20 min-w-40 border border-gray-200 bg-white py-1.5 shadow-lg">
-                  {GENRE_NAV.map((item) => (
+                  {RELEASE_GENRE_NAV.map((item) => (
                     <Link
                       key={item.slug}
-                      href={`/genre/${item.slug}`}
+                      href={`/genre/${item.slug}/`}
                       className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-black transition-colors"
                     >
                       {item.label}

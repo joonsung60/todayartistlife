@@ -1,13 +1,11 @@
 import { notFound } from 'next/navigation'
 import { ArticleList } from '@/components/ArticleList'
-import { loadPublishedArticles, loadTaxonomyParams } from '@/lib/articles'
-import { GENRE_NAV, findGenre, genreLabel } from '@/lib/taxonomy'
+import { loadPublishedArticles } from '@/lib/articles'
+import { RELEASE_GENRE_NAV, findGenre, genreLabel } from '@/lib/taxonomy'
 
 export async function generateStaticParams() {
-  const { genres } = await loadTaxonomyParams()
   const slugs = new Set([
-    ...GENRE_NAV.map((item) => item.slug),
-    ...genres,
+    ...RELEASE_GENRE_NAV.map((item) => item.slug),
   ])
 
   return Array.from(slugs).map((genre) => ({ genre }))
@@ -26,7 +24,7 @@ export default async function GenrePage({
     limit: 50,
   })
 
-  if (!known && articles.length === 0) notFound()
+  if (!known) notFound()
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-8">

@@ -6,12 +6,18 @@ import { Bot, InlineKeyboard } from "grammy";
 setDefaultResultOrder("ipv4first");
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const ALLOWED_USERS = process.env.ALLOWED_USERS ? process.env.ALLOWED_USERS.split(",").map(Number) : [];
+const ALLOWED_USERS = (process.env.ALLOWED_USERS?.split(",") ?? [])
+  .map((id) => id.trim())
+  .filter((id) => id.length > 0);
 const LOCAL_API = process.env.LOCAL_API ?? "http://localhost:3000";
 const ARTICLE_PREVIEW_LENGTH = 500;
 
 if (!BOT_TOKEN) {
   throw new Error("BOT_TOKEN 환경변수가 없습니다. Telegram bot token을 설정하세요.");
+}
+
+if (ALLOWED_USERS.length === 0) {
+  throw new Error("ALLOWED_USERS 환경변수가 없습니다. 허용할 Telegram user id를 설정하세요.");
 }
 
 // WSL2 환경에서 api.telegram.org의 IPv6 주소로 SYN이 빠져나가지 못해 ETIMEDOUT으로
@@ -37,6 +43,12 @@ function formatArticlePreview(content: unknown): string {
   return `${trimmed.slice(0, ARTICLE_PREVIEW_LENGTH)}...`;
 }
 
+function formatArticleMessage(title: unknown, content: unknown): string {
+  const safeTitle = typeof title === "string" && title.trim().length > 0 ? title.trim() : "제목 없음";
+  const preview = formatArticlePreview(content);
+  return preview ? `${safeTitle}\n\n${preview}` : safeTitle;
+}
+
 bot.catch((err) => {
   console.error("Telegram bot 처리 중 오류:", err.error);
 });
@@ -54,9 +66,9 @@ bot.use(async (ctx, next) => {
 
 // 허용된 사용자만 접근
 bot.use(async (ctx, next) => {
-  const userId = ctx.from?.id;
+  const userId = ctx.from?.id.toString();
   if (!userId || !ALLOWED_USERS.includes(userId)) {
-    console.log("ALLOWED_USERS 차단:", userId ?? "unknown");
+    console.log("ALLOWED_USERS 차단:", userId ?? "unknown", "allowed:", ALLOWED_USERS);
     await ctx.reply("접근 권한이 없습니다.");
     return;
   }
@@ -225,7 +237,7 @@ bot.callbackQuery(/^approve:(.+)$/, async (ctx) => {
     await ctx.api.editMessageText(
       ctx.chat.id,
       msg.message_id,
-      `기사 생성 완료\n\n${genResult.article?.title ?? "제목 없음"}\n\n${formatArticlePreview(genResult.article?.content)}`,
+      `기사 생성 완료\n\n${formatArticleMessage(genResult.article?.title, genResult.article?.content)}`,
       { reply_markup: keyboard }
     );
   } catch (e) {
@@ -274,7 +286,7 @@ bot.command("articles", async (ctx) => {
       const keyboard = new InlineKeyboard()
         .text("게시", `publish:${a.id}`)
         .text("삭제", `delete:${a.id}`);
-      await ctx.reply(`*${a.title}*`, { parse_mode: "Markdown", reply_markup: keyboard });
+      await ctx.reply(formatArticleMessage(a.title, a.content), { reply_markup: keyboard });
     }
   } catch (e) {
     await ctx.reply(`오류 발생: ${e}`);

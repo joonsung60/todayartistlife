@@ -102,34 +102,36 @@ export default function RootLayout({
 
             {/* 하단 바 — 카테고리 네비 */}
             <nav className="relative flex items-center border-t border-gray-100 -mx-4 px-4 md:mx-0 md:px-0 md:border-t-0">
-              <div className="flex min-w-0 flex-1 items-center overflow-x-auto [&::-webkit-scrollbar]:hidden">
+              <div className="flex min-w-0 flex-1 items-center">
                 {NAV_ITEMS.map((item) => (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className="shrink-0 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-black whitespace-nowrap border-b-2 border-transparent hover:border-black transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-
-              <details className="group relative shrink-0">
-                <summary className="genre-nav-summary list-none cursor-pointer px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-black whitespace-nowrap border-b-2 border-transparent group-open:border-black transition-colors">
-                  릴리즈 ▾
-                </summary>
-                <div className="absolute right-0 top-full z-20 min-w-40 border border-gray-200 bg-white py-1.5 shadow-lg">
-                  {RELEASE_GENRE_NAV.map((item) => (
+                  item.href === "/category/release" ? (
+                    <details key={item.label} className="group relative shrink-0">
+                      <summary className="genre-nav-summary list-none cursor-pointer px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-black whitespace-nowrap border-b-2 border-transparent group-open:border-black transition-colors">
+                        릴리즈 ▾
+                      </summary>
+                      <div className="absolute left-0 top-full z-20 min-w-40 border border-gray-200 bg-white py-1.5 shadow-lg">
+                        {RELEASE_GENRE_NAV.map((genre) => (
+                          <Link
+                            key={genre.slug}
+                            href={`/genre/${genre.slug}/`}
+                            className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-black transition-colors"
+                          >
+                            {genre.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </details>
+                  ) : (
                     <Link
-                      key={item.slug}
-                      href={`/genre/${item.slug}/`}
-                      className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-black transition-colors"
+                      key={item.label}
+                      href={item.href}
+                      className="shrink-0 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-black whitespace-nowrap border-b-2 border-transparent hover:border-black transition-colors"
                     >
                       {item.label}
                     </Link>
-                  ))}
-                </div>
-              </details>
+                  )
+                ))}
+              </div>
             </nav>
           </div>
         </header>

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { SYSTEM_PROMPT_A } from '@/lib/prompts'
-import { findGenre } from '@/lib/taxonomy'
 
 type ImageSourceRow = {
   id: string
@@ -17,12 +16,10 @@ type GeneratedImageArticle = {
   content: string
   slug: string
   category: string
-  genre: string
 }
 
-const ALLOWED_CATEGORIES = ['페스티벌', '릴리즈', '뉴스']
+const ALLOWED_CATEGORIES = ['뉴스', '공연', '아티스트']
 const DEFAULT_CATEGORY = '뉴스'
-const DEFAULT_GENRE = 'edm'
 const SLUG_MAX_LENGTH = 30
 const BUCKET_NAME = 'image-sources'
 const MAX_BASE64_LENGTH = 14_000_000
@@ -119,15 +116,6 @@ function normalizeCategory(raw: string): string {
   return ALLOWED_CATEGORIES.includes(trimmed) ? trimmed : DEFAULT_CATEGORY
 }
 
-function normalizeGenre(raw: string): string {
-  return findGenre(raw)?.slug ?? DEFAULT_GENRE
-}
-
-function normalizeGenreForCategory(category: string, raw: string): string {
-  if (category !== '릴리즈') return DEFAULT_GENRE
-  return normalizeGenre(raw)
-}
-
 async function ensureUniqueSlug(base: string): Promise<string> {
   const safeBase = base || `image-article-${Date.now().toString(36)}`
   let candidate = safeBase
@@ -155,7 +143,6 @@ function parseGeneratedArticle(response: string): GeneratedImageArticle | null {
           content: parsed.content.trim(),
           slug: typeof parsed.slug === 'string' ? parsed.slug.trim() : '',
           category: typeof parsed.category === 'string' ? parsed.category.trim() : '',
-          genre: typeof parsed.genre === 'string' ? parsed.genre.trim() : '',
         }
       }
     } catch {
@@ -165,20 +152,18 @@ function parseGeneratedArticle(response: string): GeneratedImageArticle | null {
 
   const titleMatch = response.match(/(?:^|\n)\s*(?:제목|title)\s*[:：]\s*(.+)/i)
   const contentMatch = response.match(
-    /(?:^|\n)\s*(?:본문|내용|content)\s*[:：]\s*([\s\S]+?)(?=\n\s*(?:슬러그|slug|카테고리|category|장르|genre)\s*[:：]|$)/i
+    /(?:^|\n)\s*(?:본문|내용|content)\s*[:：]\s*([\s\S]+?)(?=\n\s*(?:슬러그|slug|카테고리|category)\s*[:：]|$)/i
   )
 
   if (titleMatch && contentMatch) {
     const slugMatch = response.match(/(?:^|\n)\s*(?:슬러그|slug)\s*[:：]\s*(.+)/i)
     const categoryMatch = response.match(/(?:^|\n)\s*(?:카테고리|category)\s*[:：]\s*(.+)/i)
-    const genreMatch = response.match(/(?:^|\n)\s*(?:장르|genre)\s*[:：]\s*(.+)/i)
 
     return {
       title: titleMatch[1].trim(),
       content: contentMatch[1].trim(),
       slug: slugMatch?.[1].trim() ?? '',
       category: categoryMatch?.[1].trim() ?? '',
-      genre: genreMatch?.[1].trim() ?? '',
     }
   }
 
@@ -205,7 +190,6 @@ function formatSourceDate(value: string | null): string {
   const date = new Date(`${value}T00:00:00+09:00`)
   if (Number.isNaN(date.getTime())) return '없음'
   return date.toLocaleDateString('ko-KR', {
-    year: 'numeric',
     month: 'long',
     day: 'numeric',
     timeZone: 'Asia/Seoul',
@@ -214,7 +198,7 @@ function formatSourceDate(value: string | null): string {
 
 function buildPrompt(source: ImageSourceRow): string {
   return `아래는 단일 이미지/SNS 소스를 Vision LLM으로 분석한 결과입니다.
-이 이미지 하나만을 근거로 한국어 EDM 뉴스 기사 초안을 작성하세요.
+이 이미지 하나만을 근거로 한국어 뉴스 기사 초안을 작성하세요.
 
 중요:
 - 분석 결과에 없는 사실을 추측하지 마세요.
@@ -222,12 +206,6 @@ function buildPrompt(source: ImageSourceRow): string {
 - 소스 메모는 사용자의 맥락 보충 자료입니다. 단, 메모만으로 과장하지 마세요.
 - 날짜가 필요하면 사용자 입력 날짜 또는 이미지 분석 결과에 명확히 있는 구체적 날짜만 사용하세요.
 - '오늘', '어제', '최근', '며칠 전' 같은 상대적 날짜 표현은 금지입니다.
-- 출력은 반드시 JSON 객체 하나만 허용됩니다.
-- 마크다운 코드블록, 설명 문장, 주석, 목록, 머리말을 JSON 앞뒤에 붙이지 마세요.
-- JSON 키는 "title", "content", "slug", "category", "genre" 다섯 개입니다.
-- JSON 문자열 안의 줄바꿈은 \\n으로 이스케이프하세요.
-- category는 "페스티벌", "릴리즈", "뉴스" 셋 중 하나만 사용하세요. 페스티벌/행사/공연/레지던시는 "페스티벌", 신곡/앨범/EP/믹스/리믹스/컴필레이션 발매는 "릴리즈", 그 외는 모두 "뉴스"입니다.
-- genre는 category가 "릴리즈"일 때만 "house", "techno", "trance", "drum-and-bass", "dubstep", "ambient" 중 하나를 사용하세요. 이 목록 중 특정하기 어렵거나 category가 "페스티벌" 또는 "뉴스"이면 반드시 "edm"으로 두세요.
 
 [소스 메모]
 ${source.source_memo ?? '없음'}
@@ -238,8 +216,7 @@ ${formatSourceDate(source.source_date)}
 [이미지 분석 결과]
 ${source.extracted_text ?? ''}
 
-응답 예:
-{"title":"한국어 기사 제목","content":"한국어 기사 본문","slug":"english-keyword-slug","category":"뉴스","genre":"edm"}`
+응답은 오직 SYSTEM_PROMPT의 [출력 형식]에 정의된 JSON 구조로만 반환하세요.`
 }
 
 async function generateArticle(source: ImageSourceRow): Promise<GeneratedImageArticle> {
@@ -358,7 +335,6 @@ export async function POST(
     const generated = await generateArticle(imageSource)
     const slug = await ensureUniqueSlug(normalizeSlug(generated.slug))
     const category = normalizeCategory(generated.category)
-    const genre = normalizeGenreForCategory(category, generated.genre)
 
     const { data: article, error: articleError } = await supabase
       .from('articles')
@@ -369,7 +345,6 @@ export async function POST(
         published: false,
         slug,
         category,
-        genre,
         image_url: articleImageUrl,
       })
       .select()

@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import {
   matchesCategory,
-  matchesGenre,
   normalizeTaxonomySlug,
 } from '@/lib/taxonomy'
 
@@ -63,7 +62,6 @@ export async function loadPublishedArticles(
 
   const rows = ((data ?? []) as ArticleRow[])
     .filter((row) => !options.category || matchesCategory(row.category, options.category))
-    .filter((row) => !options.genre || matchesGenre(row.genre, options.genre))
     .slice(0, limit)
 
   const imageByCluster = await loadImagesByCluster(rows)

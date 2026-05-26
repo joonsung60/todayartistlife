@@ -362,7 +362,7 @@ async function main() {
 
     await bot.start({
       onStart: (botInfo) => {
-        console.log(`EDM Star News 봇 시작됨: @${botInfo.username}`);
+        console.log(`투아라 (Today Artist Life) 봇 시작됨: @${botInfo.username}`);
       },
     });
   } catch (e) {

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: '소개 | EDM Star News',
-  description: 'EDM Star News는 한국어권 EDM 저널리즘의 공백을 채우기 위해 만들어진 독립 미디어입니다.',
+  title: '소개 | 투아라 (Today Artist Life)',
+  description: '해외 아티스트/연예인들의 생생한 라이프, 가십, 스토리를 전하는 한국인 대상 전문 미디어입니다.',
 }
 
 export default function AboutPage() {
@@ -10,26 +10,20 @@ export default function AboutPage() {
     <div className="min-h-full bg-zinc-50 text-zinc-900">
       <main className="max-w-3xl mx-auto px-6 py-16">
         <h1 className="text-3xl font-bold tracking-tight mb-10">
-          EDM Star News는
+          투아라 (Today Artist Life)는
         </h1>
 
         <div className="text-base leading-relaxed text-zinc-800 space-y-6">
           <p>
-            한국어권 EDM 저널리즘의 공백을 채우기 위해 만들어진 독립 미디어입니다.
+            해외 팝, 케이팝, 그리고 다양한 장르를 넘나드는 글로벌 아티스트들의 라이프, 가십, 비하인드 스토리를 전하는 미디어입니다.
           </p>
 
           <p>
-            2016년, 월드디제이페스티벌(WDF) 현장에서 EDM 씬을 처음 마주했습니다.
-            10년이 지난 2026년, 아비치의 다큐멘터리를 계기로 전자음악이 단순한 유흥이 아닌
-            인류의 서사라는 것을 깨달았고, 한국어로 된 제대로 된 EDM 자료가 거의 없다는
-            사실에 직면했습니다.
+            무대 위 화려한 모습뿐만 아니라, 그 이면의 일상과 흥미로운 에피소드들을 한국어로 쉽고 빠르게 접할 수 있도록 기획되었습니다. 음악 산업 트렌드부터 아티스트 개인의 인간적인 매력까지 폭넓게 다룹니다.
           </p>
 
-          <p>그 결핍이 이 사이트를 만들었습니다.</p>
-
           <p>
-            페스티벌 라인업, 아티스트 동향, 새로운 릴리즈까지.
-            EDM을 진지하게 듣는 사람들을 위한 뉴스를 만들어갑니다.
+            단순한 정보 전달을 넘어 아티스트들의 다채로운 삶과 이야기를 가장 생생하게 기록해 나갑니다.
           </p>
         </div>
 

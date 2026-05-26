@@ -1,22 +1,61 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { cleanArticleText, extractArticleText } from '@/lib/article-extraction'
-import displayNames from '@/lib/display-names.json'
+import { findCategory } from '@/lib/taxonomy'
 import { SYSTEM_PROMPT_A } from '@/lib/prompts'
-import { findGenre } from '@/lib/taxonomy'
 
-const displayNameRules = Object.entries(displayNames as Record<string, string>)
-  .map(([en, ko]) => `- ${en} → ${ko}`)
-  .join('\n')
+type SimpleEntity = { name: string; korean_name: string; type: string; aliases?: string[] }
 
-const displayNameReplacements = Object.entries(displayNames as Record<string, string>)
-  .filter(([en, ko]) => en !== ko)
-  .sort((a, b) => b[0].length - a[0].length)
+function loadEntities(): SimpleEntity[] {
+  try {
+    const artists = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'lib/entities/artists.json'), 'utf-8'))
+    const celebs = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'lib/entities/celebrities.json'), 'utf-8'))
+    return [...artists, ...celebs]
+  } catch (err) {
+    console.error('Failed to load entities:', err)
+    return []
+  }
+}
 
-function applyDisplayNameMapping(text: string): string {
+function escapeRegExp(string: string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function entityMatchTerms(entity: SimpleEntity): string[] {
+  return [entity.name, ...(entity.aliases ?? [])].filter((term) => term.trim().length > 0)
+}
+
+function getMatchedEntities(fullText: string, entities: SimpleEntity[]): SimpleEntity[] {
+  const lowerText = fullText.toLowerCase()
+  return entities.filter(ent => {
+    const hasNameMatch = entityMatchTerms(ent).some((term) => {
+      const lowerTerm = term.toLowerCase()
+      const termRegex = new RegExp(`\\b${escapeRegExp(lowerTerm)}\\b`, 'i')
+      return termRegex.test(lowerText)
+    })
+    return hasNameMatch || fullText.includes(ent.korean_name)
+  })
+}
+
+// 사후 교정을 위한 함수 (optional)
+function applyDisplayNameMapping(text: string, matchedEntities: SimpleEntity[]): string {
   let result = text
-  for (const [en, ko] of displayNameReplacements) {
-    result = result.replaceAll(en, ko)
+  const replacements = matchedEntities
+    .filter(e => e.name !== e.korean_name)
+    .flatMap((entity) => entityMatchTerms(entity).map((term) => ({
+      term,
+      koreanName: entity.korean_name,
+    })))
+    .sort((a, b) => b.term.length - a.term.length)
+
+  for (const { term, koreanName } of replacements) {
+    const regex = new RegExp(`\\b${escapeRegExp(term)}\\b`, 'gi')
+    result = result.replace(regex, (match, offset: number) => {
+      if (result[offset - 1] === '(') return match
+      return koreanName
+    })
   }
   return result
 }
@@ -34,13 +73,11 @@ type GeneratedArticle = {
   content: string
   slug: string
   category: string
-  genre: string
+  entities: string[]
 }
 
-const ALLOWED_CATEGORIES = ['페스티벌', '릴리즈', '뉴스']
 const SLUG_MAX_LENGTH = 30
-const DEFAULT_CATEGORY = '뉴스'
-const DEFAULT_GENRE = 'edm'
+const DEFAULT_CATEGORY = 'news'
 
 type ClusterArticleRow = {
   raw_article_id: string
@@ -60,10 +97,10 @@ type SourceMeta = {
 }
 
 const RESPONSE_NOISE_PATTERNS = [
-  /\b(login|search|members login|become a member|advertise|submit music|contact us)\b/i,
+  /\b(login|search|members login|become a member|advertise|contact us)\b/i,
   /\b(share|email|facebook|twitter|reddit|pinterest|whatsapp|telegram)\b/i,
   /\b(previous article|next article|related articles|more from author|comments are closed)\b/i,
-  /\b(sign up|subscribe|tags|just released|claim this offer|read more)\b/i,
+  /\b(sign up|subscribe|claim this offer|read more)\b/i,
 ]
 
 function compactSourceText(text: string): string {
@@ -112,16 +149,14 @@ function appendSingleSourceAttribution(
   const [article] = rawArticles
   const sourceName = sourceNameForAttribution(article, sourceMeta)
   const sourceUrl = cleanSourceUrl(article.url)
-  return `${content.trim()}\n\n*이 기사는 ${sourceName}의 원문을 바탕으로 핵심 내용을 한국어로 재구성한 것입니다. [원문 보기](${sourceUrl})*`
+  return `${content.trim()}\n\n*이 기사는 ${sourceName}의 원문을 바탕으로 재구성되었습니다. [원문 보기](${sourceUrl})*`
 }
 
 async function fetchSourceMeta(sourceIds: Array<string | number | null>): Promise<Map<string, SourceMeta>> {
   const ids = Array.from(new Set(sourceIds.filter((id): id is string | number => id !== null)))
   const sourceMeta = new Map<string, SourceMeta>()
 
-  if (ids.length === 0) {
-    return sourceMeta
-  }
+  if (ids.length === 0) return sourceMeta
 
   const { data } = await supabase
     .from('rss_sources')
@@ -137,22 +172,13 @@ async function fetchSourceMeta(sourceIds: Array<string | number | null>): Promis
   return sourceMeta
 }
 
-function formatSourceDate(iso: string | null): string | null {
-  if (!iso) {
-    return null
-  }
-
-  const date = new Date(iso)
+function formatSourceDate(iso: string | null): string {
+  const date = iso ? new Date(iso) : new Date()
   if (Number.isNaN(date.getTime())) {
-    return null
+    const fallback = new Date()
+    return `${fallback.getUTCMonth() + 1}월 ${fallback.getUTCDate()}일`
   }
-
-  return date.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'Asia/Seoul',
-  })
+  return `${date.getUTCMonth() + 1}월 ${date.getUTCDate()}일`
 }
 
 async function fetchArticleContent(url: string): Promise<string> {
@@ -182,29 +208,33 @@ function parseGeneratedArticle(response: string): GeneratedArticle | null {
           content: parsed.content.trim(),
           slug: typeof parsed.slug === 'string' ? parsed.slug.trim() : '',
           category: typeof parsed.category === 'string' ? parsed.category.trim() : '',
-          genre: typeof parsed.genre === 'string' ? parsed.genre.trim() : '',
+          entities: Array.isArray(parsed.entities)
+            ? parsed.entities
+              .filter((entity): entity is string => typeof entity === 'string')
+              .map((entity) => entity.trim())
+              .filter(Boolean)
+            : [],
         }
       }
     } catch {
-      // Fall through to the legacy parser for imperfect model output.
+      // Fall through
     }
   }
 
   const titleMatch = cleaned.match(/^제목:\s*(.+)$/m)
-  const contentMatch = cleaned.match(/^내용:\s*([\s\S]+?)(?=\n(?:슬러그|카테고리|장르):|$)/m)
+  const contentMatch = cleaned.match(/^내용:\s*([\s\S]+?)(?=\n(?:슬러그|카테고리):|$)/m)
   if (!titleMatch || !contentMatch) {
     return null
   }
   const slugMatch = cleaned.match(/^슬러그:\s*(.+)$/m)
   const categoryMatch = cleaned.match(/^카테고리:\s*(.+)$/m)
-  const genreMatch = cleaned.match(/^장르:\s*(.+)$/m)
 
   return {
     title: titleMatch[1].trim(),
     content: contentMatch[1].trim(),
     slug: slugMatch?.[1].trim() ?? '',
     category: categoryMatch?.[1].trim() ?? '',
-    genre: genreMatch?.[1].trim() ?? '',
+    entities: [],
   }
 }
 
@@ -219,17 +249,8 @@ function normalizeSlug(raw: string): string {
 }
 
 function normalizeCategory(raw: string): string {
-  const trimmed = raw.trim()
-  return ALLOWED_CATEGORIES.includes(trimmed) ? trimmed : DEFAULT_CATEGORY
-}
-
-function normalizeGenre(raw: string): string | null {
-  return findGenre(raw)?.slug ?? null
-}
-
-function normalizeGenreForCategory(category: string, raw: string): string {
-  if (category !== '릴리즈') return DEFAULT_GENRE
-  return normalizeGenre(raw) ?? DEFAULT_GENRE
+  const category = findCategory(raw)
+  return category?.slug ?? DEFAULT_CATEGORY
 }
 
 async function ensureUniqueSlug(base: string): Promise<string> {
@@ -270,14 +291,14 @@ function validateKoreanArticle(article: GeneratedArticle): string | null {
   return null
 }
 
-async function generateKoreanArticle(articles: SourceArticle[]): Promise<GeneratedArticle> {
+async function generateKoreanArticle(articles: SourceArticle[], matchedEntities: SimpleEntity[]): Promise<GeneratedArticle> {
   const articlesText = articles
     .map((article, index) => {
       const publishedAt = formatSourceDate(article.publishedAt)
       return [
         `[소스 ${index + 1}]`,
         `매체: ${article.sourceName}`,
-        publishedAt ? `발행일: ${publishedAt}` : null,
+        `발행일: ${publishedAt}`,
         `제목: ${article.title}`,
         `URL: ${article.source}`,
         `내용: ${compactSourceText(article.content)}`,
@@ -285,14 +306,25 @@ async function generateKoreanArticle(articles: SourceArticle[]): Promise<Generat
     })
     .join('\n\n---\n\n')
 
+  const entityRules = matchedEntities.length > 0
+    ? matchedEntities.map(e => `- ${e.name} → ${e.korean_name}`).join('\n')
+    : '(매칭된 사전 정의 인물 없음)'
+
   const ollamaUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434'
   const ollamaModel = process.env.OLLAMA_GENERATE_MODEL || process.env.OLLAMA_MODEL || 'qwen3:14b'
   let lastError = '생성 실패'
 
   for (let attempt = 1; attempt <= 2; attempt++) {
     const retryGuidance = attempt > 1
-      ? `\n이전 응답은 검증에 실패했습니다. 실패 이유: ${lastError}\n이번에는 영어 원문 문장과 사이트 메뉴 문구를 절대 포함하지 말고, 자연스러운 한국어 기사로 다시 작성하세요.\n`
+      ? `\n[주의]\n이전 응답은 검증에 실패했습니다. 실패 이유: ${lastError}\n형식과 원칙을 엄격히 지켜서 다시 작성하세요.\n`
       : ''
+
+    const userPrompt = `[고유명사 표기 규칙]
+아래 목록은 이번 기사에 등장하는 인물들의 지정된 한국어 표기입니다.
+${entityRules}
+
+[소스 기사]
+${articlesText}${retryGuidance}`
 
     const res = await fetch(`${ollamaUrl}/api/generate`, {
       method: 'POST',
@@ -300,40 +332,7 @@ async function generateKoreanArticle(articles: SourceArticle[]): Promise<Generat
       body: JSON.stringify({
         model: ollamaModel,
         system: SYSTEM_PROMPT_A,
-        prompt: `아래 소스들을 참고해 한국어 뉴스 기사를 새로 작성하세요.
-
-[displayNameRules]
-아래 목록은 이번 요청에서 사용할 수 있는 고유명사 표기 허용 목록입니다.
-- 오른쪽 값이 한국어인 항목만 한국어 표기를 사용할 수 있습니다.
-- 제목에서는 허용된 한국어 표기만 사용하고 영문 병기를 하지 마세요.
-- 본문에서는 허용된 한국어 표기가 있는 고유명사가 처음 등장할 때 한 번만 "한국어(영문)" 형태로 쓰고, 이후에는 한국어만 쓰세요.
-- 목록에 없거나, 값이 영문과 같거나, 한국어 표기가 애매한 아티스트명·장소명·행사명은 영문 그대로 유지하세요.
-- 모델 지식으로 새 한국어 표기나 음역을 만들지 마세요. 예: Floating Points, Honey Dijon, Joy Orbison, Field Day, Represent는 목록에 한국어 값이 없으면 영문 그대로 써야 합니다.
-${displayNameRules}
-
-[출력 지시]
-- 소스 내용을 그대로 복사하지 마세요.
-- 영어 원문 문장, 사이트 메뉴, 태그, 공유 버튼, 관련 기사 목록은 출력하지 마세요.
-- 모든 소스를 동등하게 참고하되, 어느 한 소스의 표현이나 판단을 검증 없이 확대하지 마세요.
-- 출력은 반드시 JSON 객체 하나만 허용됩니다.
-- JSON 키는 "title", "content", "slug", "category", "genre" 다섯 개입니다.
-- category는 반드시 "페스티벌", "릴리즈", "뉴스" 셋 중 하나만 사용하세요.
-- genre는 반드시 "house", "techno", "edm" 셋 중 하나만 사용하세요.
-- 릴리즈 기사에서 house 또는 techno로 명확히 특정되는 경우에만 각각 "house", "techno"를 쓰고, 그 외 모든 경우는 "edm"으로 두세요.
-- 본문 content에 마크다운 문법을 절대 사용하지 마세요. #, ##, **, *, -, 불릿 포인트, 번호 목록 등 일체 금지입니다.
-- 날짜별 일정을 나열할 때도 불릿이나 헤더 없이 자연스러운 문장으로 이어 쓰세요.
-- 곡명, 앨범명, EP명은 번역하지 말고 원문 그대로 작은따옴표로 표기하세요. 예: 'Your Eyes', 'Light Years', 'Pure Devotion'. 절대 한국어로 번역하지 마세요.
-- 원문이 인터뷰 형식(Q&A)인 경우 질문과 답변을 그대로 나열하지 말고 기사체로 재구성하세요. 아티스트의 발언은 간접 인용 형태로 처리하세요. 예: "메 엔 유는 낯선 사람들과의 대화에서 공연의 영감을 얻는다고 밝혔다." 직접 인용이 필요한 경우에만 따옴표로 한 문장 이내로 처리하세요.
-- 실제 사실(날짜, 장소, 아티스트명, 곡명 등)이 없는 문장은 쓰지 마세요. "이러한 라인업은 ~의 역할을 보여줍니다", "특별한 경험을 선사합니다" 같은 홍보성 마무리 문장은 금지입니다.
-- content는 순수 텍스트 단락만으로 구성하세요.
-- slug: 영문 소문자와 하이픈만 사용하고 30자 이내. 기사 핵심 키워드 기반. 예: "martin-garrix-new-album-2026"
-${retryGuidance}
-
-[소스 데이터]
-${articlesText}
-
-[JSON 출력 형식]
-{"title":"한국어 기사 제목","content":"한국어 기사 본문","slug":"english-keyword-slug-2026","category":"릴리즈","genre":"house"}`,
+        prompt: userPrompt,
         stream: false,
         think: false,
       }),
@@ -352,6 +351,8 @@ ${articlesText}
       lastError = 'Ollama 응답을 기사 JSON으로 파싱하지 못했습니다.'
       continue
     }
+
+    console.log('[entities] LLM returned:', generated.entities)
 
     const validationError = validateKoreanArticle(generated)
     if (!validationError) {
@@ -372,11 +373,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'clusterIds가 필요합니다.' }, { status: 400 })
   }
 
+  const allEntities = loadEntities()
   const results = []
 
   for (const clusterId of clusterIds) {
     try {
-      // 클러스터에 연결된 원문 기사들 가져오기
       const { data: clusterArticles, error: clusterError } = await supabase
         .from('cluster_articles')
         .select('raw_article_id')
@@ -404,7 +405,6 @@ export async function POST(req: NextRequest) {
       const typedRawArticles = rawArticles as RawArticleRow[]
       const sourceMeta = await fetchSourceMeta(typedRawArticles.map((article) => article.source_id))
 
-      // 본문이 없는 기사는 스크래핑
       const articlesWithContent = await Promise.all(
         typedRawArticles.map(async (article) => {
           const content = article.content || await fetchArticleContent(article.url)
@@ -424,19 +424,26 @@ export async function POST(req: NextRequest) {
         throw new Error('생성에 사용할 수 있는 원문 본문이 없습니다.')
       }
 
-      // 한국어 종합 기사 생성
-      const rawGenerated = await generateKoreanArticle(usableArticles)
+      // 엔티티 매칭
+      const fullContentForMatching = usableArticles.map(a => `${a.title}\n${a.content}`).join('\n')
+      const matchedEntities = getMatchedEntities(fullContentForMatching, allEntities)
+
+      const rawGenerated = await generateKoreanArticle(usableArticles, matchedEntities)
+
       const generated = {
         ...rawGenerated,
-        title: applyDisplayNameMapping(rawGenerated.title),
-        content: rawGenerated.content,
+        title: applyDisplayNameMapping(rawGenerated.title, matchedEntities),
+        content: applyDisplayNameMapping(rawGenerated.content, matchedEntities),
       }
+      const fallbackMatchedEntities = getMatchedEntities(`${generated.title}\n${generated.content}`, allEntities)
+      const entityNames = generated.entities.length > 0
+        ? Array.from(new Set(generated.entities))
+        : fallbackMatchedEntities.map((e) => e.name)
+
       const slug = await ensureUniqueSlug(normalizeSlug(generated.slug))
       const category = normalizeCategory(generated.category)
-      const genre = normalizeGenreForCategory(category, generated.genre)
       const content = appendSingleSourceAttribution(generated.content, typedRawArticles, sourceMeta)
 
-      // articles 테이블에 저장
       const { data, error } = await supabase
         .from('articles')
         .insert({
@@ -446,12 +453,67 @@ export async function POST(req: NextRequest) {
           published: false,
           slug,
           category,
-          genre,
         })
         .select()
         .single()
 
       if (error) throw error
+
+      if (entityNames.length > 0 && data?.id) {
+        try {
+          const { data: dbEntities, error: entError } = await supabase
+            .from('entities')
+            .select('id, name, korean_name')
+            .in('name', entityNames)
+
+          if (entError) {
+            console.error('Failed to fetch entities:', entError.message)
+          }
+
+          const matchedDbEntities = dbEntities ?? []
+          const foundNames = new Set(matchedDbEntities.map((entity) => entity.name))
+          const missingNames = entityNames.filter((name) => !foundNames.has(name))
+
+          for (const missingName of missingNames) {
+            const { data: aliasEntities, error: aliasError } = await supabase
+              .from('entities')
+              .select('id, name, korean_name')
+              .filter('aliases', 'cs', `{"${missingName.replaceAll('"', '\\"')}"}`)
+
+            if (aliasError) {
+              console.error(`Failed to fetch entities by alias (${missingName}):`, aliasError.message)
+              continue
+            }
+
+            matchedDbEntities.push(...(aliasEntities ?? []))
+          }
+
+          const uniqueDbEntities = Array.from(
+            new Map(matchedDbEntities.map((entity) => [entity.id, entity])).values()
+          )
+          const generatedText = `${generated.title}\n${generated.content}`
+          const verifiedDbEntities = uniqueDbEntities.filter((entity) =>
+            generatedText.includes(entity.korean_name)
+          )
+
+          if (verifiedDbEntities.length > 0) {
+            const articleEntities = verifiedDbEntities.map((ent) => ({
+              article_id: data.id,
+              entity_id: ent.id,
+            }))
+
+            const { error: relError } = await supabase
+              .from('article_entities')
+              .upsert(articleEntities, { onConflict: 'article_id,entity_id', ignoreDuplicates: true })
+
+            if (relError) {
+              console.error('Failed to insert article_entities:', relError.message)
+            }
+          }
+        } catch (entErr) {
+          console.error('Error in article_entities linking:', entErr)
+        }
+      }
 
       results.push({ success: true, clusterId, article: data })
 

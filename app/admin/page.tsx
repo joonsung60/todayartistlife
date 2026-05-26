@@ -37,7 +37,7 @@ export default function AdminPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-8">EDM Star News 어드민</h1>
+      <h1 className="text-2xl font-bold mb-8">투아라 어드민</h1>
 
       <div className="mb-8 rounded border border-gray-200 bg-gray-50 p-1">
         <div className="grid grid-cols-1 gap-1 sm:grid-cols-3">
@@ -844,6 +844,65 @@ function SuggestTab() {
     setProcessing(null)
   }
 
+  const handleRegenerate = async (s: PersistedSuggestion) => {
+    setProcessing(s.id)
+    setResults((r) => ({ ...r, [s.id]: { state: 'pending', message: '기사 재생성 중...' } }))
+
+    try {
+      let currentClusterId = s.clusterId
+
+      if (!currentClusterId) {
+        const clusterRes = await fetch('/api/cluster', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            topic: s.topic,
+            keywords: s.keywords,
+            articleIds: s.articleIds,
+          }),
+        })
+        const clusterData = await clusterRes.json()
+        if (!clusterData.success) {
+          setResults((r) => ({
+            ...r,
+            [s.id]: { state: 'error', message: clusterData.error ?? '클러스터 생성 실패' },
+          }))
+          setProcessing(null)
+          return
+        }
+        currentClusterId = clusterData.clusterId
+      }
+
+      const genRes = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clusterIds: [currentClusterId] }),
+      })
+      const genData = await genRes.json()
+      const result = genData.results?.[0] as GenerateResult | undefined
+
+      if (result?.success) {
+        await patchStatus(s.id, {
+          status: 'published',
+          clusterId: currentClusterId,
+        })
+        setResults((r) => ({
+          ...r,
+          [s.id]: { state: 'success', message: `재생성 완료: ${result.article?.title ?? ''}` },
+        }))
+        await load(subTab)
+      } else {
+        setResults((r) => ({
+          ...r,
+          [s.id]: { state: 'error', message: result?.error ?? '기사 생성 실패' },
+        }))
+      }
+    } catch (err) {
+      setResults((r) => ({ ...r, [s.id]: { state: 'error', message: String(err) } }))
+    }
+    setProcessing(null)
+  }
+
   const handleReject = async (s: PersistedSuggestion) => {
     setProcessing(s.id)
     try {
@@ -1133,10 +1192,19 @@ function SuggestTab() {
                     </div>
                   )}
 
-                  {subTab === 'published' && s.clusterId && (
-                    <span className="px-3 py-2 border border-gray-300 text-gray-600 text-sm rounded whitespace-nowrap">
-                      기사 초안 생성됨
-                    </span>
+                  {subTab === 'published' && (
+                    <div className="flex gap-2 whitespace-nowrap">
+                      <span className="px-3 py-2 border border-gray-300 text-gray-600 text-sm rounded">
+                        기사 초안 생성됨
+                      </span>
+                      <button
+                        onClick={() => handleRegenerate(s)}
+                        disabled={processing !== null}
+                        className="px-3 py-2 bg-black text-white text-sm rounded font-semibold disabled:opacity-50"
+                      >
+                        {isProcessing ? '처리 중...' : '재생성'}
+                      </button>
+                    </div>
                   )}
                 </div>
 

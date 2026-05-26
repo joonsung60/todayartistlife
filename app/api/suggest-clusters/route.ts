@@ -4,28 +4,26 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { cleanArticleText } from '@/lib/article-extraction'
 
-const SUGGEST_SYSTEM = `당신은 전세계 전자음악 씬 전반을 다루는 에디터입니다. 다국어(영어, 이탈리아어, 스페인어, 독일어, 프랑스어 등)로 된 뉴스 원문을 한 편 또는 여러 편 받아 언어에 무관하게 한국어 기사로 작성할 만한 소재인지 판단합니다.
+const SUGGEST_SYSTEM = `당신은 해외 팝, 케이팝, EDM, 힙합, 배우 등 글로벌 아티스트와 유명인들의 라이프, 가십, 신보 소식을 다루는 에디터입니다. 다국어로 된 뉴스 원문을 한 편 또는 여러 편 받아 한국어 기사로 작성할 만한 소재인지 판단합니다.
 
 핵심 원칙:
-- 아래 주제 등 전자음악과 연결고리가 있으면 적극 승인하세요:
-  * 아티스트/DJ/프로듀서 관련 소식
-  * 릴리즈 (신곡, 앨범, EP, 리믹스)
-  * 페스티벌, 클럽, 이벤트
-  * 음악 장비, 신디사이저, 소프트웨어
-  * 클럽 문화, 씬 소식, 업계 동향
-  * 레이블, 스트리밍 플랫폼 관련 소식
-- 거절 기준을 높이세요. 전자음악과 완전히 무관한 경우(예: 순수 팝/록 기사, 스포츠, 정치 등)에만 거절하세요.
+- 아래 주제와 연결고리가 있으면 적극 승인하세요:
+  * 아티스트/유명인의 신보, 공연, 캐스팅 소식
+  * 인터뷰, 비하인드 스토리, 가십, 열애설
+  * 패션, 뷰티, 라이프스타일
+  * 음악/엔터테인먼트 업계 주요 동향
+- 완전히 무관한 분야(순수 정치, 경제, 스포츠 경기 등)에만 거절하세요.
 - 거절 시 반드시 이유를 reason 필드에 넣으세요.
 - 모든 소스를 동등하게 취급하세요. 특정 매체의 등급이나 권위를 기준으로 거르지 마세요.
-- 연도 단독(2025, 2026 등), 매체명, 사이트명, 시리즈명, 인터뷰 형식 표현(catches up with, chats to, talks to 등), 연말 결산/차트/베스트 목록 문구는 절대 승인 기준으로 사용하지 마세요.
-- "음악산업의 변화와 도전", "음악 페스티벌과 라이브 공연", "전자음악 씬 동향"처럼 여러 기사를 넓은 테마로 요약한 추상 토픽은 절대 만들지 마세요.
-- topic에는 가능한 한 구체적 고유명사(아티스트명, 페스티벌명, 클럽명, 레이블명, 곡/앨범/EP명, 제품명, 책 제목 등)를 포함하세요.
-- 좋은 예: "Music On Festival 취소 사태", "EDC Las Vegas 2026 관련 소식", "Armin van Buuren 'A State of Trance 2026' 발매", "John Summit 신곡 'Light Years' 공개"
-- 나쁜 예: "음악산업의 변화와 도전", "음악 페스티벌과 라이브 공연", "전자음악 씬 동향", "클럽 문화의 변화"
+- 연도 단독(2025, 2026 등), 매체명, 사이트명, 인터뷰 형식 표현(catches up with 등)은 절대 승인 기준으로 사용하지 마세요.
+- 여러 기사를 "음악산업의 변화", "최근 엔터테인먼트 동향"처럼 너무 넓은 테마로 요약한 추상 토픽은 절대 만들지 마세요.
+- topic에는 가능한 한 구체적 고유명사(인물명, 작품명, 행사명 등)를 포함하세요.
+- 좋은 예: "Taylor Swift의 'Eras Tour' 아시아 일정 추가", "Timothee Chalamet 새 영화 캐스팅 비하인드", "Kylie Jenner의 새로운 브랜드 론칭"
+- 나쁜 예: "팝 음악계의 변화", "유명인들의 일상", "할리우드 배우들의 근황"
 
 응답 작성 시:
 - topic은 한국어로, 구체적이고 명확하게 작성하세요.
-- keywords는 3~6개의 영문 키워드로, 카테고리 단어 단독 사용 금지.
+- keywords는 3~6개의 영문/국문 키워드로, 카테고 단어 단독 사용 금지.
 - 응답 JSON 스키마는 별도로 강제되므로 그 형식을 그대로 따르세요.`
 
 type Suggestion = {
@@ -39,6 +37,7 @@ type Suggestion = {
 
 type SuggestionWithArticles = Suggestion & {
   articles: { id: string; title: string; url: string }[]
+  matchedEntities?: string[]
 }
 
 type RawArticle = {
@@ -48,6 +47,7 @@ type RawArticle = {
   url: string
   source_id: string | number | null
   sourceName?: string
+  published_at?: string | null
 }
 
 type SuggestionStatus = 'pending' | 'approved' | 'rejected' | 'published'
@@ -56,6 +56,10 @@ const ALLOWED_STATUSES: SuggestionStatus[] = ['pending', 'approved', 'rejected',
 const MIN_COHESION_SCORE = 20
 const DEFAULT_ANALYSIS_LIMIT = 200
 const MAX_ANALYSIS_LIMIT = 200
+const STAGE2_DEFAULT_COHESION = 50
+const LLM_INPUT_MAX = 120
+const LLM_BATCH_SIZE = 20
+
 const SUGGEST_RESPONSE_FORMAT = {
   type: 'object',
   properties: {
@@ -105,102 +109,21 @@ type PersistedSuggestion = SuggestionWithArticles & {
 }
 
 const CATEGORY_KEYWORDS = new Set([
-  'album',
-  'albums',
-  'club',
-  'clubs',
-  'dj',
-  'edm',
-  'festival',
-  'festivals',
-  'house',
-  'intros',
-  'lineup',
-  'line-ups',
-  'music',
-  'new',
-  'new music',
-  'premiere',
-  'preview',
-  'record',
-  'records',
-  'release',
-  'released',
-  'releases',
-  'single',
-  'synth',
-  'synths',
-  'techno',
-  'track',
-  'tracks',
+  'album', 'albums', 'club', 'clubs', 'dj', 'edm', 'festival', 'festivals',
+  'house', 'intros', 'lineup', 'line-ups', 'music', 'new', 'new music',
+  'premiere', 'preview', 'record', 'records', 'release', 'released', 'releases',
+  'single', 'synth', 'synths', 'techno', 'track', 'tracks',
 ])
 
 const STOPWORDS = new Set([
-  'about',
-  'after',
-  'album',
-  'albums',
-  'also',
-  'and',
-  'are',
-  'artist',
-  'artists',
-  'back',
-  'best',
-  'can',
-  'club',
-  'dance',
-  'deep',
-  'dj',
-  'edm',
-  'from',
-  'has',
-  'have',
-  'home',
-  'house',
-  'into',
-  'label',
-  'live',
-  'magazine',
-  'menu',
-  'mix',
-  'music',
-  'new',
-  'news',
-  'out',
-  'premiere',
-  'preview',
-  'records',
-  'release',
-  'released',
-  'releases',
-  'review',
-  'show',
-  'site',
-  'single',
-  'so',
-  'techno',
-  'tech',
-  'the',
-  'this',
-  'track',
-  'tracks',
-  'with',
-  'year',
-  'far',
-  'just',
-  'page',
-	  'privacy',
-	  'policy',
-	  'cookie',
-	  'cookies',
-	  'http',
-	  'https',
-	  'www',
-	  'com',
-	  'net',
-	  'org',
-	])
+  'about', 'after', 'album', 'albums', 'also', 'and', 'are', 'artist', 'artists',
+  'back', 'best', 'can', 'club', 'dance', 'deep', 'dj', 'edm', 'from', 'has', 'have',
+  'home', 'house', 'into', 'label', 'live', 'magazine', 'menu', 'mix', 'music',
+  'new', 'news', 'out', 'premiere', 'preview', 'records', 'release', 'released',
+  'releases', 'review', 'show', 'site', 'single', 'so', 'techno', 'tech', 'the',
+  'this', 'track', 'tracks', 'with', 'year', 'far', 'just', 'page', 'privacy',
+  'policy', 'cookie', 'cookies', 'http', 'https', 'www', 'com', 'net', 'org',
+])
 
 const SOURCE_OR_SERIES_PATTERNS = [
   /\b909originals\b/i,
@@ -242,9 +165,7 @@ async function attachSourceMeta(articles: RawArticle[]): Promise<RawArticle[]> {
 
   for (const source of (data ?? []) as { id: string | number; name: string | null }[]) {
     const name = source.name ?? '알 수 없는 소스'
-    sourceMeta.set(String(source.id), {
-      name,
-    })
+    sourceMeta.set(String(source.id), { name })
   }
 
   return articles.map((article) => {
@@ -346,9 +267,7 @@ function calculateCohesionScore(articleIds: string[], commonEntities: string[], 
     const normalizedEntity = normalizeText(entity)
     const hits = articleIds.filter((id) => {
       const article = articleById.get(id)
-      if (!article) {
-        return false
-      }
+      if (!article) return false
       const searchableText = normalizeText(`${article.title} ${articleSnippet(article)}`)
       return searchableText.includes(normalizedEntity)
     }).length
@@ -365,7 +284,8 @@ function normalizeSuggestion(
   suggestion: Partial<Suggestion>,
   validIds: Set<string>,
   articleMeta: Map<string, { id: string; title: string; url: string }>,
-  rawArticles: RawArticle[]
+  rawArticles: RawArticle[],
+  articleMatchMap: Map<string, string[]>
 ): SuggestionWithArticles | null {
   const articleIds = Array.from(new Set(
     (Array.isArray(suggestion.articleIds) ? suggestion.articleIds : [])
@@ -412,6 +332,10 @@ function normalizeSuggestion(
     return null
   }
 
+  const matchedEntities = Array.from(new Set(
+    articleIds.flatMap(id => articleMatchMap.get(id) || [])
+  ))
+
   return {
     topic,
     keywords,
@@ -420,6 +344,7 @@ function normalizeSuggestion(
     commonEntities,
     cohesionScore,
     articles: articleIds.map((id) => articleMeta.get(id)!).filter(Boolean),
+    matchedEntities,
   }
 }
 
@@ -427,22 +352,33 @@ async function hydrateSuggestions(rows: DbSuggestedCluster[]): Promise<Persisted
   if (rows.length === 0) return []
 
   const allIds = Array.from(new Set(rows.flatMap((row) => row.article_ids ?? [])))
-  const articleMeta = new Map<string, { id: string; title: string; url: string }>()
+  const articleMeta = new Map<string, { id: string; title: string; url: string; content: string | null }>()
 
   if (allIds.length > 0) {
     const { data: rawArticles } = await supabase
       .from('raw_articles')
-      .select('id, title, url')
+      .select('id, title, url, content')
       .in('id', allIds)
 
-    for (const article of (rawArticles ?? []) as { id: string; title: string; url: string }[]) {
-      articleMeta.set(article.id, { id: article.id, title: article.title, url: article.url })
+    for (const article of (rawArticles ?? []) as { id: string; title: string; url: string; content: string | null }[]) {
+      articleMeta.set(article.id, { id: article.id, title: article.title, url: article.url, content: article.content })
     }
   }
+
+  const entities = loadTargetEntities()
 
   return rows.map((row) => {
     const articleIds = row.article_ids ?? []
     const commonEntities = row.keywords?.filter((keyword) => !isCategoryKeyword(keyword)) ?? []
+
+    const matchedEntities = Array.from(new Set(
+      articleIds.flatMap(id => {
+        const meta = articleMeta.get(id)
+        if (!meta) return []
+        return getMatchedEntities(meta, entities)
+      })
+    ))
+
     return {
       id: row.id,
       topic: row.topic,
@@ -455,18 +391,19 @@ async function hydrateSuggestions(rows: DbSuggestedCluster[]): Promise<Persisted
       cohesionScore: commonEntities.length > 0
         ? calculateCohesionScore(articleIds, commonEntities, articleIds.map((id) => {
           const meta = articleMeta.get(id)
-	          return {
-	            id,
-	            title: meta?.title ?? '',
-	            content: null,
-	            url: meta?.url ?? '',
-	            source_id: null,
-	          }
-	        }))
+          return {
+            id,
+            title: meta?.title ?? '',
+            content: meta?.content ?? null,
+            url: meta?.url ?? '',
+            source_id: null,
+          }
+        }))
         : undefined,
       articles: articleIds
         .map((id) => articleMeta.get(id))
-        .filter((a): a is { id: string; title: string; url: string } => Boolean(a)),
+        .filter((a): a is { id: string; title: string; url: string; content: string | null } => Boolean(a)),
+      matchedEntities,
       status: row.status,
       clusterId: row.cluster_id,
       articleId: null,
@@ -509,10 +446,7 @@ async function loadActiveBlockRules(): Promise<TopicBlockRule[]> {
   }
 
   return ((data ?? []) as TopicBlockRule[])
-    .map((rule) => ({
-      ...rule,
-      pattern: rule.pattern.trim(),
-    }))
+    .map((rule) => ({ ...rule, pattern: rule.pattern.trim() }))
     .filter((rule) => rule.pattern.length > 0)
 }
 
@@ -624,122 +558,48 @@ async function markRawArticlesSuggested(suggestions: SuggestionWithArticles[]): 
   }
 }
 
-// ============ Entity dictionary (2-stage 후보 생성용) ============
+// ============ Entity Matching ============
 
-type EntityEntry = {
-  canonical: string
-  surfaces: string[]
-  weight: number
+type SimpleEntity = { name: string; korean_name: string; type: string; aliases?: string[] }
+
+function escapeRegExp(string: string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-type EntityDataset = {
-  artists_top500_relevance_2024_2025?: Array<{ name?: string; aliases?: string[] }>
-  major_edm_festivals_worldwide?: Array<{ name?: string }>
-  edm_labels_key_artists?: Array<{ name?: string }>
-  club_venues?: Array<{ name?: string; aliases?: string[] }>
-  equipment_software_brands?: Array<{ name?: string; aliases?: string[] }>
+function entityMatchTerms(entity: SimpleEntity): string[] {
+  return [entity.name, ...(entity.aliases ?? [])].filter((term) => term.trim().length > 0)
 }
 
-const ENTITY_DICT_CANDIDATE_PATHS = [
-  'lib/edm-entities.json',
-]
-
-const ENTITY_HAYSTACK_CONTENT_LIMIT = 500
-const STAGE2_DEFAULT_COHESION = 50
-const LLM_INPUT_MAX = 120
-const NO_ENTITY_RATIO_MAX = 0.6
-const LLM_BATCH_SIZE = 20
-
-function loadEntityDictionary(): EntityEntry[] | null {
-  for (const rel of ENTITY_DICT_CANDIDATE_PATHS) {
-    const abs = path.join(process.cwd(), rel)
-    try {
-      const raw = fs.readFileSync(abs, 'utf-8')
-      const data = JSON.parse(raw) as EntityDataset
-      const entries: EntityEntry[] = []
-      for (const artist of data.artists_top500_relevance_2024_2025 ?? []) {
-        const name = artist?.name
-        if (!name) continue
-        const surfaces = [name, ...(artist.aliases ?? [])]
-          .map((s) => (typeof s === 'string' ? s.toLowerCase() : ''))
-          .filter((s) => s.length >= 2)
-        if (surfaces.length === 0) continue
-        entries.push({ canonical: name, surfaces, weight: 1.0 })
-      }
-      for (const festival of data.major_edm_festivals_worldwide ?? []) {
-        const name = festival?.name
-        if (!name || name.length < 2) continue
-        entries.push({ canonical: name, surfaces: [name.toLowerCase()], weight: 1.0 })
-      }
-      for (const label of data.edm_labels_key_artists ?? []) {
-        const name = label?.name
-        if (!name || name.length < 2) continue
-        entries.push({ canonical: name, surfaces: [name.toLowerCase()], weight: 0.6 })
-      }
-      for (const club of data.club_venues ?? []) {
-        const name = club?.name
-        if (!name) continue
-        const surfaces = [name, ...(club.aliases ?? [])]
-          .map((s) => (typeof s === 'string' ? s.toLowerCase() : ''))
-          .filter((s) => s.length >= 2)
-        if (surfaces.length === 0) continue
-        entries.push({ canonical: name, surfaces, weight: 0.8 })
-      }
-      for (const brand of data.equipment_software_brands ?? []) {
-        const name = brand?.name
-        if (!name) continue
-        const surfaces = [name, ...(brand.aliases ?? [])]
-          .map((s) => (typeof s === 'string' ? s.toLowerCase() : ''))
-          .filter((s) => s.length >= 2)
-        if (surfaces.length === 0) continue
-        entries.push({ canonical: name, surfaces, weight: 0.6 })
-      }
-      console.log(`[suggest-clusters] entity dict loaded from ${rel}: ${entries.length} entries`)
-      return entries
-    } catch {
-      // 다음 후보 경로 시도
-    }
-  }
-  return null
-}
-
-function findSurfaceInText(text: string, surface: string): boolean {
-  if (!surface || surface.length < 2) return false
-  let from = 0
-  while (true) {
-    const i = text.indexOf(surface, from)
-    if (i < 0) return false
-    const before = i === 0 ? ' ' : text[i - 1]
-    const after = i + surface.length >= text.length ? ' ' : text[i + surface.length]
-    if (!/[a-z0-9]/.test(before) && !/[a-z0-9]/.test(after)) return true
-    from = i + 1
+function loadTargetEntities(): SimpleEntity[] {
+  try {
+    const artists = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'lib/entities/artists.json'), 'utf-8'))
+    const celebs = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'lib/entities/celebrities.json'), 'utf-8'))
+    return [...artists, ...celebs]
+  } catch (err) {
+    console.error('Failed to load target entities:', err)
+    return []
   }
 }
 
-function buildEntityIndex(
-  articles: RawArticle[],
-  dict: EntityEntry[],
-): { articleEntities: Map<string, Set<string>>; entityArticles: Map<string, Set<string>> } {
-  const articleEntities = new Map<string, Set<string>>()
-  const entityArticles = new Map<string, Set<string>>()
-  for (const article of articles) {
-    const haystack = `${article.title ?? ''}\n${(article.content ?? '').slice(0, ENTITY_HAYSTACK_CONTENT_LIMIT)}`.toLowerCase()
-    const matched = new Set<string>()
-    for (const entry of dict) {
-      for (const surface of entry.surfaces) {
-        if (findSurfaceInText(haystack, surface)) {
-          matched.add(entry.canonical)
-          break
-        }
-      }
-    }
-    articleEntities.set(article.id, matched)
-    for (const canonical of matched) {
-      if (!entityArticles.has(canonical)) entityArticles.set(canonical, new Set())
-      entityArticles.get(canonical)!.add(article.id)
+function getMatchedEntities(article: { title?: string | null, content?: string | null }, entities: SimpleEntity[]): string[] {
+  const matched = new Set<string>()
+  const title = article.title || ''
+  const content = (article.content || '').slice(0, 1000)
+  const fullText = `${title}\n${content}`
+  const lowerText = fullText.toLowerCase()
+
+  for (const ent of entities) {
+    const hasNameMatch = entityMatchTerms(ent).some((term) => {
+      const lowerTerm = term.toLowerCase()
+      const termRegex = new RegExp(`\\b${escapeRegExp(lowerTerm)}\\b`, 'i')
+      return termRegex.test(lowerText)
+    })
+
+    if (hasNameMatch || fullText.includes(ent.korean_name)) {
+      matched.add(ent.name)
     }
   }
-  return { articleEntities, entityArticles }
+  return Array.from(matched)
 }
 
 function chunkArticles(articles: RawArticle[], size: number): RawArticle[][] {
@@ -767,122 +627,12 @@ function buildClusterPrompt(batch: RawArticle[]): string {
 이 기사들을 읽고 같은 사건/릴리즈/행사/인물을 다루는 기사끼리 묶어서 토픽을 제안하세요.
 하나의 클러스터는 반드시 하나의 구체적 사건이어야 합니다.
 서로 다른 별개의 사건을 다루는 기사는 절대 같은 클러스터로 묶지 마세요.
-여러 기사를 "음악산업", "페스티벌", "라이브 공연", "씬 동향" 같은 넓은 테마로 묶지 마세요.
-topic에는 구체적 고유명사나 작품명/행사명/제품명을 포함하세요.
-단독 기사도 한국어 EDM 기사로 쓸 만한 가치가 있으면 단독으로 제안하세요.
+여러 기사를 "엔터테인먼트 동향", "아티스트 근황", "음악 산업" 같은 넓은 테마로 묶지 마세요.
+topic에는 구체적 고유명사나 작품명/행사명/인물명을 포함하세요.
+단독 기사도 가십/라이프 뉴스 기사로 쓸 만한 가치가 있으면 단독으로 제안하세요.
 
 기사 목록:
 ${articlesText}`
-}
-
-async function runLlmOnlyPath(
-  rawArticles: RawArticle[],
-  totalCount: number,
-  suggestModel: string,
-  ollamaUrl: string,
-  validIds: Set<string>,
-  articleMeta: Map<string, { id: string; title: string; url: string }>,
-): Promise<NextResponse> {
-  const articlesText = rawArticles
-    .map((article) =>
-      [
-        `[${article.id}]`,
-        article.sourceName ? `매체: ${article.sourceName}` : null,
-        `제목: ${article.title}`,
-        `요약: ${articleSnippet(article) || '(본문 없음)'}`,
-      ].filter(Boolean).join('\n')
-    )
-    .join('\n---\n')
-
-  const ollamaRes = await fetch(`${ollamaUrl}/api/generate`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: suggestModel,
-      system: SUGGEST_SYSTEM,
-      prompt: `다음 기사 목록(${rawArticles.length}개)을 분석해 토픽 그룹을 제안하세요.\n\n${articlesText}`,
-      format: SUGGEST_RESPONSE_FORMAT,
-      stream: false,
-    }),
-  })
-
-  if (!ollamaRes.ok) {
-    return NextResponse.json({ error: `Ollama 응답 오류: ${ollamaRes.status}` }, { status: 502 })
-  }
-
-  const ollamaData = await ollamaRes.json()
-  const responseText: string = ollamaData.response ?? ''
-
-  let parsed: { suggestions?: Suggestion[] }
-  try {
-    parsed = parseSuggestions(responseText)
-  } catch (err) {
-    return NextResponse.json({ error: String(err), raw: responseText.slice(0, 500) }, { status: 502 })
-  }
-
-  const llmSuggestions = (parsed.suggestions ?? [])
-    .map((suggestion) => normalizeSuggestion(suggestion, validIds, articleMeta, rawArticles))
-    .filter((suggestion): suggestion is SuggestionWithArticles => suggestion !== null)
-
-  if (llmSuggestions.length === 0) {
-    return NextResponse.json({
-      suggestions: [],
-      saved: 0,
-      total: totalCount,
-      source: 'llm',
-      model: suggestModel,
-      llmSuggestionCount: parsed.suggestions?.length ?? 0,
-      normalizedSuggestionCount: 0,
-      rawResponsePreview: responseText.slice(0, 500),
-    })
-  }
-
-  const { suggestions: saveableSuggestions, duplicateSkipCount } =
-    await filterDuplicateSuggestions(llmSuggestions)
-
-  if (saveableSuggestions.length === 0) {
-    return NextResponse.json({
-      suggestions: [],
-      saved: 0,
-      total: totalCount,
-      source: 'llm',
-      model: suggestModel,
-      llmSuggestionCount: parsed.suggestions?.length ?? 0,
-      normalizedSuggestionCount: llmSuggestions.length,
-      duplicateSkipCount,
-      rawResponsePreview: responseText.slice(0, 500),
-    })
-  }
-
-  const insertPayload = saveableSuggestions.map((s) => ({
-    topic: s.topic,
-    keywords: s.keywords,
-    article_ids: s.articleIds,
-    status: 'pending' as const,
-  }))
-
-  const { data: inserted, error: insertError } = await supabase
-    .from('suggested_clusters')
-    .insert(insertPayload)
-    .select()
-
-  if (insertError) {
-    return NextResponse.json({ error: `제안 저장 실패: ${insertError.message}` }, { status: 500 })
-  }
-
-  await markRawArticlesSuggested(saveableSuggestions)
-
-  const persisted = await hydrateSuggestions((inserted ?? []) as DbSuggestedCluster[])
-  return NextResponse.json({
-    suggestions: persisted,
-    saved: persisted.length,
-    total: totalCount,
-    source: 'llm',
-    model: suggestModel,
-    llmSuggestionCount: parsed.suggestions?.length ?? 0,
-    normalizedSuggestionCount: llmSuggestions.length,
-    duplicateSkipCount,
-  })
 }
 
 export async function GET(req: NextRequest) {
@@ -945,34 +695,23 @@ export async function POST(req: NextRequest) {
       rawArticles.map((a) => [a.id, { id: a.id, title: a.title, url: a.url }])
     )
 
-    const dict = loadEntityDictionary()
-    if (!dict) {
-      console.error('[suggest-clusters] entity dictionary 로드 실패 — 단일 LLM 경로로 fallback')
-      return await runLlmOnlyPath(rawArticles, articles.length, suggestModel, ollamaUrl, validIds, articleMeta)
-    }
-
-    // ───── Stage 1: 엔터티 매칭으로 LLM 투입 기사 필터링 ─────
-    const { articleEntities } = buildEntityIndex(rawArticles, dict)
+    const entities = loadTargetEntities()
+    const articleMatchMap = new Map<string, string[]>()
     const withEntities: RawArticle[] = []
-    const withoutEntities: RawArticle[] = []
+
     for (const article of rawArticles) {
-      const matched = articleEntities.get(article.id)
-      if (matched && matched.size > 0) {
+      const matched = getMatchedEntities(article, entities)
+      if (matched.length > 0) {
+        articleMatchMap.set(article.id, matched)
         withEntities.push(article)
-      } else {
-        withoutEntities.push(article)
       }
     }
 
-    const prioritySelected = withEntities.slice(0, LLM_INPUT_MAX)
-    const remainingSlots = LLM_INPUT_MAX - prioritySelected.length
-    const noEntityMaxByRatio = Math.floor(LLM_INPUT_MAX * NO_ENTITY_RATIO_MAX)
-    const noEntitySelected = withoutEntities.slice(0, Math.min(remainingSlots, noEntityMaxByRatio))
-    const llmInput = [...prioritySelected, ...noEntitySelected]
+    const llmInput = withEntities.slice(0, LLM_INPUT_MAX)
 
     console.log(
       `[stage1] 전체 ${rawArticles.length}개 → 엔터티 매칭 ${withEntities.length}개`
-      + ` / 미매칭 ${withoutEntities.length}개 → LLM 투입 ${llmInput.length}개`
+      + ` → LLM 투입 ${llmInput.length}개 (미매칭 제외)`
     )
 
     if (llmInput.length === 0) {
@@ -983,12 +722,10 @@ export async function POST(req: NextRequest) {
         source: 'filter+llm',
         model: suggestModel,
         entityMatchedCount: withEntities.length,
-        noEntityCount: withoutEntities.length,
         llmInputCount: 0,
       })
     }
 
-    // ───── Stage 2: LLM이 배치별 클러스터링 + 토픽 제안 ─────
     const batches = chunkArticles(llmInput, LLM_BATCH_SIZE)
     const normalized: SuggestionWithArticles[] = []
     let llmSuggestionCount = 0
@@ -1046,10 +783,10 @@ export async function POST(req: NextRequest) {
 
       const suggestions = parsed.suggestions ?? []
       llmSuggestionCount += suggestions.length
-      
+
       normalized.push(
         ...suggestions
-          .map((s) => normalizeSuggestion(s, validIds, articleMeta, rawArticles))
+          .map((s) => normalizeSuggestion(s, validIds, articleMeta, rawArticles, articleMatchMap))
           .filter((s): s is SuggestionWithArticles => s !== null)
       )
       console.log(`[batch ${batchIndex}] 종료: ${suggestions.length}개 제안 파싱 완료`)
@@ -1069,7 +806,6 @@ export async function POST(req: NextRequest) {
         source: 'filter+llm',
         model: suggestModel,
         entityMatchedCount: withEntities.length,
-        noEntityCount: withoutEntities.length,
         llmInputCount: llmInput.length,
         batchCount: batches.length,
         llmSuggestionCount,
@@ -1089,7 +825,6 @@ export async function POST(req: NextRequest) {
         source: 'filter+llm',
         model: suggestModel,
         entityMatchedCount: withEntities.length,
-        noEntityCount: withoutEntities.length,
         llmInputCount: llmInput.length,
         batchCount: batches.length,
         llmSuggestionCount,
@@ -1098,9 +833,10 @@ export async function POST(req: NextRequest) {
       })
     }
 
+    // 나중에 기사 생성 시 활용 가능하도록 keywords 배열에 매칭된 엔티티 이름 병합
     const insertPayload = saveableSuggestions.map((s) => ({
       topic: s.topic,
-      keywords: s.keywords,
+      keywords: Array.from(new Set([...s.keywords, ...(s.matchedEntities || [])])),
       article_ids: s.articleIds,
       status: 'pending' as const,
     }))
@@ -1126,7 +862,6 @@ export async function POST(req: NextRequest) {
       source: 'filter+llm',
       model: suggestModel,
       entityMatchedCount: withEntities.length,
-      noEntityCount: withoutEntities.length,
       llmInputCount: llmInput.length,
       batchCount: batches.length,
       llmSuggestionCount,
@@ -1137,4 +872,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
 }
-

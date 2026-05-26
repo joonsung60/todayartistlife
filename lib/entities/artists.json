@@ -1,0 +1,797 @@
+[
+  {
+    "name": "Taylor Swift",
+    "korean_name": "테일러 스위프트",
+    "type": "artist"
+  },
+  {
+    "name": "Beyonce",
+    "korean_name": "비욘세",
+    "type": "artist"
+  },
+  {
+    "name": "Rihanna",
+    "korean_name": "리한나",
+    "type": "artist"
+  },
+  {
+    "name": "Ariana Grande",
+    "korean_name": "아리아나 그란데",
+    "type": "artist"
+  },
+  {
+    "name": "Billie Eilish",
+    "korean_name": "빌리 아일리시",
+    "type": "artist"
+  },
+  {
+    "name": "Dua Lipa",
+    "korean_name": "두아 리파",
+    "type": "artist"
+  },
+  {
+    "name": "Olivia Rodrigo",
+    "korean_name": "올리비아 로드리고",
+    "type": "artist"
+  },
+  {
+    "name": "Sabrina Carpenter",
+    "korean_name": "사브리나 카펜터",
+    "type": "artist"
+  },
+  {
+    "name": "Selena Gomez",
+    "korean_name": "셀레나 고메즈",
+    "type": "artist"
+  },
+  {
+    "name": "Lady Gaga",
+    "korean_name": "레이디 가가",
+    "type": "artist"
+  },
+  {
+    "name": "SZA",
+    "korean_name": "SZA",
+    "type": "artist"
+  },
+  {
+    "name": "Karol G",
+    "korean_name": "카롤 G",
+    "type": "artist"
+  },
+  {
+    "name": "Teyana Taylor",
+    "korean_name": "테야나 테일러",
+    "type": "artist"
+  },
+  {
+    "name": "Paula Abdul",
+    "korean_name": "폴라 압둘",
+    "type": "artist"
+  },
+  {
+    "name": "Fergie",
+    "korean_name": "퍼기",
+    "type": "artist"
+  },
+  {
+    "name": "Pussycat Dolls",
+    "korean_name": "푸시캣 돌스",
+    "type": "artist"
+  },
+  {
+    "name": "Debby Ryan",
+    "korean_name": "데비 라이언",
+    "type": "artist"
+  },
+  {
+    "name": "Sombr",
+    "korean_name": "솜브르",
+    "type": "artist"
+  },
+  {
+    "name": "KATSEYE",
+    "korean_name": "캣츠아이",
+    "type": "artist"
+  },
+  {
+    "name": "Drake",
+    "korean_name": "드레이크",
+    "type": "artist"
+  },
+  {
+    "name": "The Weeknd",
+    "korean_name": "위켄드",
+    "type": "artist"
+  },
+  {
+    "name": "Post Malone",
+    "korean_name": "포스트 말론",
+    "type": "artist"
+  },
+  {
+    "name": "Harry Styles",
+    "korean_name": "해리 스타일스",
+    "type": "artist"
+  },
+  {
+    "name": "Ed Sheeran",
+    "korean_name": "에드 시런",
+    "type": "artist"
+  },
+  {
+    "name": "Justin Bieber",
+    "korean_name": "저스틴 비버",
+    "type": "artist"
+  },
+  {
+    "name": "Zayn Malik",
+    "korean_name": "제인 말리크",
+    "type": "artist"
+  },
+  {
+    "name": "John Legend",
+    "korean_name": "존 레전드",
+    "type": "artist"
+  },
+  {
+    "name": "Bruno Mars",
+    "korean_name": "브루노 마스",
+    "type": "artist"
+  },
+  {
+    "name": "Charlie Puth",
+    "korean_name": "찰리 푸스",
+    "type": "artist"
+  },
+  {
+    "name": "Shawn Mendes",
+    "korean_name": "숀 멘데스",
+    "type": "artist"
+  },
+  {
+    "name": "Niall Horan",
+    "korean_name": "나일 호란",
+    "type": "artist"
+  },
+  {
+    "name": "Black Eyed Peas",
+    "korean_name": "블랙 아이드 피스",
+    "type": "artist"
+  },
+  {
+    "name": "One Direction",
+    "korean_name": "원 디렉션",
+    "type": "artist"
+  },
+  {
+    "name": "BTS",
+    "korean_name": "BTS",
+    "type": "artist"
+  },
+  {
+    "name": "RM",
+    "korean_name": "RM",
+    "type": "artist"
+  },
+  {
+    "name": "Jin",
+    "korean_name": "진",
+    "type": "artist"
+  },
+  {
+    "name": "Suga",
+    "korean_name": "슈가",
+    "type": "artist"
+  },
+  {
+    "name": "J-Hope",
+    "korean_name": "제이홉",
+    "type": "artist"
+  },
+  {
+    "name": "Jimin",
+    "korean_name": "지민",
+    "type": "artist"
+  },
+  {
+    "name": "V",
+    "korean_name": "뷔",
+    "type": "artist"
+  },
+  {
+    "name": "Jungkook",
+    "korean_name": "정국",
+    "type": "artist"
+  },
+  {
+    "name": "BLACKPINK",
+    "korean_name": "블랙핑크",
+    "type": "artist"
+  },
+  {
+    "name": "Lisa",
+    "korean_name": "리사",
+    "type": "artist"
+  },
+  {
+    "name": "Jennie",
+    "korean_name": "제니",
+    "type": "artist"
+  },
+  {
+    "name": "Rose",
+    "korean_name": "로제",
+    "type": "artist"
+  },
+  {
+    "name": "Jisoo",
+    "korean_name": "지수",
+    "type": "artist"
+  },
+  {
+    "name": "TWICE",
+    "korean_name": "트와이스",
+    "type": "artist"
+  },
+  {
+    "name": "aespa",
+    "korean_name": "에스파",
+    "type": "artist"
+  },
+  {
+    "name": "NewJeans",
+    "korean_name": "뉴진스",
+    "type": "artist"
+  },
+  {
+    "name": "SEVENTEEN",
+    "korean_name": "세븐틴",
+    "type": "artist"
+  },
+  {
+    "name": "Stray Kids",
+    "korean_name": "스트레이 키즈",
+    "type": "artist"
+  },
+  {
+    "name": "IVE",
+    "korean_name": "아이브",
+    "type": "artist"
+  },
+  {
+    "name": "Calvin Harris",
+    "korean_name": "캘빈 해리스",
+    "type": "artist"
+  },
+  {
+    "name": "Zedd",
+    "korean_name": "제드",
+    "type": "artist"
+  },
+  {
+    "name": "Marshmello",
+    "korean_name": "마시멜로",
+    "type": "artist"
+  },
+  {
+    "name": "David Guetta",
+    "korean_name": "데이빗 게타",
+    "type": "artist"
+  },
+  {
+    "name": "Diplo",
+    "korean_name": "디플로",
+    "type": "artist"
+  },
+  {
+    "name": "Miley Cyrus",
+    "korean_name": "마일리 사이러스",
+    "type": "artist"
+  },
+  {
+    "name": "Katy Perry",
+    "korean_name": "케이티 페리",
+    "type": "artist"
+  },
+  {
+    "name": "Madonna",
+    "korean_name": "마돈나",
+    "type": "artist"
+  },
+  {
+    "name": "Britney Spears",
+    "korean_name": "브리트니 스피어스",
+    "type": "artist"
+  },
+  {
+    "name": "Christina Aguilera",
+    "korean_name": "크리스티나 아길레라",
+    "type": "artist"
+  },
+  {
+    "name": "Shakira",
+    "korean_name": "샤키라",
+    "type": "artist"
+  },
+  {
+    "name": "Jennifer Lopez",
+    "korean_name": "제니퍼 로페즈",
+    "type": "artist"
+  },
+  {
+    "name": "Nicki Minaj",
+    "korean_name": "니키 미나즈",
+    "type": "artist"
+  },
+  {
+    "name": "Cardi B",
+    "korean_name": "카디 비",
+    "type": "artist"
+  },
+  {
+    "name": "Doja Cat",
+    "korean_name": "도자 캣",
+    "type": "artist"
+  },
+  {
+    "name": "Megan Thee Stallion",
+    "korean_name": "메건 더 스탤리언",
+    "type": "artist"
+  },
+  {
+    "name": "Lizzo",
+    "korean_name": "리조",
+    "type": "artist"
+  },
+  {
+    "name": "Lana Del Rey",
+    "korean_name": "라나 델 레이",
+    "type": "artist"
+  },
+  {
+    "name": "Charli XCX",
+    "korean_name": "찰리 XCX",
+    "type": "artist"
+  },
+  {
+    "name": "Chappell Roan",
+    "korean_name": "채플 론",
+    "type": "artist"
+  },
+  {
+    "name": "Tate McRae",
+    "korean_name": "테이트 맥레이",
+    "type": "artist"
+  },
+  {
+    "name": "Gracie Abrams",
+    "korean_name": "그레이시 에이브럼스",
+    "type": "artist"
+  },
+  {
+    "name": "Lorde",
+    "korean_name": "로드",
+    "type": "artist"
+  },
+  {
+    "name": "Halsey",
+    "korean_name": "할시",
+    "type": "artist"
+  },
+  {
+    "name": "Camila Cabello",
+    "korean_name": "카밀라 카베요",
+    "type": "artist"
+  },
+  {
+    "name": "Normani",
+    "korean_name": "노마니",
+    "type": "artist"
+  },
+  {
+    "name": "Fifth Harmony",
+    "korean_name": "피프스 하모니",
+    "type": "artist"
+  },
+  {
+    "name": "Bebe Rexha",
+    "korean_name": "비비 렉사",
+    "type": "artist"
+  },
+  {
+    "name": "Rita Ora",
+    "korean_name": "리타 오라",
+    "type": "artist"
+  },
+  {
+    "name": "Ava Max",
+    "korean_name": "에이바 맥스",
+    "type": "artist"
+  },
+  {
+    "name": "Raye",
+    "korean_name": "레이",
+    "type": "artist"
+  },
+  {
+    "name": "Anne-Marie",
+    "korean_name": "앤 마리",
+    "type": "artist"
+  },
+  {
+    "name": "Ellie Goulding",
+    "korean_name": "엘리 굴딩",
+    "type": "artist"
+  },
+  {
+    "name": "Jessie J",
+    "korean_name": "제시 제이",
+    "type": "artist"
+  },
+  {
+    "name": "Pink",
+    "korean_name": "핑크",
+    "type": "artist"
+  },
+  {
+    "name": "Kesha",
+    "korean_name": "케샤",
+    "type": "artist"
+  },
+  {
+    "name": "Demi Lovato",
+    "korean_name": "데미 로바토",
+    "type": "artist"
+  },
+  {
+    "name": "Havana Rose Liu",
+    "korean_name": "하바나 로즈 리우",
+    "type": "artist"
+  },
+  {
+    "name": "Troye Sivan",
+    "korean_name": "트로이 시반",
+    "type": "artist"
+  },
+  {
+    "name": "Sam Smith",
+    "korean_name": "샘 스미스",
+    "type": "artist"
+  },
+  {
+    "name": "Lewis Capaldi",
+    "korean_name": "루이스 카팔디",
+    "type": "artist"
+  },
+  {
+    "name": "James Arthur",
+    "korean_name": "제임스 아서",
+    "type": "artist"
+  },
+  {
+    "name": "Hozier",
+    "korean_name": "호지어",
+    "type": "artist"
+  },
+  {
+    "name": "Benson Boone",
+    "korean_name": "벤슨 분",
+    "type": "artist"
+  },
+  {
+    "name": "Conan Gray",
+    "korean_name": "코난 그레이",
+    "type": "artist"
+  },
+  {
+    "name": "Lauv",
+    "korean_name": "라우브",
+    "type": "artist"
+  },
+  {
+    "name": "Khalid",
+    "korean_name": "칼리드",
+    "type": "artist"
+  },
+  {
+    "name": "Frank Ocean",
+    "korean_name": "프랭크 오션",
+    "type": "artist"
+  },
+  {
+    "name": "Tyler, The Creator",
+    "korean_name": "타일러, 더 크리에이터",
+    "type": "artist"
+  },
+  {
+    "name": "Kendrick Lamar",
+    "korean_name": "켄드릭 라마",
+    "type": "artist"
+  },
+  {
+    "name": "Travis Scott",
+    "korean_name": "트래비스 스콧",
+    "type": "artist"
+  },
+  {
+    "name": "A$AP Rocky",
+    "korean_name": "에이셉 라키",
+    "type": "artist"
+  },
+  {
+    "name": "Kanye West",
+    "korean_name": "카니예 웨스트",
+    "type": "artist"
+  },
+  {
+    "name": "Ye",
+    "korean_name": "예",
+    "type": "artist"
+  },
+  {
+    "name": "Jay-Z",
+    "korean_name": "제이지",
+    "type": "artist"
+  },
+  {
+    "name": "Eminem",
+    "korean_name": "에미넴",
+    "type": "artist"
+  },
+  {
+    "name": "Bad Bunny",
+    "korean_name": "배드 버니",
+    "type": "artist"
+  },
+  {
+    "name": "Peso Pluma",
+    "korean_name": "페소 플루마",
+    "type": "artist"
+  },
+  {
+    "name": "Rosalia",
+    "korean_name": "로살리아",
+    "type": "artist"
+  },
+  {
+    "name": "Tyla",
+    "korean_name": "타일라",
+    "type": "artist"
+  },
+  {
+    "name": "Victoria Monet",
+    "korean_name": "빅토리아 모네",
+    "type": "artist"
+  },
+  {
+    "name": "The Kid LAROI",
+    "korean_name": "더 키드 라로이",
+    "type": "artist"
+  },
+  {
+    "name": "Lil Nas X",
+    "korean_name": "릴 나스 엑스",
+    "type": "artist"
+  },
+  {
+    "name": "Machine Gun Kelly",
+    "korean_name": "머신 건 켈리",
+    "type": "artist"
+  },
+  {
+    "name": "MGK",
+    "korean_name": "MGK",
+    "type": "artist"
+  },
+  {
+    "name": "Coldplay",
+    "korean_name": "콜드플레이",
+    "type": "artist"
+  },
+  {
+    "name": "Imagine Dragons",
+    "korean_name": "이매진 드래곤스",
+    "type": "artist"
+  },
+  {
+    "name": "Maroon 5",
+    "korean_name": "마룬 5",
+    "type": "artist"
+  },
+  {
+    "name": "The 1975",
+    "korean_name": "더 1975",
+    "type": "artist"
+  },
+  {
+    "name": "Arctic Monkeys",
+    "korean_name": "악틱 몽키즈",
+    "type": "artist"
+  },
+  {
+    "name": "Oasis",
+    "korean_name": "오아시스",
+    "type": "artist"
+  },
+  {
+    "name": "Radiohead",
+    "korean_name": "라디오헤드",
+    "type": "artist"
+  },
+  {
+    "name": "Linkin Park",
+    "korean_name": "린킨 파크",
+    "type": "artist"
+  },
+  {
+    "name": "Martin Garrix",
+    "korean_name": "마틴 게릭스",
+    "type": "artist"
+  },
+  {
+    "name": "Skrillex",
+    "korean_name": "스크릴렉스",
+    "type": "artist"
+  },
+  {
+    "name": "Steve Aoki",
+    "korean_name": "스티브 아오키",
+    "type": "artist"
+  },
+  {
+    "name": "Kygo",
+    "korean_name": "카이고",
+    "type": "artist"
+  },
+  {
+    "name": "Tiësto",
+    "korean_name": "티에스토",
+    "type": "artist"
+  },
+  {
+    "name": "Avicii",
+    "korean_name": "아비치",
+    "type": "artist"
+  },
+  {
+    "name": "The Chainsmokers",
+    "korean_name": "체인스모커스",
+    "type": "artist"
+  },
+  {
+    "name": "Alan Walker",
+    "korean_name": "앨런 워커",
+    "type": "artist"
+  },
+  {
+    "name": "Illenium",
+    "korean_name": "일레니엄",
+    "type": "artist"
+  },
+  {
+    "name": "Fred again..",
+    "korean_name": "프레드 어게인",
+    "type": "artist"
+  },
+  {
+    "name": "Anyma",
+    "korean_name": "애니마",
+    "type": "artist"
+  },
+  {
+    "name": "Peggy Gou",
+    "korean_name": "페기 구",
+    "type": "artist"
+  },
+  {
+    "name": "LE SSERAFIM",
+    "korean_name": "르세라핌",
+    "type": "artist"
+  },
+  {
+    "name": "ILLIT",
+    "korean_name": "아일릿",
+    "type": "artist"
+  },
+  {
+    "name": "BABYMONSTER",
+    "korean_name": "베이비몬스터",
+    "type": "artist"
+  },
+  {
+    "name": "ENHYPEN",
+    "korean_name": "엔하이픈",
+    "type": "artist"
+  },
+  {
+    "name": "TXT",
+    "korean_name": "투모로우바이투게더",
+    "type": "artist"
+  },
+  {
+    "name": "TOMORROW X TOGETHER",
+    "korean_name": "투모로우바이투게더",
+    "type": "artist"
+  },
+  {
+    "name": "NCT",
+    "korean_name": "NCT",
+    "type": "artist"
+  },
+  {
+    "name": "NCT 127",
+    "korean_name": "NCT 127",
+    "type": "artist"
+  },
+  {
+    "name": "NCT DREAM",
+    "korean_name": "NCT DREAM",
+    "type": "artist"
+  },
+  {
+    "name": "RIIZE",
+    "korean_name": "라이즈",
+    "type": "artist"
+  },
+  {
+    "name": "ATEEZ",
+    "korean_name": "에이티즈",
+    "type": "artist"
+  },
+  {
+    "name": "ITZY",
+    "korean_name": "있지",
+    "type": "artist"
+  },
+  {
+    "name": "NMIXX",
+    "korean_name": "엔믹스",
+    "type": "artist"
+  },
+  {
+    "name": "G-Dragon",
+    "korean_name": "지드래곤",
+    "type": "artist"
+  },
+  {
+    "name": "BigBang",
+    "korean_name": "빅뱅",
+    "type": "artist"
+  },
+  {
+    "name": "EXO",
+    "korean_name": "엑소",
+    "type": "artist"
+  },
+  {
+    "name": "IU",
+    "korean_name": "아이유",
+    "type": "artist"
+  },
+  {
+    "name": "JYP",
+    "korean_name": "박진영",
+    "type": "artist"
+  },
+  {
+    "name": "CL",
+    "korean_name": "씨엘",
+    "type": "artist"
+  },
+  {
+    "name": "Jackson Wang",
+    "korean_name": "잭슨 왕",
+    "type": "artist"
+  },
+  {
+    "name": "GOT7",
+    "korean_name": "갓세븐",
+    "type": "artist"
+  },
+  {
+    "name": "XG",
+    "korean_name": "XG",
+    "type": "artist"
+  }
+]

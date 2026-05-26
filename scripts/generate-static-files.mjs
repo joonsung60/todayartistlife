@@ -2,7 +2,6 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createClient } from '@supabase/supabase-js'
 
 const CATEGORY_SLUGS = ['festival', 'artist', 'release', 'news', 'interview']
-const GENRE_SLUGS = ['house', 'techno', 'trance', 'drum-and-bass', 'dubstep', 'ambient']
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://edmstarnews.com').replace(/\/$/, '')
 
@@ -79,12 +78,6 @@ const urls = [
     lastmod: new Date().toISOString(),
     changefreq: 'daily',
     priority: '0.7',
-  })),
-  ...GENRE_SLUGS.map((slug) => ({
-    loc: `${SITE_URL}/genre/${slug}/`,
-    lastmod: new Date().toISOString(),
-    changefreq: 'daily',
-    priority: '0.6',
   })),
   ...articlesWithSlug.map((article) => ({
     loc: `${SITE_URL}/articles/${article.slug}/`,

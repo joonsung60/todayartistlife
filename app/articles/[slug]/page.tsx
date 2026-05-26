@@ -100,6 +100,31 @@ async function loadArticle(key: string): Promise<{
   return { data: null, errorMessage: null };
 }
 
+// ── 아티스트/셀럽 태그 ────────────────────────────────
+
+type ArticleEntity = {
+  name: string;
+  korean_name: string;
+  type: string;
+};
+
+async function loadArticleEntities(articleId: string): Promise<ArticleEntity[]> {
+  const { data } = await supabase
+    .from("article_entities")
+    .select("entity:entities(name, korean_name, type)")
+    .eq("article_id", articleId);
+
+  // to-one FK 임베드는 런타임에서 단일 객체로 반환되지만 select-string 추론은 배열로 잡으므로 unknown 경유 캐스트
+  return ((data ?? []) as unknown as { entity: ArticleEntity | null }[])
+    .map((row) => row.entity)
+    .filter((e): e is ArticleEntity => Boolean(e));
+}
+
+// name을 영문 소문자 + 공백→하이픈으로 변환해 /artist/[name] 경로 생성
+function artistHref(name: string): string {
+  return `/artist/${name.trim().toLowerCase().replace(/\s+/g, "-")}`;
+}
+
 // 아래 헬퍼들은 원본에서 변경 없음
 type ArticleBlock =
   | { type: "paragraph"; text: string }
@@ -212,6 +237,7 @@ export default async function ArticlePage({
   }
 
   const article = data;
+  const entities = await loadArticleEntities(article.id);
   const articleImageUrl = isUsableImageUrl(article.image_url)
     ? article.image_url
     : (await loadClusterImageUrl(article.cluster_id)) ??
@@ -274,6 +300,28 @@ export default async function ArticlePage({
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight tracking-tight mb-4">
           {article.title}
         </h1>
+
+        {/* 아티스트/셀럽 태그 */}
+        {entities.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mb-6">
+            {entities.map((entity) => {
+              const isArtist = entity.type === "artist";
+              return (
+                <Link
+                  key={entity.name}
+                  href={artistHref(entity.name)}
+                  className={
+                    isArtist
+                      ? "inline-flex items-center rounded-full px-3 py-1 text-sm font-medium bg-black text-white hover:opacity-70 transition-opacity"
+                      : "inline-flex items-center rounded-full px-3 py-1 text-sm font-medium border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white transition-colors"
+                  }
+                >
+                  {entity.korean_name}
+                </Link>
+              );
+            })}
+          </div>
+        )}
 
         {/* 발행인 구분선 */}
         <div className="mb-8 pb-4 border-b border-gray-200 text-sm">

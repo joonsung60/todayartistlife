@@ -5,10 +5,7 @@ import type { PercentCrop } from 'react-image-crop'
 import { ImageCropper, getCroppedDataUrl } from '@/components/ImageCropper'
 import { supabase } from '@/lib/supabase'
 
-type AdminGroup = 'rss' | 'image' | 'interview'
 type RssTab = 'collect' | 'add-urls' | 'suggest' | 'articles' | 'cluster' | 'generate'
-type ImageTab = 'image-source' | 'image-articles'
-type InterviewTab = 'discovery' | 'review'
 
 const RSS_TABS: { id: RssTab; label: string }[] = [
   { id: 'collect', label: '① RSS 수집' },
@@ -19,85 +16,28 @@ const RSS_TABS: { id: RssTab; label: string }[] = [
   { id: 'generate', label: '⑥ 기사 생성 (수동)' },
 ]
 
-const IMAGE_TABS: { id: ImageTab; label: string }[] = [
-  { id: 'image-source', label: '이미지 소스 추가' },
-  { id: 'image-articles', label: '생성 기사 검토' },
-]
-
-const INTERVIEW_TABS: { id: InterviewTab; label: string }[] = [
-  { id: 'discovery', label: '인터뷰 후보 발굴' },
-  { id: 'review', label: '생성 기사 검토' },
-]
-
 export default function AdminPage() {
-  const [activeGroup, setActiveGroup] = useState<AdminGroup>('rss')
   const [activeRssTab, setActiveRssTab] = useState<RssTab>('collect')
-  const [activeImageTab, setActiveImageTab] = useState<ImageTab>('image-source')
-  const [activeInterviewTab, setActiveInterviewTab] = useState<InterviewTab>('discovery')
 
   return (
     <div className="max-w-4xl mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-8">투아라 어드민</h1>
-
-      <div className="mb-8 rounded border border-gray-200 bg-gray-50 p-1">
-        <div className="grid grid-cols-1 gap-1 sm:grid-cols-3">
-          {[
-            { id: 'rss', label: 'RSS 및 URL 기반 기사 생성' },
-            { id: 'image', label: '이미지 소스 및 SNS 기반 기사 생성' },
-            { id: 'interview', label: '인터뷰 번역' },
-          ].map((group) => (
-            <button
-              key={group.id}
-              type="button"
-              onClick={() => setActiveGroup(group.id as AdminGroup)}
-              className={`rounded px-4 py-3 text-sm font-semibold transition-colors ${
-                activeGroup === group.id
-                  ? 'bg-white text-black shadow-sm'
-                  : 'text-gray-500 hover:text-gray-800'
-              }`}
-            >
-              {group.label}
-            </button>
-          ))}
-        </div>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-bold">투아라 어드민</h1>
+        <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded">RSS 및 URL 기반 기사 생성</span>
       </div>
 
-      {activeGroup === 'rss' && (
-        <TabBar
-          tabs={RSS_TABS}
-          activeId={activeRssTab}
-          onChange={(id) => setActiveRssTab(id as RssTab)}
-        />
-      )}
+      <TabBar
+        tabs={RSS_TABS}
+        activeId={activeRssTab}
+        onChange={(id) => setActiveRssTab(id as RssTab)}
+      />
 
-      {activeGroup === 'image' && (
-        <TabBar
-          tabs={IMAGE_TABS}
-          activeId={activeImageTab}
-          onChange={(id) => setActiveImageTab(id as ImageTab)}
-        />
-      )}
-
-      {activeGroup === 'interview' && (
-        <TabBar
-          tabs={INTERVIEW_TABS}
-          activeId={activeInterviewTab}
-          onChange={(id) => setActiveInterviewTab(id as InterviewTab)}
-        />
-      )}
-
-      {activeGroup === 'rss' && activeRssTab === 'collect' && <CollectTab />}
-      {activeGroup === 'rss' && activeRssTab === 'add-urls' && <AddUrlsTab />}
-      {activeGroup === 'rss' && activeRssTab === 'suggest' && <SuggestTab />}
-      {activeGroup === 'rss' && activeRssTab === 'articles' && <ArticlesReviewTab />}
-      {activeGroup === 'rss' && activeRssTab === 'cluster' && <ClusterTab />}
-      {activeGroup === 'rss' && activeRssTab === 'generate' && <GenerateTab />}
-
-      {activeGroup === 'image' && activeImageTab === 'image-source' && <ImageSourceTab />}
-      {activeGroup === 'image' && activeImageTab === 'image-articles' && <ArticlesReviewTab />}
-
-      {activeGroup === 'interview' && activeInterviewTab === 'discovery' && <InterviewDiscoveryTab />}
-      {activeGroup === 'interview' && activeInterviewTab === 'review' && <ArticlesReviewTab />}
+      {activeRssTab === 'collect' && <CollectTab />}
+      {activeRssTab === 'add-urls' && <AddUrlsTab />}
+      {activeRssTab === 'suggest' && <SuggestTab />}
+      {activeRssTab === 'articles' && <ArticlesReviewTab />}
+      {activeRssTab === 'cluster' && <ClusterTab />}
+      {activeRssTab === 'generate' && <GenerateTab />}
     </div>
   )
 }
@@ -267,291 +207,6 @@ function AddUrlsTab() {
   )
 }
 
-function ImageSourceTab() {
-  const [imageFile, setImageFile] = useState<File | null>(null)
-  const [sourceImageDataUrl, setSourceImageDataUrl] = useState('')
-  const [useCrop, setUseCrop] = useState(false)
-  const [crop, setCrop] = useState<PercentCrop | null>(null)
-  const [sourceMemo, setSourceMemo] = useState('')
-  const [sourceDate, setSourceDate] = useState('')
-  const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [imageSourceId, setImageSourceId] = useState<string | null>(null)
-  const [imageUrl, setImageUrl] = useState('')
-  const [extractedText, setExtractedText] = useState('')
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
-
-  const resetResult = () => {
-    setImageSourceId(null)
-    setImageUrl('')
-    setExtractedText('')
-    setUseCrop(false)
-    setCrop(null)
-    setMessage('')
-    setError('')
-  }
-
-  const handleAnalyze = async () => {
-    if (!imageFile) {
-      setError('분석할 이미지를 선택하세요.')
-      return
-    }
-
-    setIsAnalyzing(true)
-    resetResult()
-
-    try {
-      const imageBase64 = await fileToDataUrl(imageFile)
-      setSourceImageDataUrl(imageBase64)
-      const res = await fetch('/api/image-sources/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          imageBase64,
-          fileName: imageFile.name,
-          mimeType: imageFile.type,
-          sourceMemo,
-          sourceDate,
-        }),
-      })
-      const data = await res.json()
-
-      if (data.error) {
-        setError(data.error)
-      } else {
-        setImageSourceId(data.imageSource?.id ?? null)
-        setImageUrl(data.imageUrl ?? data.imageSource?.image_url ?? '')
-        setExtractedText(data.extractedText ?? data.imageSource?.extracted_text ?? '')
-        setMessage('이미지 분석이 완료됐습니다. 내용을 확인한 뒤 기사 초안을 생성하세요.')
-      }
-    } catch (err) {
-      setError(String(err))
-    }
-
-    setIsAnalyzing(false)
-  }
-
-  const handleGenerateDraft = async () => {
-    if (!imageSourceId) {
-      setError('먼저 이미지를 분석하세요.')
-      return
-    }
-
-    setIsGenerating(true)
-    setError('')
-    setMessage('')
-
-    try {
-      const croppedImageBase64 = useCrop && sourceImageDataUrl && crop
-        ? await getCroppedDataUrl(sourceImageDataUrl, crop)
-        : undefined
-      const res = await fetch(`/api/image-sources/${imageSourceId}/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          imageBase64: croppedImageBase64,
-          mimeType: 'image/jpeg',
-        }),
-      })
-      const data = await res.json()
-
-      if (data.error) {
-        setError(data.error)
-      } else {
-        setMessage(`기사 초안 생성 완료: ${data.article?.title ?? ''}`)
-        setImageSourceId(null)
-      }
-    } catch (err) {
-      setError(String(err))
-    }
-
-    setIsGenerating(false)
-  }
-
-  const handleRejectImageSource = async () => {
-    if (!imageSourceId) return
-
-    setIsGenerating(true)
-    setError('')
-    setMessage('')
-
-    try {
-      const res = await fetch(`/api/image-sources/${imageSourceId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'rejected' }),
-      })
-      const data = await res.json()
-
-      if (data.error) {
-        setError(data.error)
-      } else {
-        setMessage('이미지 소스를 기각했습니다.')
-        setImageSourceId(null)
-      }
-    } catch (err) {
-      setError(String(err))
-    }
-
-    setIsGenerating(false)
-  }
-
-  return (
-    <div>
-      <p className="text-gray-600 mb-6">
-        SNS 캡처나 포스터 이미지를 Vision LLM으로 분석하고, 단일 이미지 소스 기반 기사 초안을 생성합니다.
-      </p>
-
-      <div className="space-y-5 rounded border p-5">
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-gray-800">
-            이미지 파일
-          </label>
-          <input
-            type="file"
-            accept="image/jpeg,image/png"
-            onChange={(e) => {
-              setImageFile(e.target.files?.[0] ?? null)
-              setSourceImageDataUrl('')
-              resetResult()
-            }}
-            className="block w-full rounded border p-3 text-sm file:mr-4 file:rounded file:border-0 file:bg-black file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
-          />
-          {imageFile && (
-            <p className="mt-2 text-sm text-gray-500">
-              선택됨: {imageFile.name}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-gray-800">
-            소스 메모
-            <span className="ml-1 font-normal text-gray-400">(선택)</span>
-          </label>
-          <textarea
-            value={sourceMemo}
-            onChange={(e) => setSourceMemo(e.target.value)}
-            className="h-32 w-full rounded border p-3 text-sm"
-            placeholder="예: Instagram 캡처, 아티스트 공식 계정 게시물, 현장 포스터 등"
-          />
-        </div>
-
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-gray-800">
-            날짜
-            <span className="ml-1 font-normal text-gray-400">(선택)</span>
-          </label>
-          <input
-            type="date"
-            value={sourceDate}
-            onChange={(e) => setSourceDate(e.target.value)}
-            className="w-full rounded border p-3 text-sm sm:w-64"
-          />
-        </div>
-
-        <div className="rounded bg-gray-50 p-4 text-sm text-gray-500">
-          이미지는 Supabase Storage에 저장되고, 분석 결과를 확인한 뒤 기사 초안을 생성할 수 있습니다.
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={handleAnalyze}
-            disabled={isAnalyzing || isGenerating || !imageFile}
-            className="px-6 py-3 bg-black text-white rounded font-semibold disabled:opacity-50"
-          >
-            {isAnalyzing ? '분석 중...' : '분석'}
-          </button>
-          {imageSourceId && (
-            <>
-              <button
-                type="button"
-                onClick={handleGenerateDraft}
-                disabled={isGenerating || isAnalyzing}
-                className="px-6 py-3 border border-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-50 disabled:opacity-50"
-              >
-                {isGenerating ? '처리 중...' : '기사 초안 생성'}
-              </button>
-              <button
-                type="button"
-                onClick={handleRejectImageSource}
-                disabled={isGenerating || isAnalyzing}
-                className="px-6 py-3 border border-red-300 text-red-600 rounded font-semibold hover:bg-red-50 disabled:opacity-50"
-              >
-                기각
-              </button>
-            </>
-          )}
-        </div>
-
-        {message && <p className="text-green-600">{message}</p>}
-        {error && <p className="text-red-500">{error}</p>}
-
-        {extractedText && sourceImageDataUrl && (
-          <div className="border-t pt-5">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-gray-800">이미지 크롭</p>
-                <p className="mt-1 text-sm text-gray-500">
-                  선택사항입니다. 끄면 원본 이미지 전체가 기사 이미지로 들어갑니다.
-                </p>
-              </div>
-              <label className="flex items-center gap-2 text-sm text-gray-700">
-                <input
-                  type="checkbox"
-                  checked={useCrop}
-                  onChange={(e) => {
-                    setUseCrop(e.target.checked)
-                    if (!e.target.checked) setCrop(null)
-                  }}
-                />
-                크롭 사용
-              </label>
-            </div>
-            {useCrop ? (
-              <ImageCropper
-                imageUrl={sourceImageDataUrl}
-                onCropChange={setCrop}
-              />
-            ) : (
-              <div className="max-h-[420px] overflow-hidden rounded border bg-gray-100">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={sourceImageDataUrl} alt="" className="block max-h-[420px] w-full object-contain" />
-              </div>
-            )}
-          </div>
-        )}
-
-        {(imageUrl || extractedText) && (
-          <div className="grid grid-cols-1 gap-5 border-t pt-5 md:grid-cols-[220px_1fr]">
-            {imageUrl && (
-              <div>
-                <p className="mb-2 text-sm font-semibold text-gray-800">원본 저장 이미지</p>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imageUrl}
-                  alt=""
-                  className="w-full rounded border bg-gray-100 object-cover"
-                />
-              </div>
-            )}
-            {extractedText && (
-              <div>
-                <p className="mb-2 text-sm font-semibold text-gray-800">분석 결과 미리보기</p>
-                <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded border bg-gray-50 p-4 text-sm leading-6 text-gray-700">
-                  {extractedText}
-                </pre>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
 function ClusterTab() {
   const [topic, setTopic] = useState('')
   const [keywords, setKeywords] = useState('')
@@ -620,6 +275,7 @@ type PersistedSuggestion = {
   reason?: string
   commonEntities?: string[]
   cohesionScore?: number
+  matchedEntities?: string[]
   articles: { id: string; title: string; url: string }[]
   status: SuggestionStatus
   clusterId: string | null
@@ -669,6 +325,7 @@ function SuggestTab() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState('')
   const [processing, setProcessing] = useState<string | null>(null)
+  const [removingKeyword, setRemovingKeyword] = useState<string | null>(null)
   const [results, setResults] = useState<Record<string, ProcessingState>>({})
   const [lastGenSummary, setLastGenSummary] = useState('')
   const [blockRules, setBlockRules] = useState<TopicBlockRule[]>([])
@@ -676,6 +333,7 @@ function SuggestTab() {
   const [blockReason, setBlockReason] = useState('')
   const [blockMessage, setBlockMessage] = useState('')
   const [isBlocklistLoading, setIsBlocklistLoading] = useState(false)
+  const [isRejectingAll, setIsRejectingAll] = useState(false)
 
   const load = useCallback(async (status: SubTab) => {
     setIsLoading(true)
@@ -918,6 +576,29 @@ function SuggestTab() {
     setProcessing(null)
   }
 
+  const handleRejectAll = async () => {
+    if (!window.confirm(`미처리 토픽 ${suggestions.length}개를 모두 거절하시겠습니까?`)) {
+      return
+    }
+
+    setIsRejectingAll(true)
+    setError('')
+    try {
+      const res = await fetch('/api/suggest-clusters/reject-all', {
+        method: 'POST',
+      })
+      const data = await res.json()
+      if (data.error) {
+        setError(data.error)
+      } else {
+        await load('pending')
+      }
+    } catch (err) {
+      setError(String(err))
+    }
+    setIsRejectingAll(false)
+  }
+
   const handleAddBlockRule = async () => {
     const pattern = blockPattern.trim()
     if (!pattern) return
@@ -1020,6 +701,72 @@ function SuggestTab() {
     }
   }
 
+  const handleRemoveKeyword = async (suggestionId: string, keyword: string) => {
+    const confirmed = window.confirm(
+      `"${keyword}" 엔티티를 제거하고 엔티티 JSON에서도 삭제할까요?`
+    )
+    if (!confirmed) return
+
+    const removalKey = `${suggestionId}:${keyword}`
+    setRemovingKeyword(removalKey)
+    setResults((r) => ({
+      ...r,
+      [suggestionId]: { state: 'pending', message: `"${keyword}" 엔티티 제거 중...` },
+    }))
+
+    try {
+      const res = await fetch(`/api/suggest-clusters/${suggestionId}/keywords`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keyword }),
+      })
+      const data = await res.json()
+
+      if (data.error) {
+        setResults((r) => ({
+          ...r,
+          [suggestionId]: { state: 'error', message: data.error },
+        }))
+      } else {
+        const nextKeywords = (data.keywords ?? []) as string[]
+        setSuggestions((prev) =>
+          prev.map((s) => {
+            if (s.id !== suggestionId) return s
+            return {
+              ...s,
+              keywords: nextKeywords,
+              commonEntities: s.commonEntities?.filter(
+                (entity) => entity.trim().toLowerCase() !== keyword.trim().toLowerCase()
+              ),
+              matchedEntities: s.matchedEntities?.filter(
+                (entity) => entity.trim().toLowerCase() !== keyword.trim().toLowerCase()
+              ),
+            }
+          })
+        )
+        const removedEntityNames = (data.removedEntities ?? [])
+          .map((entity: { name?: string }) => entity.name)
+          .filter(Boolean)
+          .join(', ')
+        setResults((r) => ({
+          ...r,
+          [suggestionId]: {
+            state: 'success',
+            message: removedEntityNames
+              ? `키워드 제거 및 엔티티 삭제 완료: ${removedEntityNames}`
+              : '엔티티 표시를 제거했습니다. 같은 이름의 엔티티는 JSON에서 찾지 못했습니다.',
+          },
+        }))
+      }
+    } catch (err) {
+      setResults((r) => ({
+        ...r,
+        [suggestionId]: { state: 'error', message: String(err) },
+      }))
+    }
+    setRemovingKeyword(null)
+  }
+
   const emptyMessage =
     subTab === 'pending'
       ? '대기 중인 제안이 없습니다. 위 버튼으로 새 제안을 받아보세요.'
@@ -1110,11 +857,20 @@ function SuggestTab() {
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <button
           onClick={handleGenerate}
-          disabled={isGenerating}
+          disabled={isGenerating || isRejectingAll}
           className="px-6 py-3 bg-black text-white rounded font-semibold disabled:opacity-50"
         >
           {isGenerating ? '분석 중...' : '토픽 제안 받기'}
         </button>
+        {subTab === 'pending' && suggestions.length > 0 && (
+          <button
+            onClick={handleRejectAll}
+            disabled={isGenerating || processing !== null || isRejectingAll}
+            className="px-6 py-3 border border-red-300 text-red-600 rounded font-semibold hover:bg-red-50 disabled:opacity-50"
+          >
+            {isRejectingAll ? '처리 중...' : '미처리 전체 거절'}
+          </button>
+        )}
         {lastGenSummary && <p className="text-sm text-gray-500">{lastGenSummary}</p>}
       </div>
 
@@ -1160,31 +916,43 @@ function SuggestTab() {
                       {typeof s.cohesionScore === 'number' && (
                         <span className="font-medium text-gray-700">응집도 {s.cohesionScore}</span>
                       )}
-                      {s.commonEntities && s.commonEntities.length > 0 && (
-                        <span>공통 근거: {s.commonEntities.join(', ')}</span>
-                      )}
                     </div>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {s.keywords.map((k) => (
-                        <span key={k} className="px-2 py-0.5 text-xs bg-gray-100 rounded">
-                          {k}
-                        </span>
-                      ))}
-                    </div>
+                    {s.matchedEntities && s.matchedEntities.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {s.matchedEntities.map((k) => (
+                          <span
+                            key={k}
+                            className="inline-flex items-center gap-1 rounded bg-gray-100 py-0.5 pl-2 pr-1 text-xs"
+                          >
+                            <span>{k}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveKeyword(s.id, k)}
+                              disabled={removingKeyword !== null || processing !== null}
+                              title={`${k} 엔티티 제거`}
+                              aria-label={`${k} 엔티티 제거`}
+                              className="rounded px-1 text-gray-400 hover:bg-gray-200 hover:text-red-600 disabled:opacity-40"
+                            >
+                              x
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {subTab === 'pending' && (
                     <div className="flex gap-2 whitespace-nowrap">
                       <button
                         onClick={() => handleApprove(s)}
-                        disabled={processing !== null}
+                        disabled={processing !== null || isRejectingAll}
                         className="px-3 py-2 bg-black text-white text-sm rounded font-semibold disabled:opacity-50"
                       >
                         {isProcessing ? '처리 중...' : '승인 & 기사 생성'}
                       </button>
                       <button
                         onClick={() => handleReject(s)}
-                        disabled={processing !== null}
+                        disabled={processing !== null || isRejectingAll}
                         className="px-3 py-2 border border-gray-300 text-gray-600 text-sm rounded font-semibold hover:bg-gray-50 disabled:opacity-50"
                       >
                         거절
@@ -1199,7 +967,7 @@ function SuggestTab() {
                       </span>
                       <button
                         onClick={() => handleRegenerate(s)}
-                        disabled={processing !== null}
+                        disabled={processing !== null || isRejectingAll}
                         className="px-3 py-2 bg-black text-white text-sm rounded font-semibold disabled:opacity-50"
                       >
                         {isProcessing ? '처리 중...' : '재생성'}
@@ -1207,8 +975,6 @@ function SuggestTab() {
                     </div>
                   )}
                 </div>
-
-                {s.reason && <p className="mb-3 text-sm text-gray-600">{s.reason}</p>}
 
                 <details className="mt-2">
                   <summary className="text-sm text-gray-500 cursor-pointer">
@@ -1816,142 +1582,3 @@ function formatDate(value: string) {
     minute: '2-digit',
   }).format(new Date(value))
 }
-
-type InterviewCandidate = {
-  id: string
-  title: string | null
-  url: string
-  published_at: string | null
-}
-
-function InterviewDiscoveryTab() {
-  const [candidates, setCandidates] = useState<InterviewCandidate[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [processing, setProcessing] = useState<string | null>(null)
-  const [error, setError] = useState('')
-  const [results, setResults] = useState<Record<string, { state: 'pending' | 'success' | 'error'; message: string }>>({})
-
-  const load = useCallback(async () => {
-    setIsLoading(true)
-    setError('')
-    try {
-      const { data, error: fetchError } = await supabase
-        .from('raw_articles')
-        .select('id, title, url, published_at')
-        .or('suggestion_state.is.null,suggestion_state.eq.new')
-        .or('url.ilike.%/interview/%,url.ilike.%/feature/%,url.ilike.%/talks/%,title.ilike.%interview%,title.ilike.%in conversation%,title.ilike.%talks to%,title.ilike.%speaks to%,title.ilike.%catches up%')
-        .order('published_at', { ascending: false, nullsFirst: false })
-        .limit(50)
-
-      if (fetchError) throw fetchError
-      setCandidates((data as InterviewCandidate[]) || [])
-    } catch (err) {
-      setError(String(err))
-    }
-    setIsLoading(false)
-  }, [])
-
-  useEffect(() => {
-    load()
-  }, [load])
-
-  const handleTranslate = async (article: InterviewCandidate) => {
-    setProcessing(article.id)
-    setResults((r) => ({ ...r, [article.id]: { state: 'pending', message: '번역 중...' } }))
-    try {
-      const res = await fetch('/api/interview/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ raw_article_id: article.id }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        setResults((r) => ({ ...r, [article.id]: { state: 'success', message: '번역 완료' } }))
-      } else {
-        setResults((r) => ({ ...r, [article.id]: { state: 'error', message: data.error } }))
-      }
-    } catch (err) {
-      setResults((r) => ({ ...r, [article.id]: { state: 'error', message: String(err) } }))
-    }
-    setProcessing(null)
-  }
-
-  const handleReject = async (article: InterviewCandidate) => {
-    setProcessing(article.id)
-    setResults((r) => ({ ...r, [article.id]: { state: 'pending', message: '기각 중...' } }))
-    try {
-      const res = await fetch(`/api/raw-articles/${article.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ suggestion_state: 'rejected' }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        setResults((r) => ({ ...r, [article.id]: { state: 'success', message: '기각됨' } }))
-      } else {
-        setResults((r) => ({ ...r, [article.id]: { state: 'error', message: data.error } }))
-      }
-    } catch (err) {
-      setResults((r) => ({ ...r, [article.id]: { state: 'error', message: String(err) } }))
-    }
-    setProcessing(null)
-  }
-
-  return (
-    <div>
-      <div className="mb-6 flex items-center justify-between">
-        <p className="text-gray-600">인터뷰로 추정되는 원문을 찾아 번역합니다.</p>
-        <button onClick={load} disabled={isLoading} className="px-3 py-2 text-sm border rounded hover:bg-gray-50">
-          새로고침
-        </button>
-      </div>
-
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      {isLoading && <p className="text-gray-500">불러오는 중...</p>}
-
-      {!isLoading && candidates.length === 0 && !error && (
-        <p className="text-gray-500">발견된 인터뷰 후보가 없습니다.</p>
-      )}
-
-      {candidates.length > 0 && (
-        <div className="space-y-4">
-          {candidates.map(c => {
-            const result = results[c.id]
-            const isProcessing = processing === c.id
-            return (
-              <div key={c.id} className="border rounded p-4 flex items-start justify-between gap-4">
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-semibold">{c.title || '제목 없음'}</h3>
-                  <a href={c.url} target="_blank" rel="noreferrer" className="text-xs text-blue-500 hover:underline block truncate mt-1">{c.url}</a>
-                  <p className="text-xs text-gray-500 mt-1">발행일: {c.published_at ? formatDate(c.published_at) : '불명'}</p>
-                  {result && (
-                    <p className={`mt-2 text-sm ${result.state === 'success' ? 'text-green-600' : result.state === 'error' ? 'text-red-500' : 'text-gray-500'}`}>
-                      {result.message}
-                    </p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleTranslate(c)}
-                    disabled={processing !== null || result?.state === 'success'}
-                    className="px-4 py-2 bg-black text-white text-sm rounded font-semibold disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {isProcessing && result?.message !== '기각 중...' ? '처리 중...' : result?.message === '번역 완료' ? '완료' : '번역 실행'}
-                  </button>
-                  <button
-                    onClick={() => handleReject(c)}
-                    disabled={processing !== null || result?.state === 'success'}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded font-semibold hover:bg-gray-50 disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {result?.message === '기각됨' ? '기각됨' : '기각'}
-                  </button>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
-}
-

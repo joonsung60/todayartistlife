@@ -32,9 +32,6 @@ This version has breaking changes — APIs, conventions, and file structure may 
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
 OLLAMA_BASE_URL          # 기본: http://localhost:11434
-OLLAMA_MODEL             # 기본: qwen3:14b
-OLLAMA_SUGGEST_MODEL     # 토픽 제안 전용
-OLLAMA_INTERVIEW_MODEL   # 인터뷰 번역 전용 (현재: mistral-small3.2:24b)
 ADMIN_PASSWORD
 CLOUDFLARE_DEPLOY_HOOK_URL
 CRON_SECRET

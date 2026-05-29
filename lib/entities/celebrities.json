@@ -105,11 +105,6 @@
     "type": "celebrity"
   },
   {
-    "name": "Shannon Elizabeth",
-    "korean_name": "섀넌 엘리자베스",
-    "type": "celebrity"
-  },
-  {
     "name": "Travis Kelce",
     "korean_name": "트래비스 켈시",
     "type": "celebrity"
@@ -143,7 +138,9 @@
     "name": "Timothee Chalamet",
     "korean_name": "티모시 샬라메",
     "type": "celebrity",
-    "aliases": ["Timothée Chalamet"]
+    "aliases": [
+      "Timothée Chalamet"
+    ]
   },
   {
     "name": "Margot Robbie",

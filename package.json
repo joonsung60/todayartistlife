@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.98.0",
+    "@aws-sdk/client-s3": "^3.1063.0",
     "@supabase/supabase-js": "^2.105.4",
     "dotenv": "^17.4.2",
     "next": "16.2.6",

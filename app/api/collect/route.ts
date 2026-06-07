@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { extractArticleText, extractArticleTitle, extractImageUrl, isUrlLikeTitle, titleFromUrl } from '@/lib/article-extraction'
+import { uploadImageFromUrl } from '@/lib/r2'
 import Parser from 'rss-parser'
 
 const parser = new Parser()
@@ -65,6 +66,32 @@ async function fetchArticleContent(url: string): Promise<{ content: string; imag
   }
 }
 
+// 외부 이미지를 R2에 업로드하고 images 테이블에 기록한 뒤, R2 public_url을 반환한다.
+// 실패해도 기사 수집이 중단되지 않도록 원본 URL로 폴백한다.
+async function persistImageToR2(sourceImageUrl: string | null): Promise<string | null> {
+  if (!sourceImageUrl) return sourceImageUrl
+
+  try {
+    const { r2Key, publicUrl } = await uploadImageFromUrl(sourceImageUrl)
+
+    const { error } = await supabase.from('images').insert({
+      r2_key: r2Key,
+      public_url: publicUrl,
+      source_url: sourceImageUrl,
+      source_type: 'rss',
+    })
+    if (error) {
+      // 업로드 자체는 성공했으므로 R2 URL은 그대로 사용한다.
+      console.error(`images insert 실패: ${publicUrl}`, error)
+    }
+
+    return publicUrl
+  } catch (err) {
+    console.error(`R2 이미지 업로드 실패: ${sourceImageUrl}`, err)
+    return sourceImageUrl
+  }
+}
+
 // RSS 자동 수집
 async function collectFromRSS(): Promise<{ collected: number; failures: CollectFailure[] }> {
   const { data: sources } = await supabase
@@ -104,12 +131,14 @@ async function collectFromRSS(): Promise<{ collected: number; failures: CollectF
           ? feedTitle
           : extractedTitle ?? titleFromUrl(item.link) ?? '제목 없음'
 
+        const storedImageUrl = await persistImageToR2(imageUrl)
+
         await supabase.from('raw_articles').insert({
           source_id: source.id,
           title,
           content,
           url: item.link,
-          image_url: imageUrl,
+          image_url: storedImageUrl,
           author: item.creator || null,
           published_at: parsePublishedAt(item.pubDate || item.isoDate),
         })
@@ -146,13 +175,14 @@ async function collectFromUrls(urls: string[]): Promise<number> {
       if (existing) continue
 
       const { content, imageUrl, title } = await fetchArticleContent(url)
+      const storedImageUrl = await persistImageToR2(imageUrl)
 
       await supabase.from('raw_articles').insert({
         source_id: null,
         title: title ?? titleFromUrl(url) ?? '제목 없음',
         content,
         url,
-        image_url: imageUrl,
+        image_url: storedImageUrl,
         published_at: new Date().toISOString(),
       })
 

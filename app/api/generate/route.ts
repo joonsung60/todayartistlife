@@ -515,6 +515,67 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      // 원문 기사 이미지(R2 저장본)를 article_images에 연결 (실패해도 기사 생성에 영향 없음)
+      if (data?.id) {
+        try {
+          const { data: imgRawArticles, error: imgRawError } = await supabase
+            .from('raw_articles')
+            .select('image_url')
+            .in('id', rawArticleIds)
+            .not('image_url', 'is', null)
+
+          if (imgRawError) {
+            console.error('Failed to fetch raw_articles for images:', imgRawError.message)
+          }
+
+          const imageUrls = Array.from(
+            new Set(
+              ((imgRawArticles ?? []) as { image_url: string | null }[])
+                .map((row) => row.image_url)
+                .filter((url): url is string => Boolean(url))
+            )
+          )
+
+          if (imageUrls.length > 0) {
+            const { data: images, error: imgError } = await supabase
+              .from('images')
+              .select('id, public_url')
+              .in('source_url', imageUrls)
+
+            if (imgError) {
+              console.error('Failed to fetch images:', imgError.message)
+            }
+
+            const imageIdByUrl = new Map(
+              ((images ?? []) as { id: string; public_url: string }[]).map((img) => [img.public_url, img.id])
+            )
+            // raw_articles의 image_url 순서를 보존해 첫 번째를 썸네일로 지정
+            const orderedImageIds = imageUrls
+              .map((url) => imageIdByUrl.get(url))
+              .filter((id): id is string => Boolean(id))
+
+            if (orderedImageIds.length > 0) {
+              const articleImages = orderedImageIds.map((imageId, index) => ({
+                article_id: data.id,
+                image_id: imageId,
+                position: index,
+                is_thumbnail: index === 0,
+              }))
+
+              const { error: linkError } = await supabase
+                .from('article_images')
+                .upsert(articleImages, { onConflict: 'article_id,image_id', ignoreDuplicates: true })
+
+              if (linkError) {
+                console.error('Failed to insert article_images:', linkError.message)
+              }
+            }
+          }
+        } catch (imgErr) {
+          console.error('Error in article_images linking:', imgErr)
+        }
+      }
+
       results.push({ success: true, clusterId, article: data })
 
     } catch (err) {

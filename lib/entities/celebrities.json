@@ -1,1285 +1,632 @@
 [
   {
-    "name": "Cillian Murphy",
-    "korean_name": "킬리언 머피",
-    "type": "celebrity"
-  },
-  {
-    "name": "Tom Hardy",
-    "korean_name": "톰 하디",
-    "type": "celebrity"
-  },
-  {
-    "name": "Helen Mirren",
-    "korean_name": "헬렌 미렌",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jacob Elordi",
-    "korean_name": "제이콥 엘로디",
-    "type": "celebrity"
-  },
-  {
-    "name": "Kendall Jenner",
-    "korean_name": "켄달 제너",
-    "type": "celebrity"
+    "name": "Kim Kardashian",
+    "korean_name": "킴 카다시안",
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Kylie Jenner",
     "korean_name": "카일리 제너",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Kim Kardashian",
-    "korean_name": "킴 카다시안",
-    "type": "celebrity"
+    "name": "Kendall Jenner",
+    "korean_name": "켄달 제너",
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Khloe Kardashian",
     "korean_name": "클로이 카다시안",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Kourtney Kardashian",
     "korean_name": "코트니 카다시안",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Kris Jenner",
     "korean_name": "크리스 제너",
-    "type": "celebrity"
-  },
-  {
-    "name": "Sydney Sweeney",
-    "korean_name": "시드니 스위니",
-    "type": "celebrity"
-  },
-  {
-    "name": "Hilary Duff",
-    "korean_name": "힐러리 더프",
-    "type": "celebrity"
-  },
-  {
-    "name": "Russell Crowe",
-    "korean_name": "러셀 크로우",
-    "type": "celebrity"
-  },
-  {
-    "name": "Chrissy Teigen",
-    "korean_name": "크리시 테이건",
-    "type": "celebrity"
-  },
-  {
-    "name": "Nikki Glaser",
-    "korean_name": "니키 글레이저",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Meghan Markle",
     "korean_name": "메건 마클",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": ["Meghan, Duchess of Sussex", "Meghan Sussex"]
   },
   {
     "name": "Prince Harry",
     "korean_name": "해리 왕자",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": ["Duke of Sussex", "Harry Sussex"]
   },
   {
     "name": "Prince William",
     "korean_name": "윌리엄 왕세자",
-    "type": "celebrity"
-  },
-  {
-    "name": "King Charles",
-    "korean_name": "찰스 왕",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": ["King William", "Prince of Wales"]
   },
   {
     "name": "Princess Kate",
     "korean_name": "케이트 왕세자빈",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": ["Kate Middleton", "Catherine, Princess of Wales", "Catherine Middleton"]
   },
   {
-    "name": "Brooke Hogan",
-    "korean_name": "브룩 호건",
-    "type": "celebrity"
+    "name": "King Charles",
+    "korean_name": "찰스 왕",
+    "type": "celebrity",
+    "aliases": ["King Charles III", "Prince Charles"]
   },
   {
-    "name": "Travis Kelce",
-    "korean_name": "트래비스 켈시",
-    "type": "celebrity"
-  },
-  {
-    "name": "Hailey Bieber",
-    "korean_name": "헤일리 비버",
-    "type": "celebrity"
-  },
-  {
-    "name": "Blake Lively",
-    "korean_name": "블레이크 라이블리",
-    "type": "celebrity"
-  },
-  {
-    "name": "Ryan Reynolds",
-    "korean_name": "라이언 레이놀즈",
-    "type": "celebrity"
+    "name": "Queen Camilla",
+    "korean_name": "커밀라 왕비",
+    "type": "celebrity",
+    "aliases": ["Camilla Parker Bowles"]
   },
   {
     "name": "Zendaya",
     "korean_name": "젠데이아",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Tom Holland",
     "korean_name": "톰 홀랜드",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Timothee Chalamet",
     "korean_name": "티모시 샬라메",
     "type": "celebrity",
-    "aliases": [
-      "Timothée Chalamet"
-    ]
+    "aliases": ["Timothée Chalamet"]
   },
   {
-    "name": "Margot Robbie",
-    "korean_name": "마고 로비",
-    "type": "celebrity"
+    "name": "Jacob Elordi",
+    "korean_name": "제이콥 엘로디",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Ben Affleck",
-    "korean_name": "벤 애플렉",
-    "type": "celebrity"
-  },
-  {
-    "name": "Brad Pitt",
-    "korean_name": "브래드 피트",
-    "type": "celebrity"
-  },
-  {
-    "name": "Angelina Jolie",
-    "korean_name": "안젤리나 졸리",
-    "type": "celebrity"
-  },
-  {
-    "name": "Johnny Depp",
-    "korean_name": "조니 뎁",
-    "type": "celebrity"
-  },
-  {
-    "name": "Amber Heard",
-    "korean_name": "앰버 허드",
-    "type": "celebrity"
-  },
-  {
-    "name": "Leonardo DiCaprio",
-    "korean_name": "레오나르도 디카프리오",
-    "type": "celebrity"
-  },
-  {
-    "name": "Tom Cruise",
-    "korean_name": "톰 크루즈",
-    "type": "celebrity"
-  },
-  {
-    "name": "Keanu Reeves",
-    "korean_name": "키아누 리브스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Robert Pattinson",
-    "korean_name": "로버트 패틴슨",
-    "type": "celebrity"
-  },
-  {
-    "name": "Kristen Stewart",
-    "korean_name": "크리스틴 스튜어트",
-    "type": "celebrity"
-  },
-  {
-    "name": "Emma Stone",
-    "korean_name": "엠마 스톤",
-    "type": "celebrity"
-  },
-  {
-    "name": "Emma Watson",
-    "korean_name": "엠마 왓슨",
-    "type": "celebrity"
-  },
-  {
-    "name": "Anne Hathaway",
-    "korean_name": "앤 해서웨이",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jennifer Lawrence",
-    "korean_name": "제니퍼 로렌스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Scarlett Johansson",
-    "korean_name": "스칼렛 요한슨",
-    "type": "celebrity"
-  },
-  {
-    "name": "Natalie Portman",
-    "korean_name": "나탈리 포트만",
-    "type": "celebrity"
-  },
-  {
-    "name": "Mila Kunis",
-    "korean_name": "밀라 쿠니스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Ashton Kutcher",
-    "korean_name": "애슈턴 커처",
-    "type": "celebrity"
-  },
-  {
-    "name": "Megan Fox",
-    "korean_name": "메간 폭스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Dakota Johnson",
-    "korean_name": "다코타 존슨",
-    "type": "celebrity"
-  },
-  {
-    "name": "Ana de Armas",
-    "korean_name": "아나 데 아르마스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Anya Taylor-Joy",
-    "korean_name": "안야 테일러 조이",
-    "type": "celebrity"
-  },
-  {
-    "name": "Florence Pugh",
-    "korean_name": "플로렌스 퓨",
-    "type": "celebrity"
-  },
-  {
-    "name": "Daisy Edgar-Jones",
-    "korean_name": "데이지 에드거 존스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Saoirse Ronan",
-    "korean_name": "시얼샤 로넌",
-    "type": "celebrity"
-  },
-  {
-    "name": "Elizabeth Olsen",
-    "korean_name": "엘리자베스 올슨",
-    "type": "celebrity"
-  },
-  {
-    "name": "Aubrey Plaza",
-    "korean_name": "오브리 플라자",
-    "type": "celebrity"
+    "name": "Sydney Sweeney",
+    "korean_name": "시드니 스위니",
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Jenna Ortega",
     "korean_name": "제나 오르테가",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Millie Bobby Brown",
     "korean_name": "밀리 바비 브라운",
-    "type": "celebrity"
-  },
-  {
-    "name": "Sadie Sink",
-    "korean_name": "세이디 싱크",
-    "type": "celebrity"
-  },
-  {
-    "name": "Finn Wolfhard",
-    "korean_name": "핀 울프하드",
-    "type": "celebrity"
-  },
-  {
-    "name": "Noah Schnapp",
-    "korean_name": "노아 슈냅",
-    "type": "celebrity"
-  },
-  {
-    "name": "Joseph Quinn",
-    "korean_name": "조셉 퀸",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Pedro Pascal",
     "korean_name": "페드로 파스칼",
-    "type": "celebrity"
-  },
-  {
-    "name": "Oscar Isaac",
-    "korean_name": "오스카 아이작",
-    "type": "celebrity"
-  },
-  {
-    "name": "Adam Driver",
-    "korean_name": "애덤 드라이버",
-    "type": "celebrity"
-  },
-  {
-    "name": "Andrew Garfield",
-    "korean_name": "앤드류 가필드",
-    "type": "celebrity"
-  },
-  {
-    "name": "Tobey Maguire",
-    "korean_name": "토비 맥과이어",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Ryan Gosling",
     "korean_name": "라이언 고슬링",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Eva Mendes",
-    "korean_name": "에바 멘데스",
-    "type": "celebrity"
+    "name": "Margot Robbie",
+    "korean_name": "마고 로비",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Glen Powell",
-    "korean_name": "글렌 파월",
-    "type": "celebrity"
+    "name": "Anya Taylor-Joy",
+    "korean_name": "안야 테일러 조이",
+    "type": "celebrity",
+    "aliases": []
+  },
+  {
+    "name": "Florence Pugh",
+    "korean_name": "플로렌스 퓨",
+    "type": "celebrity",
+    "aliases": []
+  },
+  {
+    "name": "Ana de Armas",
+    "korean_name": "아나 데 아르마스",
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Austin Butler",
     "korean_name": "오스틴 버틀러",
-    "type": "celebrity"
-  },
-  {
-    "name": "Kaia Gerber",
-    "korean_name": "카이아 거버",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Barry Keoghan",
     "korean_name": "배리 키오건",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Paul Mescal",
     "korean_name": "폴 메스칼",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Phoebe Dynevor",
-    "korean_name": "피비 디네버",
-    "type": "celebrity"
-  },
-  {
-    "name": "Rege-Jean Page",
-    "korean_name": "레게 장 페이지",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jonathan Bailey",
-    "korean_name": "조나단 베일리",
-    "type": "celebrity"
-  },
-  {
-    "name": "Nicola Coughlan",
-    "korean_name": "니콜라 코클란",
-    "type": "celebrity"
-  },
-  {
-    "name": "Hugh Jackman",
-    "korean_name": "휴 잭맨",
-    "type": "celebrity"
-  },
-  {
-    "name": "Sutton Foster",
-    "korean_name": "서튼 포스터",
-    "type": "celebrity"
-  },
-  {
-    "name": "Chris Evans",
-    "korean_name": "크리스 에반스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Chris Hemsworth",
-    "korean_name": "크리스 헴스워스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Liam Hemsworth",
-    "korean_name": "리암 헴스워스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Robert Downey Jr.",
-    "korean_name": "로버트 다우니 주니어",
-    "type": "celebrity"
-  },
-  {
-    "name": "Mark Ruffalo",
-    "korean_name": "마크 러팔로",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jeremy Renner",
-    "korean_name": "제러미 레너",
-    "type": "celebrity"
-  },
-  {
-    "name": "Sebastian Stan",
-    "korean_name": "세바스찬 스탠",
-    "type": "celebrity"
-  },
-  {
-    "name": "Anthony Mackie",
-    "korean_name": "앤서니 매키",
-    "type": "celebrity"
-  },
-  {
-    "name": "Benedict Cumberbatch",
-    "korean_name": "베네딕트 컴버배치",
-    "type": "celebrity"
-  },
-  {
-    "name": "Henry Cavill",
-    "korean_name": "헨리 카빌",
-    "type": "celebrity"
-  },
-  {
-    "name": "Gal Gadot",
-    "korean_name": "갤 가돗",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jason Momoa",
-    "korean_name": "제이슨 모모아",
-    "type": "celebrity"
-  },
-  {
-    "name": "Dwayne Johnson",
-    "korean_name": "드웨인 존슨",
-    "type": "celebrity"
-  },
-  {
-    "name": "The Rock",
-    "korean_name": "더 락",
-    "type": "celebrity"
-  },
-  {
-    "name": "Vin Diesel",
-    "korean_name": "빈 디젤",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jason Statham",
-    "korean_name": "제이슨 스타뎀",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jude Law",
-    "korean_name": "주드 로",
-    "type": "celebrity"
-  },
-  {
-    "name": "Colin Farrell",
-    "korean_name": "콜린 파렐",
-    "type": "celebrity"
-  },
-  {
-    "name": "Matthew McConaughey",
-    "korean_name": "매튜 맥커너히",
-    "type": "celebrity"
-  },
-  {
-    "name": "Joaquin Phoenix",
-    "korean_name": "호아킨 피닉스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jared Leto",
-    "korean_name": "자레드 레토",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jesse Eisenberg",
-    "korean_name": "제시 아이젠버그",
-    "type": "celebrity"
-  },
-  {
-    "name": "Michael Cera",
-    "korean_name": "마이클 세라",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jonah Hill",
-    "korean_name": "조나 힐",
-    "type": "celebrity"
-  },
-  {
-    "name": "Seth Rogen",
-    "korean_name": "세스 로건",
-    "type": "celebrity"
-  },
-  {
-    "name": "James Franco",
-    "korean_name": "제임스 프랭코",
-    "type": "celebrity"
-  },
-  {
-    "name": "Zac Efron",
-    "korean_name": "잭 에프론",
-    "type": "celebrity"
-  },
-  {
-    "name": "Vanessa Hudgens",
-    "korean_name": "바네사 허진스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Ashley Tisdale",
-    "korean_name": "애슐리 티스데일",
-    "type": "celebrity"
-  },
-  {
-    "name": "Lindsay Lohan",
-    "korean_name": "린지 로한",
-    "type": "celebrity"
-  },
-  {
-    "name": "Paris Hilton",
-    "korean_name": "패리스 힐튼",
-    "type": "celebrity"
-  },
-  {
-    "name": "Nicole Richie",
-    "korean_name": "니콜 리치",
-    "type": "celebrity"
-  },
-  {
-    "name": "Mischa Barton",
-    "korean_name": "미샤 바튼",
-    "type": "celebrity"
-  },
-  {
-    "name": "Rachel Bilson",
-    "korean_name": "레이첼 빌슨",
-    "type": "celebrity"
-  },
-  {
-    "name": "Leighton Meester",
-    "korean_name": "레이튼 미스터",
-    "type": "celebrity"
-  },
-  {
-    "name": "Penn Badgley",
-    "korean_name": "펜 배질리",
-    "type": "celebrity"
-  },
-  {
-    "name": "Chace Crawford",
-    "korean_name": "체이스 크로포드",
-    "type": "celebrity"
-  },
-  {
-    "name": "Ed Westwick",
-    "korean_name": "에드 웨스트윅",
-    "type": "celebrity"
-  },
-  {
-    "name": "Sarah Jessica Parker",
-    "korean_name": "사라 제시카 파커",
-    "type": "celebrity"
-  },
-  {
-    "name": "Kim Cattrall",
-    "korean_name": "킴 캐트럴",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jennifer Aniston",
-    "korean_name": "제니퍼 애니스턴",
-    "type": "celebrity"
-  },
-  {
-    "name": "Courteney Cox",
-    "korean_name": "코트니 콕스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Lisa Kudrow",
-    "korean_name": "리사 쿠드로",
-    "type": "celebrity"
-  },
-  {
-    "name": "Matt LeBlanc",
-    "korean_name": "맷 르블랑",
-    "type": "celebrity"
-  },
-  {
-    "name": "David Schwimmer",
-    "korean_name": "데이비드 슈위머",
-    "type": "celebrity"
-  },
-  {
-    "name": "Matthew Perry",
-    "korean_name": "매튜 페리",
-    "type": "celebrity"
-  },
-  {
-    "name": "Gwyneth Paltrow",
-    "korean_name": "기네스 팰트로",
-    "type": "celebrity"
-  },
-  {
-    "name": "Julia Roberts",
-    "korean_name": "줄리아 로버츠",
-    "type": "celebrity"
-  },
-  {
-    "name": "Sandra Bullock",
-    "korean_name": "샌드라 블록",
-    "type": "celebrity"
-  },
-  {
-    "name": "Nicole Kidman",
-    "korean_name": "니콜 키드먼",
-    "type": "celebrity"
-  },
-  {
-    "name": "Cate Blanchett",
-    "korean_name": "케이트 블란쳇",
-    "type": "celebrity"
-  },
-  {
-    "name": "Charlize Theron",
-    "korean_name": "샤를리즈 테론",
-    "type": "celebrity"
-  },
-  {
-    "name": "Meryl Streep",
-    "korean_name": "메릴 스트립",
-    "type": "celebrity"
-  },
-  {
-    "name": "Demi Moore",
-    "korean_name": "데미 무어",
-    "type": "celebrity"
-  },
-  {
-    "name": "Bruce Willis",
-    "korean_name": "브루스 윌리스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Will Smith",
-    "korean_name": "윌 스미스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jada Pinkett Smith",
-    "korean_name": "제이다 핀켓 스미스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Viola Davis",
-    "korean_name": "비올라 데이비스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Octavia Spencer",
-    "korean_name": "옥타비아 스펜서",
-    "type": "celebrity"
-  },
-  {
-    "name": "Michelle Yeoh",
-    "korean_name": "양자경",
-    "type": "celebrity"
-  },
-  {
-    "name": "Lucy Liu",
-    "korean_name": "루시 리우",
-    "type": "celebrity"
-  },
-  {
-    "name": "Constance Wu",
-    "korean_name": "콘스턴스 우",
-    "type": "celebrity"
-  },
-  {
-    "name": "Awkwafina",
-    "korean_name": "아콰피나",
-    "type": "celebrity"
-  },
-  {
-    "name": "Sandra Oh",
-    "korean_name": "샌드라 오",
-    "type": "celebrity"
-  },
-  {
-    "name": "Steven Yeun",
-    "korean_name": "스티븐 연",
-    "type": "celebrity"
-  },
-  {
-    "name": "Ali Wong",
-    "korean_name": "앨리 웡",
-    "type": "celebrity"
-  },
-  {
-    "name": "Simu Liu",
-    "korean_name": "시무 리우",
-    "type": "celebrity"
-  },
-  {
-    "name": "Dev Patel",
-    "korean_name": "데브 파텔",
-    "type": "celebrity"
-  },
-  {
-    "name": "Priyanka Chopra",
-    "korean_name": "프리앙카 초프라",
-    "type": "celebrity"
-  },
-  {
-    "name": "Nick Jonas",
-    "korean_name": "닉 조나스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Joe Jonas",
-    "korean_name": "조 조나스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Sophie Turner",
-    "korean_name": "소피 터너",
-    "type": "celebrity"
-  },
-  {
-    "name": "Kit Harington",
-    "korean_name": "킷 해링턴",
-    "type": "celebrity"
-  },
-  {
-    "name": "Emilia Clarke",
-    "korean_name": "에밀리아 클라크",
-    "type": "celebrity"
-  },
-  {
-    "name": "Maisie Williams",
-    "korean_name": "메이지 윌리엄스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Jason Sudeikis",
-    "korean_name": "제이슨 수데이키스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Olivia Wilde",
-    "korean_name": "올리비아 와일드",
-    "type": "celebrity"
-  },
-  {
-    "name": "Shailene Woodley",
-    "korean_name": "쉐일린 우들리",
-    "type": "celebrity"
-  },
-  {
-    "name": "Aaron Rodgers",
-    "korean_name": "애런 로저스",
-    "type": "celebrity"
+    "name": "Glen Powell",
+    "korean_name": "글렌 파월",
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Jeremy Allen White",
     "korean_name": "제러미 앨런 화이트",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Ayo Edebiri",
     "korean_name": "아요 에데비리",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Ebon Moss-Bachrach",
-    "korean_name": "에번 모스-배크랙",
-    "type": "celebrity"
+    "name": "Leonardo DiCaprio",
+    "korean_name": "레오나르도 디카프리오",
+    "type": "celebrity",
+    "aliases": ["Leo DiCaprio"]
   },
   {
-    "name": "Lily Collins",
-    "korean_name": "릴리 콜린스",
-    "type": "celebrity"
+    "name": "Brad Pitt",
+    "korean_name": "브래드 피트",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Emily Blunt",
-    "korean_name": "에밀리 블런트",
-    "type": "celebrity"
+    "name": "Angelina Jolie",
+    "korean_name": "안젤리나 졸리",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "John Krasinski",
-    "korean_name": "존 크래신스키",
-    "type": "celebrity"
+    "name": "Tom Cruise",
+    "korean_name": "톰 크루즈",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Daniel Craig",
-    "korean_name": "다니엘 크레이그",
-    "type": "celebrity"
+    "name": "Johnny Depp",
+    "korean_name": "조니 뎁",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Rachel Weisz",
-    "korean_name": "레이첼 와이즈",
-    "type": "celebrity"
+    "name": "Amber Heard",
+    "korean_name": "앰버 허드",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Daniel Radcliffe",
-    "korean_name": "다니엘 래드클리프",
-    "type": "celebrity"
+    "name": "Keanu Reeves",
+    "korean_name": "키아누 리브스",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Rupert Grint",
-    "korean_name": "루퍼트 그린트",
-    "type": "celebrity"
+    "name": "Robert Pattinson",
+    "korean_name": "로버트 패틴슨",
+    "type": "celebrity",
+    "aliases": ["R-Patz"]
   },
   {
-    "name": "Ralph Fiennes",
-    "korean_name": "레이프 파인스",
-    "type": "celebrity"
+    "name": "Emma Stone",
+    "korean_name": "엠마 스톤",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Helena Bonham Carter",
-    "korean_name": "헬레나 본햄 카터",
-    "type": "celebrity"
+    "name": "Emma Watson",
+    "korean_name": "엠마 왓슨",
+    "type": "celebrity",
+    "aliases": []
+  },
+  {
+    "name": "Anne Hathaway",
+    "korean_name": "앤 해서웨이",
+    "type": "celebrity",
+    "aliases": []
+  },
+  {
+    "name": "Jennifer Lawrence",
+    "korean_name": "제니퍼 로렌스",
+    "type": "celebrity",
+    "aliases": ["JLaw"]
+  },
+  {
+    "name": "Scarlett Johansson",
+    "korean_name": "스칼렛 요한슨",
+    "type": "celebrity",
+    "aliases": ["ScarJo"]
+  },
+  {
+    "name": "Natalie Portman",
+    "korean_name": "나탈리 포트만",
+    "type": "celebrity",
+    "aliases": []
+  },
+  {
+    "name": "Megan Fox",
+    "korean_name": "메간 폭스",
+    "type": "celebrity",
+    "aliases": []
+  },
+  {
+    "name": "Blake Lively",
+    "korean_name": "블레이크 라이블리",
+    "type": "celebrity",
+    "aliases": []
+  },
+  {
+    "name": "Ryan Reynolds",
+    "korean_name": "라이언 레이놀즈",
+    "type": "celebrity",
+    "aliases": []
+  },
+  {
+    "name": "Hailey Bieber",
+    "korean_name": "헤일리 비버",
+    "type": "celebrity",
+    "aliases": ["Hailey Baldwin"]
   },
   {
     "name": "Gigi Hadid",
     "korean_name": "지지 하디드",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Bella Hadid",
     "korean_name": "벨라 하디드",
-    "type": "celebrity"
-  },
-  {
-    "name": "Yolanda Hadid",
-    "korean_name": "욜란다 하디드",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Cara Delevingne",
     "korean_name": "카라 델레바인",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Emily Ratajkowski",
     "korean_name": "에밀리 라타이코프스키",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": ["EmRata"]
   },
   {
-    "name": "Naomi Campbell",
-    "korean_name": "나오미 캠벨",
-    "type": "celebrity"
+    "name": "Kaia Gerber",
+    "korean_name": "카이아 거버",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Tyra Banks",
-    "korean_name": "타이라 뱅크스",
-    "type": "celebrity"
+    "name": "Chrissy Teigen",
+    "korean_name": "크리시 테이건",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Heidi Klum",
-    "korean_name": "하이디 클룸",
-    "type": "celebrity"
+    "name": "Paris Hilton",
+    "korean_name": "패리스 힐튼",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Gisele Bundchen",
-    "korean_name": "지젤 번천",
-    "type": "celebrity"
+    "name": "Lindsay Lohan",
+    "korean_name": "린지 로한",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Irina Shayk",
-    "korean_name": "이리나 샤크",
-    "type": "celebrity"
+    "name": "Ben Affleck",
+    "korean_name": "벤 애플렉",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Kate Moss",
-    "korean_name": "케이트 모스",
-    "type": "celebrity"
+    "name": "Jennifer Aniston",
+    "korean_name": "제니퍼 애니스턴",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Cindy Crawford",
-    "korean_name": "신디 크로퍼드",
-    "type": "celebrity"
+    "name": "Gwyneth Paltrow",
+    "korean_name": "기네스 팰트로",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Lori Harvey",
-    "korean_name": "로리 하비",
-    "type": "celebrity"
+    "name": "Nicole Kidman",
+    "korean_name": "니콜 키드먼",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Olivia Culpo",
-    "korean_name": "올리비아 컬포",
-    "type": "celebrity"
+    "name": "Charlize Theron",
+    "korean_name": "샤를리즈 테론",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Julia Fox",
-    "korean_name": "줄리아 폭스",
-    "type": "celebrity"
+    "name": "Will Smith",
+    "korean_name": "윌 스미스",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Addison Rae",
-    "korean_name": "애디슨 레이",
-    "type": "celebrity"
+    "name": "Jada Pinkett Smith",
+    "korean_name": "제이다 핀켓 스미스",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Charli D'Amelio",
-    "korean_name": "찰리 디아멜리오",
-    "type": "celebrity"
+    "name": "Dwayne Johnson",
+    "korean_name": "드웨인 존슨",
+    "type": "celebrity",
+    "aliases": ["The Rock"]
   },
   {
-    "name": "Dixie D'Amelio",
-    "korean_name": "딕시 디아멜리오",
-    "type": "celebrity"
+    "name": "Hugh Jackman",
+    "korean_name": "휴 잭맨",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Bella Thorne",
-    "korean_name": "벨라 손",
-    "type": "celebrity"
+    "name": "Chris Evans",
+    "korean_name": "크리스 에반스",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "JoJo Siwa",
-    "korean_name": "조조 시와",
-    "type": "celebrity"
+    "name": "Chris Hemsworth",
+    "korean_name": "크리스 헴스워스",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Tana Mongeau",
-    "korean_name": "타나 몽고",
-    "type": "celebrity"
+    "name": "Robert Downey Jr.",
+    "korean_name": "로버트 다우니 주니어",
+    "type": "celebrity",
+    "aliases": ["RDJ"]
   },
   {
-    "name": "Jake Paul",
-    "korean_name": "제이크 폴",
-    "type": "celebrity"
+    "name": "Benedict Cumberbatch",
+    "korean_name": "베네딕트 컴버배치",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Logan Paul",
-    "korean_name": "로건 폴",
-    "type": "celebrity"
+    "name": "Henry Cavill",
+    "korean_name": "헨리 카빌",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "MrBeast",
-    "korean_name": "미스터비스트",
-    "type": "celebrity"
+    "name": "Gal Gadot",
+    "korean_name": "갤 가돗",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Emma Chamberlain",
-    "korean_name": "엠마 체임벌린",
-    "type": "celebrity"
+    "name": "Jason Momoa",
+    "korean_name": "제이슨 모모아",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Queen Camilla",
-    "korean_name": "커밀라 왕비",
-    "type": "celebrity"
+    "name": "Joaquin Phoenix",
+    "korean_name": "호아킨 피닉스",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Prince Andrew",
-    "korean_name": "앤드루 왕자",
-    "type": "celebrity"
+    "name": "Cillian Murphy",
+    "korean_name": "킬리언 머피",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Princess Eugenie",
-    "korean_name": "유지니 공주",
-    "type": "celebrity"
+    "name": "Andrew Garfield",
+    "korean_name": "앤드류 가필드",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Princess Beatrice",
-    "korean_name": "베아트리스 공주",
-    "type": "celebrity"
+    "name": "Zac Efron",
+    "korean_name": "잭 에프론",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Pippa Middleton",
-    "korean_name": "피파 미들턴",
-    "type": "celebrity"
+    "name": "Vanessa Hudgens",
+    "korean_name": "바네사 허진스",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "James Middleton",
-    "korean_name": "제임스 미들턴",
-    "type": "celebrity"
+    "name": "Lily Collins",
+    "korean_name": "릴리 콜린스",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Prince George",
-    "korean_name": "조지 왕자",
-    "type": "celebrity"
+    "name": "Emily Blunt",
+    "korean_name": "에밀리 블런트",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Princess Charlotte",
-    "korean_name": "샬럿 공주",
-    "type": "celebrity"
+    "name": "Daisy Edgar-Jones",
+    "korean_name": "데이지 에드거 존스",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Prince Louis",
-    "korean_name": "루이 왕자",
-    "type": "celebrity"
+    "name": "Saoirse Ronan",
+    "korean_name": "시얼샤 로넌",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Oprah Winfrey",
-    "korean_name": "오프라 윈프리",
-    "type": "celebrity"
+    "name": "Michelle Yeoh",
+    "korean_name": "양자경",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Ellen DeGeneres",
-    "korean_name": "엘런 드제너러스",
-    "type": "celebrity"
+    "name": "Sandra Oh",
+    "korean_name": "샌드라 오",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Jimmy Fallon",
-    "korean_name": "지미 팰런",
-    "type": "celebrity"
+    "name": "Awkwafina",
+    "korean_name": "아콰피나",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Jimmy Kimmel",
-    "korean_name": "지미 키멀",
-    "type": "celebrity"
-  },
-  {
-    "name": "Stephen Colbert",
-    "korean_name": "스티븐 콜베어",
-    "type": "celebrity"
-  },
-  {
-    "name": "Trevor Noah",
-    "korean_name": "트레버 노아",
-    "type": "celebrity"
-  },
-  {
-    "name": "John Oliver",
-    "korean_name": "존 올리버",
-    "type": "celebrity"
-  },
-  {
-    "name": "James Corden",
-    "korean_name": "제임스 코든",
-    "type": "celebrity"
-  },
-  {
-    "name": "Andy Cohen",
-    "korean_name": "앤디 코언",
-    "type": "celebrity"
-  },
-  {
-    "name": "Wendy Williams",
-    "korean_name": "웬디 윌리엄스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Kelly Ripa",
-    "korean_name": "켈리 리파",
-    "type": "celebrity"
-  },
-  {
-    "name": "Ryan Seacrest",
-    "korean_name": "라이언 시크레스트",
-    "type": "celebrity"
-  },
-  {
-    "name": "Martha Stewart",
-    "korean_name": "마사 스튜어트",
-    "type": "celebrity"
-  },
-  {
-    "name": "Gordon Ramsay",
-    "korean_name": "고든 램지",
-    "type": "celebrity"
+    "name": "Travis Kelce",
+    "korean_name": "트래비스 켈시",
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "David Beckham",
     "korean_name": "데이비드 베컴",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Victoria Beckham",
     "korean_name": "빅토리아 베컴",
-    "type": "celebrity"
-  },
-  {
-    "name": "Brooklyn Beckham",
-    "korean_name": "브루클린 베컴",
-    "type": "celebrity"
-  },
-  {
-    "name": "Nicola Peltz Beckham",
-    "korean_name": "니콜라 펠츠 베컴",
-    "type": "celebrity"
-  },
-  {
-    "name": "Tom Brady",
-    "korean_name": "톰 브래디",
-    "type": "celebrity"
-  },
-  {
-    "name": "Serena Williams",
-    "korean_name": "세리나 윌리엄스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Venus Williams",
-    "korean_name": "비너스 윌리엄스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Lewis Hamilton",
-    "korean_name": "루이스 해밀턴",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Cristiano Ronaldo",
     "korean_name": "크리스티아누 호날두",
-    "type": "celebrity"
-  },
-  {
-    "name": "Georgina Rodriguez",
-    "korean_name": "조지나 로드리게스",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": ["CR7"]
   },
   {
     "name": "Lionel Messi",
     "korean_name": "리오넬 메시",
-    "type": "celebrity"
-  },
-  {
-    "name": "Neymar",
-    "korean_name": "네이마르",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
     "name": "Kylian Mbappe",
     "korean_name": "킬리안 음바페",
-    "type": "celebrity"
-  },
-  {
-    "name": "Patrick Mahomes",
-    "korean_name": "패트릭 마홈스",
-    "type": "celebrity"
-  },
-  {
-    "name": "Brittany Mahomes",
-    "korean_name": "브리트니 마홈스",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": ["Mbappé"]
   },
   {
     "name": "Shohei Ohtani",
     "korean_name": "오타니 쇼헤이",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": ["Ohtani"]
   },
   {
     "name": "Simone Biles",
     "korean_name": "시몬 바일스",
-    "type": "celebrity"
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Jonathan Owens",
-    "korean_name": "조나단 오웬스",
-    "type": "celebrity"
+    "name": "MrBeast",
+    "korean_name": "미스터비스트",
+    "type": "celebrity",
+    "aliases": ["Mr. Beast", "Jimmy Donaldson"]
   },
   {
-    "name": "Lee Jung-jae",
-    "korean_name": "이정재",
-    "type": "celebrity"
+    "name": "Jake Paul",
+    "korean_name": "제이크 폴",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Jung Ho-yeon",
-    "korean_name": "정호연",
-    "type": "celebrity"
+    "name": "Logan Paul",
+    "korean_name": "로건 폴",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Park Seo-joon",
-    "korean_name": "박서준",
-    "type": "celebrity"
+    "name": "Addison Rae",
+    "korean_name": "애디슨 레이",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Lee Min-ho",
-    "korean_name": "이민호",
-    "type": "celebrity"
+    "name": "Charli D'Amelio",
+    "korean_name": "찰리 디아멜리오",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Song Hye-kyo",
-    "korean_name": "송혜교",
-    "type": "celebrity"
+    "name": "Emma Chamberlain",
+    "korean_name": "엠마 체임벌린",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Son Ye-jin",
-    "korean_name": "손예진",
-    "type": "celebrity"
+    "name": "Gordon Ramsay",
+    "korean_name": "고든 램지",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Hyun Bin",
-    "korean_name": "현빈",
-    "type": "celebrity"
+    "name": "Oprah Winfrey",
+    "korean_name": "오프라 윈프리",
+    "type": "celebrity",
+    "aliases": ["Oprah"]
   },
   {
-    "name": "Kim Soo-hyun",
-    "korean_name": "김수현",
-    "type": "celebrity"
+    "name": "Nick Jonas",
+    "korean_name": "닉 조나스",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Han So-hee",
-    "korean_name": "한소희",
-    "type": "celebrity"
+    "name": "Priyanka Chopra",
+    "korean_name": "프리앙카 초프라",
+    "type": "celebrity",
+    "aliases": ["Priyanka Chopra Jonas"]
   },
   {
-    "name": "Go Youn-jung",
-    "korean_name": "고윤정",
-    "type": "celebrity"
+    "name": "Sophie Turner",
+    "korean_name": "소피 터너",
+    "type": "celebrity",
+    "aliases": []
   },
   {
-    "name": "Bae Suzy",
-    "korean_name": "수지",
-    "type": "celebrity"
-  },
-  {
-    "name": "Cha Eun-woo",
-    "korean_name": "차은우",
-    "type": "celebrity"
-  },
-  {
-    "name": "Ma Dong-seok",
-    "korean_name": "마동석",
-    "type": "celebrity"
-  },
-  {
-    "name": "Don Lee",
-    "korean_name": "마동석",
-    "type": "celebrity"
-  },
-  {
-    "name": "Youn Yuh-jung",
-    "korean_name": "윤여정",
-    "type": "celebrity"
-  },
-  {
-    "name": "Bae Doona",
-    "korean_name": "배두나",
-    "type": "celebrity"
-  },
-  {
-    "name": "Gong Yoo",
-    "korean_name": "공유",
-    "type": "celebrity"
-  },
-  {
-    "name": "Lee Byung-hun",
-    "korean_name": "이병헌",
-    "type": "celebrity"
-  },
-  {
-    "name": "Song Kang-ho",
-    "korean_name": "송강호",
-    "type": "celebrity"
+    "name": "Joe Jonas",
+    "korean_name": "조 조나스",
+    "type": "celebrity",
+    "aliases": []
   }
 ]

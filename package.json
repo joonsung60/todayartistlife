@@ -8,6 +8,8 @@
     "build:static": "node scripts/build-static.mjs",
     "start": "next start",
     "lint": "eslint",
+    "test-datalab": "node scripts/test-datalab.mjs",
+    "update-entity-weights": "node scripts/update-entity-weights.mjs",
     "sync-entities": "npx ts-node scripts/sync-entities.ts"
   },
   "dependencies": {

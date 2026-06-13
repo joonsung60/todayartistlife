@@ -308,6 +308,13 @@ type AdminArticle = {
   genre: string | null
 }
 
+type ArticleEntityTag = {
+  id: string
+  name: string
+  korean_name: string
+  type: string | null
+}
+
 type GenerateResult = {
   success: boolean
   article?: {
@@ -1046,6 +1053,62 @@ function ArticlesReviewTab() {
   const [replacementCrop, setReplacementCrop] = useState<PercentCrop | null>(null)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
+  const [articleEntities, setArticleEntities] = useState<Record<string, ArticleEntityTag[]>>({})
+  const [entityQueries, setEntityQueries] = useState<Record<string, string>>({})
+  const [entitySearchResults, setEntitySearchResults] = useState<Record<string, ArticleEntityTag[]>>({})
+  const [entitySearchLoading, setEntitySearchLoading] = useState<Record<string, boolean>>({})
+  const [entityProcessing, setEntityProcessing] = useState<string | null>(null)
+
+  const loadArticleEntities = useCallback(async (articleIds: string[]) => {
+    if (articleIds.length === 0) {
+      setArticleEntities({})
+      return
+    }
+
+    const { data: relations, error: relationError } = await supabase
+      .from('article_entities')
+      .select('article_id, entity_id')
+      .in('article_id', articleIds)
+
+    if (relationError) {
+      setError(relationError.message)
+      setArticleEntities({})
+      return
+    }
+
+    const entityIds = Array.from(new Set(
+      ((relations ?? []) as { article_id: string; entity_id: string }[])
+        .map((relation) => relation.entity_id)
+    ))
+
+    if (entityIds.length === 0) {
+      setArticleEntities(Object.fromEntries(articleIds.map((id) => [id, []])))
+      return
+    }
+
+    const { data: entities, error: entityError } = await supabase
+      .from('entities')
+      .select('id, name, korean_name, type')
+      .in('id', entityIds)
+
+    if (entityError) {
+      setError(entityError.message)
+      setArticleEntities({})
+      return
+    }
+
+    const entityById = new Map(
+      ((entities ?? []) as ArticleEntityTag[]).map((entity) => [entity.id, entity])
+    )
+    const nextEntities = Object.fromEntries(articleIds.map((id) => [id, [] as ArticleEntityTag[]]))
+
+    for (const relation of (relations ?? []) as { article_id: string; entity_id: string }[]) {
+      const entity = entityById.get(relation.entity_id)
+      if (entity) nextEntities[relation.article_id].push(entity)
+    }
+
+    setArticleEntities(nextEntities)
+  }, [])
 
   const load = useCallback(async (tab: ArticleReviewSubTab) => {
     setIsLoading(true)
@@ -1059,16 +1122,20 @@ function ArticlesReviewTab() {
       if (data.error) {
         setError(data.error)
         setArticles([])
+        setArticleEntities({})
       } else {
-        setArticles((data.articles ?? []) as AdminArticle[])
+        const loadedArticles = (data.articles ?? []) as AdminArticle[]
+        setArticles(loadedArticles)
+        await loadArticleEntities(loadedArticles.map((article) => article.id))
       }
     } catch {
       setError('기사 목록을 불러오지 못했습니다.')
       setArticles([])
+      setArticleEntities({})
     }
 
     setIsLoading(false)
-  }, [])
+  }, [loadArticleEntities])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -1205,6 +1272,100 @@ function ArticlesReviewTab() {
     window.open(`/articles/${article.slug ?? article.id}`, '_blank', 'noopener,noreferrer')
   }
 
+  const handleEntitySearch = async (articleId: string, query: string) => {
+    setEntityQueries((prev) => ({ ...prev, [articleId]: query }))
+
+    const trimmed = query.trim()
+    if (trimmed.length < 2) {
+      setEntitySearchResults((prev) => ({ ...prev, [articleId]: [] }))
+      return
+    }
+
+    setEntitySearchLoading((prev) => ({ ...prev, [articleId]: true }))
+    const pattern = `%${trimmed.replaceAll('%', '\\%').replaceAll('_', '\\_')}%`
+    const [nameResult, koreanNameResult] = await Promise.all([
+      supabase
+        .from('entities')
+        .select('id, name, korean_name, type')
+        .ilike('name', pattern)
+        .limit(8),
+      supabase
+        .from('entities')
+        .select('id, name, korean_name, type')
+        .ilike('korean_name', pattern)
+        .limit(8),
+    ])
+    const searchError = nameResult.error ?? koreanNameResult.error
+    const searchResults = Array.from(
+      new Map(
+        [...(nameResult.data ?? []), ...(koreanNameResult.data ?? [])]
+          .map((entity) => [entity.id, entity as ArticleEntityTag])
+      ).values()
+    ).slice(0, 8)
+
+    if (searchError) {
+      setError(searchError.message)
+      setEntitySearchResults((prev) => ({ ...prev, [articleId]: [] }))
+    } else {
+      setEntitySearchResults((prev) => ({ ...prev, [articleId]: searchResults }))
+    }
+    setEntitySearchLoading((prev) => ({ ...prev, [articleId]: false }))
+  }
+
+  const handleAddEntity = async (articleId: string, entity: ArticleEntityTag) => {
+    const key = `${articleId}:${entity.id}`
+    setEntityProcessing(key)
+    setError('')
+    setMessage('')
+
+    const { error: insertError } = await supabase
+      .from('article_entities')
+      .insert({
+        article_id: articleId,
+        entity_id: entity.id,
+      })
+
+    if (insertError && insertError.code !== '23505') {
+      setError(insertError.message)
+    } else {
+      setArticleEntities((prev) => {
+        const current = prev[articleId] ?? []
+        if (current.some((item) => item.id === entity.id)) return prev
+        return { ...prev, [articleId]: [...current, entity] }
+      })
+      setEntityQueries((prev) => ({ ...prev, [articleId]: '' }))
+      setEntitySearchResults((prev) => ({ ...prev, [articleId]: [] }))
+      setMessage(`엔티티 추가: ${entity.korean_name}`)
+    }
+
+    setEntityProcessing(null)
+  }
+
+  const handleRemoveEntity = async (articleId: string, entity: ArticleEntityTag) => {
+    const key = `${articleId}:${entity.id}`
+    setEntityProcessing(key)
+    setError('')
+    setMessage('')
+
+    const { error: deleteError } = await supabase
+      .from('article_entities')
+      .delete()
+      .eq('article_id', articleId)
+      .eq('entity_id', entity.id)
+
+    if (deleteError) {
+      setError(deleteError.message)
+    } else {
+      setArticleEntities((prev) => ({
+        ...prev,
+        [articleId]: (prev[articleId] ?? []).filter((item) => item.id !== entity.id),
+      }))
+      setMessage(`엔티티 제거: ${entity.korean_name}`)
+    }
+
+    setEntityProcessing(null)
+  }
+
   const handleSaveReplacementImage = async (article: AdminArticle) => {
     if (!replacementImageDataUrl) {
       setError('교체할 이미지를 선택하세요.')
@@ -1290,6 +1451,79 @@ function ArticlesReviewTab() {
               <article key={article.id} className="border rounded p-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
+                    {(() => {
+                      const tags = articleEntities[article.id] ?? []
+                      const query = entityQueries[article.id] ?? ''
+                      const results = entitySearchResults[article.id] ?? []
+                      const isSearching = entitySearchLoading[article.id] ?? false
+
+                      return (
+                        <div className="mb-3 rounded border border-gray-200 bg-gray-50 p-3">
+                          <p className="mb-2 text-xs font-semibold text-gray-500">연결 엔티티</p>
+                          <div className="mb-3 flex flex-wrap gap-1.5">
+                            {tags.length > 0 ? (
+                              tags.map((entity) => {
+                                const entityKey = `${article.id}:${entity.id}`
+                                return (
+                                  <span
+                                    key={entity.id}
+                                    className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700"
+                                  >
+                                    <span>{entity.korean_name}</span>
+                                    <span className="text-gray-400">({entity.name})</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveEntity(article.id, entity)}
+                                      disabled={entityProcessing === entityKey}
+                                      className="ml-1 text-gray-400 hover:text-red-500 disabled:opacity-50"
+                                      aria-label={`${entity.korean_name} 엔티티 제거`}
+                                    >
+                                      ×
+                                    </button>
+                                  </span>
+                                )
+                              })
+                            ) : (
+                              <span className="text-xs text-gray-400">연결된 엔티티 없음</span>
+                            )}
+                          </div>
+                          <div className="relative">
+                            <input
+                              className="w-full rounded border border-gray-300 bg-white p-2 text-sm"
+                              placeholder="엔티티 이름 검색 (영문/한국어)"
+                              value={query}
+                              onChange={(e) => handleEntitySearch(article.id, e.target.value)}
+                            />
+                            {(isSearching || results.length > 0) && (
+                              <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded border border-gray-200 bg-white shadow">
+                                {isSearching ? (
+                                  <p className="p-2 text-sm text-gray-500">검색 중...</p>
+                                ) : (
+                                  results.map((entity) => {
+                                    const alreadyLinked = tags.some((tag) => tag.id === entity.id)
+                                    const entityKey = `${article.id}:${entity.id}`
+                                    return (
+                                      <button
+                                        key={entity.id}
+                                        type="button"
+                                        onClick={() => handleAddEntity(article.id, entity)}
+                                        disabled={alreadyLinked || entityProcessing === entityKey}
+                                        className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                      >
+                                        <span className="font-medium">{entity.korean_name}</span>
+                                        <span className="ml-2 text-gray-500">{entity.name}</span>
+                                        {alreadyLinked && <span className="ml-2 text-xs text-gray-400">이미 연결됨</span>}
+                                      </button>
+                                    )
+                                  })
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })()}
+
                     <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
                       <span>{article.published ? '게시일' : '생성일'} {formatDate(article.published_at ?? article.created_at)}</span>
                       {article.updated_at && <span>수정일 {formatDate(article.updated_at)}</span>}

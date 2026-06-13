@@ -6,7 +6,7 @@
 
 ## 1. 프로젝트 목적
 
-해외 아티스트/연예인(팝, 케이팝, EDM, 힙합, 록 등) 관련 소스(RSS, 개별 URL, SNS/포스터 이미지)를 바탕으로 한국어 아티스트/가십 뉴스 기사를 생성하고, 사람이 검토한 뒤 `todayartistlife.com`에 게시한다.
+해외 아티스트/셀럽 전반(팝, 케이팝, 힙합, 영화/TV, 패션, 라이프스타일 등) 관련 소스(RSS, 개별 URL, SNS/포스터 이미지)를 바탕으로 한국어 아티스트/가십 뉴스 기사를 생성하고, 사람이 검토한 뒤 `todayartistlife.com`에 게시한다.
 
 현재 기사 생성 경로는 세 가지다.
 
@@ -163,7 +163,7 @@ RSS/URL 기사들을 토픽별로 묶는 클러스터 구조.
 
 이미지/SNS 기반 기사는 `articles.image_url`에 직접 이미지가 저장된다.
 
-인터뷰 번역 기반 기사는 `cluster_id` 없이 생성되며, 원문 `raw_articles.image_url`을 `articles.image_url`로 복사한다. 현재 `category: '인터뷰'`, `genre: 'edm'`로 저장하는 코드가 남아 있어 최신 taxonomy(`news`/`event`/`artist`)와 불일치한다.
+인터뷰 번역 기반 기사는 `cluster_id` 없이 생성되며, 원문 `raw_articles.image_url`을 `articles.image_url`로 복사한다. 신규/수정 코드에서는 최신 taxonomy(`news`/`event`/`artist`)와 투아라의 아티스트/셀럽 종합 미디어 방향에 맞춰 저장값을 유지해야 한다.
 
 ### `image_sources`
 
@@ -336,7 +336,7 @@ app/api/raw-articles/[id]/route.ts
 - 한국어 기사체, 5~10문장
 - 상대 날짜 표현 금지
 - **고유명사 표기 규칙**:
-  - 영어 아티스트명은 기본적으로 영문 유지. 임의 한글 음역 절대 금지.
+  - 영어 인물명/아티스트명은 기본적으로 영문 유지. 임의 한글 음역 절대 금지.
   - 예외적으로 `lib/display-names.json`에 정의된 정착된 표기만 한글화.
   - 도시명 단독 등장 시 한글 표기, 그 외 고유명사 일부일 땐 영문 유지.
   - RSS/URL 경로는 매칭된 `lib/entities` 항목을 프롬프트에 주입하고, 생성 완료 후 텍스트에도 사후 치환(Post-processing)을 적용함.
@@ -382,7 +382,7 @@ app/api/raw-articles/[id]/route.ts
 - SEO (slug URL, sitemap, llms.txt 등)
 - 텔레그램 봇 기반 원격 어드민 제어 (grammy)
 - **아티스트 고유명사 한글/영문 매핑 (`lib/display-names.json`) 사전 프롬프트 주입 및 사후 교정(Post-processing) 적용**
-- **투아라 브랜딩 및 Taxonomy 적용** (EDM 전문에서 아티스트/가십 종합 미디어로 확장)
+- **투아라 브랜딩 및 Taxonomy 적용** (아티스트/셀럽 라이프·가십 종합 미디어 기준)
 - **엔터티 사전/alias 동기화 및 article_entities 연결**
 
 ## 13. 남은 작업 / 주의점
@@ -393,11 +393,11 @@ app/api/raw-articles/[id]/route.ts
 - 기사 생성 시 동일 raw article 중복 사용 추적(`is_used`) 부재.
 - Vision 프롬프트 품질 고도화 및 생성 결과에 대한 `validateKoreanArticle` 수준의 검증 부재.
 - 사용하지 않는 이미지 원본/크롭 파일들의 주기적인 Storage 정리 정책 부재.
-- 투아라 전환 후 남은 EDM 레거시 문자열이 일부 존재한다.
+- 투아라 전환 후 남은 레거시 브랜딩/분류 문자열은 발견 시 투아라 기준으로 정리한다.
   - `app/articles/[slug]/page.tsx` metadata fallback/title/description
   - `scripts/generate-static-files.mjs`의 기본 SITE_URL, `CATEGORY_SLUGS`, `llms.txt` 문구
-  - 인터뷰 번역 생성값 `category: '인터뷰'`, `genre: 'edm'`
-  - 기사 상세 카테고리 배지 상수(`페스티벌`, `릴리즈` 등)
+  - 인터뷰 번역 생성값이 최신 taxonomy(`news`/`event`/`artist`)와 맞는지 확인
+  - 기사 상세 카테고리 배지 상수와 표시 라벨이 투아라 taxonomy와 맞는지 확인
 
 ## 14. API 시그니처 (간략 요약)
 

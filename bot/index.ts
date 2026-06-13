@@ -1,7 +1,11 @@
-import "dotenv/config";
+import { config as loadEnv } from "dotenv";
+import path from "node:path";
 import { setDefaultResultOrder } from "node:dns";
 import { Agent } from "node:https";
 import { Bot, InlineKeyboard } from "grammy";
+
+loadEnv({ path: path.resolve(__dirname, "../.env.local") });
+loadEnv({ path: path.resolve(__dirname, ".env") });
 
 setDefaultResultOrder("ipv4first");
 
@@ -92,30 +96,143 @@ bot.use(async (ctx, next) => {
 bot.command("start", async (ctx) => {
   console.log("/start 진입:", ctx.from?.id);
   await ctx.reply(
-    "EDM Star News 봇입니다.\n\n" +
+    "투아라 봇입니다.\n\n" +
     "/collect - RSS 수집\n" +
     "/suggest - 토픽 제안\n" +
+    "/suggest2 - 토픽 확장 제안\n" +
     "/topics - 제안된 토픽 목록\n" +
-    "/articles - 기사 초안 목록"
+    "/clear_topics - pending 토픽 제안 전체 삭제\n" +
+    "/articles - 기사 초안 목록\n" +
+    "/deploy - 사이트 배포 트리거"
   );
+});
+
+// /clear_topics
+bot.command("clear_topics", async (ctx) => {
+  console.log("/clear_topics 진입:", ctx.from?.id);
+  const msg = await ctx.reply("pending 토픽 제안 삭제 중...");
+  try {
+    const getRes = await fetch(`${LOCAL_API}/api/suggest-clusters?status=pending`);
+    const getData = await getRes.json().catch(() => ({}));
+    const count = getData.suggestions?.length || 0;
+
+    const res = await fetch(`${LOCAL_API}/api/suggest-clusters?status=pending`, { method: "DELETE" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.error) {
+      throw new Error(`삭제 실패 (status ${res.status}): ${data.error ?? res.statusText}`);
+    }
+    await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `pending 토픽 제안 ${count}개 삭제 완료`);
+  } catch (e) {
+    console.error("pending 토픽 제안 삭제 실패:", e);
+    await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `오류 발생: ${e}`);
+  }
+});
+
+// /deploy
+bot.command("deploy", async (ctx) => {
+  console.log("/deploy 진입:", ctx.from?.id);
+  const msg = await ctx.reply("배포 트리거 요청 중...");
+  try {
+    const res = await fetch(`${LOCAL_API}/api/deploy`, { method: "POST" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.error) {
+      throw new Error(`배포 트리거 실패 (status ${res.status}): ${data.error ?? res.statusText}`);
+    }
+    if (data.cooldown) {
+      await ctx.api.editMessageText(ctx.chat.id, msg.message_id, "쿨다운 중입니다. 잠시 후 다시 시도해주세요.");
+    } else if (data.success) {
+      await ctx.api.editMessageText(ctx.chat.id, msg.message_id, "배포 트리거 완료");
+    } else {
+      await ctx.api.editMessageText(ctx.chat.id, msg.message_id, "배포 트리거에 실패했습니다.");
+    }
+  } catch (e) {
+    console.error("배포 트리거 실패:", e);
+    await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `오류 발생: ${e}`);
+  }
 });
 
 // /collect
 bot.command("collect", async (ctx) => {
   console.log("/collect 진입:", ctx.from?.id);
   const msg = await ctx.reply("RSS 수집 중...");
+  let res;
+  
   try {
-    const res = await fetch(`${LOCAL_API}/api/collect`, { method: "POST" });
-    const data = await res.json();
-    const collected = data.collected ?? 0;
-    const failed = data.failures?.length ?? 0;
+    res = await fetch(`${LOCAL_API}/api/collect`, { method: "POST" });
+  } catch (e) {
+    const errorMessage = e instanceof Error ? e.message : String(e);
     await ctx.api.editMessageText(
       ctx.chat.id,
       msg.message_id,
-      `수집 완료\n새 기사: ${collected}개${failed > 0 ? `\n실패 소스: ${failed}개` : ""}`
+      `Next API에 연결하지 못했습니다. 로컬 서버가 켜져 있는지 확인하세요.\n에러: ${errorMessage.split('\n')[0]}`
     );
+    return;
+  }
+
+  try {
+    const data = await res.json().catch(() => ({}));
+    
+    if (!res.ok || data.success === false) {
+      await ctx.api.editMessageText(
+        ctx.chat.id,
+        msg.message_id,
+        `collect API가 실패했습니다. (HTTP ${res.status})\n에러: ${data.error || '알 수 없는 에러'}`
+      );
+      return;
+    }
+
+    const { collected = 0, failures = [], diagnostics } = data;
+    let resultText = "";
+
+    if (diagnostics && typeof diagnostics.sourceCount === "number") {
+      const {
+        insertedCount,
+        duplicateSkippedCount,
+        processedFeedItems,
+        totalFeedItems,
+        parsedSourceCount,
+        sourceCount,
+        failedSourceCount,
+      } = diagnostics;
+
+      resultText += `RSS 수집 완료\n`;
+      resultText += `- 신규 저장: ${insertedCount}개\n`;
+      resultText += `- 중복 스킵: ${duplicateSkippedCount}개\n`;
+      resultText += `- 처리 아이템: ${processedFeedItems}개 / 피드 전체 ${totalFeedItems}개\n`;
+      resultText += `- 소스 성공: ${parsedSourceCount}/${sourceCount}개\n`;
+      resultText += `- 실패 소스: ${failedSourceCount}개\n`;
+
+      if (collected === 0 && duplicateSkippedCount > 0) {
+        resultText += `\n새 기사는 없지만 RSS 확인은 정상 완료됐습니다.\n`;
+      }
+    } else {
+      resultText += `수집 완료\n새 기사: ${collected}개\n`;
+    }
+
+    if (failures.length > 0) {
+      resultText += `\n실패 소스:\n`;
+      failures.slice(0, 5).forEach((f: any) => {
+        let errStr = String(f.error).split('\n')[0];
+        if (errStr.length > 50) errStr = errStr.substring(0, 50) + "...";
+        resultText += `- ${f.source}: ${errStr}\n`;
+      });
+      if (failures.length > 5) {
+        resultText += `...외 ${failures.length - 5}개 실패\n`;
+      }
+    }
+
+    if (resultText.length > 4000) {
+      resultText = resultText.substring(0, 4000) + "... (메시지 길이 초과)";
+    }
+
+    await ctx.api.editMessageText(ctx.chat.id, msg.message_id, resultText.trim());
   } catch (e) {
-    await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `오류 발생: ${e}`);
+    const errorMessage = e instanceof Error ? e.message : String(e);
+    await ctx.api.editMessageText(
+      ctx.chat.id,
+      msg.message_id,
+      `응답 처리 중 오류 발생: ${errorMessage.split('\n')[0]}`
+    );
   }
 });
 
@@ -141,6 +258,30 @@ bot.command("suggest", async (ctx) => {
     // 각 제안을 카드로 표시
     await replyWithTopicCards(ctx, suggestions);
   } catch (e) {
+    await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `오류 발생: ${e}`);
+  }
+});
+
+// /suggest2
+bot.command("suggest2", async (ctx) => {
+  console.log("/suggest2 진입:", ctx.from?.id);
+  const msg = await ctx.reply("토픽 확장 제안 시작 중...");
+  try {
+    const res = await fetch(`${LOCAL_API}/api/suggest-clusters/extended`, {
+      method: "POST",
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.error) {
+      throw new Error(`토픽 확장 제안 실패 (status ${res.status}): ${data.error ?? res.statusText}`);
+    }
+
+    await ctx.api.editMessageText(
+      ctx.chat.id,
+      msg.message_id,
+      "토픽 확장 제안을 시작했습니다.\n완료 후 /topics로 제안 목록을 확인하세요."
+    );
+  } catch (e) {
+    console.error("토픽 확장 제안 실패:", e);
     await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `오류 발생: ${e}`);
   }
 });
@@ -175,118 +316,48 @@ bot.command("topics", async (ctx) => {
   }
 });
 
-// 기사 생성 버튼
+// 기사 생성 버튼: 큐에 등록만 하고 즉시 응답.
 bot.callbackQuery(/^approve:(.+)$/, async (ctx) => {
   const id = ctx.match[1];
   await ctx.answerCallbackQuery();
   await ctx.editMessageReplyMarkup({ reply_markup: new InlineKeyboard() });
-  const msg = await ctx.reply("기사 생성 중...");
-  let approved = false;
+  const msg = await ctx.reply("기사 생성 큐에 등록 중...");
 
   try {
-    // 1. approved 상태로 변경 + suggestion row를 응답에서 직접 사용 (admin과 동일한 데이터 출처)
     const approveRes = await fetch(`${LOCAL_API}/api/suggest-clusters/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "approved" }),
     });
     const approveData = await approveRes.json().catch(() => ({}));
-    console.log("PATCH approve 응답:", approveRes.status, approveData);
     if (!approveRes.ok || approveData.error) {
       throw new Error(
         `제안 승인 실패 (status ${approveRes.status}): ${approveData.error ?? approveRes.statusText}`
       );
     }
-    approved = true;
 
-    const suggestion = approveData.suggestion;
-    const topic = typeof suggestion?.topic === "string" ? suggestion.topic.trim() : "";
-    const keywords = Array.isArray(suggestion?.keywords) ? suggestion.keywords : [];
-    const articleIds = Array.isArray(suggestion?.article_ids) ? suggestion.article_ids : [];
-
-    if (!topic) {
-      throw new Error("제안 데이터에 topic이 없습니다.");
-    }
-    if (articleIds.length === 0 && keywords.length === 0) {
-      throw new Error("제안 데이터에 articleIds와 keywords가 모두 없습니다.");
-    }
-
-    // 2. 클러스터 생성 (admin과 동일: matchMode 생략 → API 기본값 'or')
-    const clusterRes = await fetch(`${LOCAL_API}/api/cluster`, {
+    const jobRes = await fetch(`${LOCAL_API}/api/jobs`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ topic, keywords, articleIds }),
+      body: JSON.stringify({
+        job_type: "generate_from_suggestion",
+        payload: { suggestionId: id },
+      }),
     });
-    const clusterData = await clusterRes.json().catch(() => ({}));
-    console.log("POST cluster 응답:", clusterRes.status, clusterData);
-    if (!clusterRes.ok || !clusterData.success) {
+    const jobData = await jobRes.json().catch(() => ({}));
+    if (!jobRes.ok || jobData.error) {
       throw new Error(
-        `클러스터 생성 실패 (status ${clusterRes.status}): ${clusterData.error ?? clusterRes.statusText}`
+        `잡 등록 실패 (status ${jobRes.status}): ${jobData.error ?? jobRes.statusText}`
       );
     }
-    const clusterId = clusterData.clusterId;
-    if (!clusterId) {
-      throw new Error(`클러스터 생성 실패: clusterId가 응답에 없습니다. payload=${JSON.stringify(clusterData)}`);
-    }
-
-    // 3. 기사 생성
-    const genRes = await fetch(`${LOCAL_API}/api/generate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ clusterIds: [clusterId] }),
-    });
-    const genData = await genRes.json().catch(() => ({}));
-    console.log("POST generate 응답:", genRes.status, genData);
-    if (!genRes.ok) {
-      throw new Error(
-        `기사 생성 실패 (status ${genRes.status}): ${genData.error ?? genRes.statusText}`
-      );
-    }
-
-    const genResult = genData.results?.[0];
-    if (!genResult?.success) {
-      throw new Error(`기사 생성 실패: ${genResult?.error ?? "알 수 없는 오류"}`);
-    }
-    const articleId = genResult.article?.id;
-    if (!articleId) {
-      throw new Error("기사 생성 실패: article id가 없습니다.");
-    }
-
-    // 4. suggested_clusters 상태 published로 + clusterId 연결 (admin과 동일하게 camelCase)
-    const publishRes = await fetch(`${LOCAL_API}/api/suggest-clusters/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "published", clusterId }),
-    });
-    const publishData = await publishRes.json().catch(() => ({}));
-    console.log("PATCH published 응답:", publishRes.status, publishData);
-    if (!publishRes.ok || publishData.error) {
-      throw new Error(
-        `제안 published 처리 실패 (status ${publishRes.status}): ${publishData.error ?? publishRes.statusText}`
-      );
-    }
-
-    const keyboard = new InlineKeyboard()
-      .text("게시", `publish:${articleId}`)
-      .text("삭제", `delete:${articleId}`);
 
     await ctx.api.editMessageText(
       ctx.chat.id,
       msg.message_id,
-      `기사 생성 완료\n\n${formatArticleMessage(genResult.article?.title, genResult.article?.content)}`,
-      { reply_markup: keyboard }
+      "기사 생성 큐에 등록됐습니다 ⏳"
     );
   } catch (e) {
-    if (approved) {
-      await fetch(`${LOCAL_API}/api/suggest-clusters/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "pending" }),
-      }).catch((resetError) => {
-        console.error("제안 상태 pending 복구 실패:", resetError);
-      });
-    }
-    console.error("기사 생성 버튼 처리 실패:", e);
+    console.error("기사 생성 큐 등록 실패:", e);
     await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `오류 발생: ${e}`);
   }
 });
@@ -360,9 +431,19 @@ async function main() {
     const me = await bot.api.getMe();
     console.log(`Telegram bot token 확인됨: @${me.username}`);
 
+    await bot.api.setMyCommands([
+      { command: "collect", description: "RSS 수집" },
+      { command: "suggest", description: "토픽 제안" },
+      { command: "suggest2", description: "토픽 확장 제안" },
+      { command: "topics", description: "제안된 토픽 목록" },
+      { command: "clear_topics", description: "pending 토픽 제안 전체 삭제" },
+      { command: "articles", description: "기사 초안 목록" },
+      { command: "deploy", description: "사이트 배포 트리거" },
+    ]);
+
     await bot.start({
       onStart: (botInfo) => {
-        console.log(`투아라 (Today Artist Life) 봇 시작됨: @${botInfo.username}`);
+        console.log(`투아라 봇 시작됨: @${botInfo.username}`);
       },
     });
   } catch (e) {

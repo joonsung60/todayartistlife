@@ -418,3 +418,6 @@ npx eslint [수정한 코드 파일]
 npm run build:static
 npm run sync-entities
 ```
+
+터미널 1: npm run dev:all (Next.js + Worker)
+터미널 2: cd bot && npm start (텔레그램 봇)

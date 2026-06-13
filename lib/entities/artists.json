@@ -538,5 +538,149 @@
     "korean_name": "일레니엄",
     "type": "artist",
     "aliases": []
+  },
+  {
+    "name": "BTS",
+    "korean_name": "방탄소년단",
+    "type": "artist",
+    "aliases": ["Bangtan Boys", "방탄소년단"]
+  },
+  {
+    "name": "Jungkook",
+    "korean_name": "정국",
+    "type": "artist",
+    "aliases": ["Jeon Jungkook", "BTS Jungkook"]
+  },
+  {
+    "name": "Jimin",
+    "korean_name": "지민",
+    "type": "artist",
+    "aliases": ["Park Jimin", "BTS Jimin"]
+  },
+  {
+    "name": "V",
+    "korean_name": "뷔",
+    "type": "artist",
+    "aliases": ["Kim Taehyung", "BTS V", "Taehyung"]
+  },
+  {
+    "name": "RM",
+    "korean_name": "알엠",
+    "type": "artist",
+    "aliases": ["Kim Namjoon", "BTS RM", "Namjoon"]
+  },
+  {
+    "name": "Suga",
+    "korean_name": "슈가",
+    "type": "artist",
+    "aliases": ["Agust D", "Min Yoongi", "BTS Suga"]
+  },
+  {
+    "name": "J-Hope",
+    "korean_name": "제이홉",
+    "type": "artist",
+    "aliases": ["Jung Hoseok", "BTS J-Hope"]
+  },
+  {
+    "name": "Jin",
+    "korean_name": "진",
+    "type": "artist",
+    "aliases": ["Kim Seokjin", "BTS Jin"]
+  },
+  {
+    "name": "BLACKPINK",
+    "korean_name": "블랙핑크",
+    "type": "artist",
+    "aliases": ["Black Pink"]
+  },
+  {
+    "name": "Lisa",
+    "korean_name": "리사",
+    "type": "artist",
+    "aliases": ["Lalisa Manobal", "BLACKPINK Lisa"]
+  },
+  {
+    "name": "Jennie",
+    "korean_name": "제니",
+    "type": "artist",
+    "aliases": ["Jennie Kim", "BLACKPINK Jennie"]
+  },
+  {
+    "name": "Rose",
+    "korean_name": "로제",
+    "type": "artist",
+    "aliases": ["Roseanne Park", "BLACKPINK Rose", "Rosé"]
+  },
+  {
+    "name": "Jisoo",
+    "korean_name": "지수",
+    "type": "artist",
+    "aliases": ["Kim Jisoo", "BLACKPINK Jisoo"]
+  },
+  {
+    "name": "TWICE",
+    "korean_name": "트와이스",
+    "type": "artist",
+    "aliases": []
+  },
+  {
+    "name": "Nayeon",
+    "korean_name": "나연",
+    "type": "artist",
+    "aliases": ["TWICE Nayeon", "Im Nayeon"]
+  },
+  {
+    "name": "SEVENTEEN",
+    "korean_name": "세븐틴",
+    "type": "artist",
+    "aliases": ["SVT"]
+  },
+  {
+    "name": "Stray Kids",
+    "korean_name": "스트레이 키즈",
+    "type": "artist",
+    "aliases": ["SKZ"]
+  },
+  {
+    "name": "aespa",
+    "korean_name": "에스파",
+    "type": "artist",
+    "aliases": []
+  },
+  {
+    "name": "NewJeans",
+    "korean_name": "뉴진스",
+    "type": "artist",
+    "aliases": ["New Jeans"]
+  },
+  {
+    "name": "IVE",
+    "korean_name": "아이브",
+    "type": "artist",
+    "aliases": []
+  },
+  {
+    "name": "KATSEYE",
+    "korean_name": "캣츠아이",
+    "type": "artist",
+    "aliases": []
+  },
+  {
+    "name": "PSY",
+    "korean_name": "싸이",
+    "type": "artist",
+    "aliases": ["Psy", "Park Jae-sang"]
+  },
+  {
+    "name": "CL",
+    "korean_name": "CL",
+    "type": "artist",
+    "aliases": ["Lee Chaerin", "2NE1 CL"]
+  },
+  {
+    "name": "Rain",
+    "korean_name": "비",
+    "type": "artist",
+    "aliases": ["Jung Ji-hoon"]
   }
 ]

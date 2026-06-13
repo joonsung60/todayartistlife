@@ -570,11 +570,37 @@ function entityMatchTerms(entity: SimpleEntity): string[] {
   return [entity.name, ...(entity.aliases ?? [])].filter((term) => term.trim().length > 0)
 }
 
+// 짧거나(<=3글자) 흔한 영어 단어일 수 있는 한 단어 이름(V, CL, Rose, Drake, Rain 등)은
+// 일반 word boundary 매칭만으로는 무관한 기사에서 오탐이 발생한다.
+function isAmbiguousTerm(term: string): boolean {
+  return term.length <= 3 || /^[A-Za-z]+$/.test(term)
+}
+
+// 모호한 term은 원문(대소문자 보존)에서 대문자로 시작하고 앞뒤가 글자/숫자가 아닌
+// (공백·문장부호·문자열 경계) 위치에 나타날 때만 매칭한다.
+function matchesProperNounTerm(text: string, term: string): boolean {
+  const regex = new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegExp(term)}(?![\\p{L}\\p{N}])`, 'giu')
+  let match: RegExpExecArray | null
+  while ((match = regex.exec(text)) !== null) {
+    if (/[A-Z]/.test(match[0][0])) {
+      return true
+    }
+  }
+  return false
+}
+
+function matchesEntityTerm(text: string, lowerText: string, term: string): boolean {
+  if (isAmbiguousTerm(term)) {
+    return matchesProperNounTerm(text, term)
+  }
+  const termRegex = new RegExp(`\\b${escapeRegExp(term.toLowerCase())}\\b`, 'i')
+  return termRegex.test(lowerText)
+}
+
 function loadTargetEntities(): SimpleEntity[] {
   try {
     const artists = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'lib/entities/artists.json'), 'utf-8'))
-    const celebs = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'lib/entities/celebrities.json'), 'utf-8'))
-    return [...artists, ...celebs]
+    return artists
   } catch (err) {
     console.error('Failed to load target entities:', err)
     return []
@@ -589,11 +615,9 @@ function getMatchedEntities(article: { title?: string | null, content?: string |
   const lowerText = fullText.toLowerCase()
 
   for (const ent of entities) {
-    const hasNameMatch = entityMatchTerms(ent).some((term) => {
-      const lowerTerm = term.toLowerCase()
-      const termRegex = new RegExp(`\\b${escapeRegExp(lowerTerm)}\\b`, 'i')
-      return termRegex.test(lowerText)
-    })
+    const hasNameMatch = entityMatchTerms(ent).some((term) =>
+      matchesEntityTerm(fullText, lowerText, term)
+    )
 
     if (hasNameMatch || fullText.includes(ent.korean_name)) {
       matched.add(ent.name)

@@ -17,7 +17,6 @@ type SuggestedClusterRow = {
 
 const ENTITY_FILES = [
   'lib/entities/artists.json',
-  'lib/entities/celebrities.json',
 ]
 
 function normalizeKey(value: string): string {

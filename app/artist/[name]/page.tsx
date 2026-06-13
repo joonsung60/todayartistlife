@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import { notFound } from 'next/navigation'
 import { ArticleList } from '@/components/ArticleList'
 import { isUsableImageUrl, loadClusterImageUrl, type ArticleListItem } from '@/lib/articles'
@@ -28,6 +30,37 @@ function entitySlug(name: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
+}
+
+export async function generateStaticParams() {
+  let entities: { name: string }[] = []
+  
+  const artistsPath = path.join(process.cwd(), 'lib/entities/artists.json')
+  const celebritiesPath = path.join(process.cwd(), 'lib/entities/celebrities.json')
+  
+  if (fs.existsSync(artistsPath)) {
+    try {
+      const data = fs.readFileSync(artistsPath, 'utf8')
+      entities = entities.concat(JSON.parse(data))
+    } catch (e) {
+      console.warn('Failed to parse artists.json', e)
+    }
+  }
+  
+  if (fs.existsSync(celebritiesPath)) {
+    try {
+      const data = fs.readFileSync(celebritiesPath, 'utf8')
+      entities = entities.concat(JSON.parse(data))
+    } catch (e) {
+      console.warn('Failed to parse celebrities.json', e)
+    }
+  }
+
+  const slugs = Array.from(new Set(entities.map(e => entitySlug(e.name))))
+
+  return slugs.map(slug => ({
+    name: slug,
+  }))
 }
 
 async function loadEntity(slug: string): Promise<Entity | null> {

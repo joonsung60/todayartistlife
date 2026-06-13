@@ -191,13 +191,11 @@ async function updateSupabaseWeights(entities) {
 
 async function main() {
   const artistsPath = resolve(process.cwd(), 'lib/entities/artists.json')
-  const celebritiesPath = resolve(process.cwd(), 'lib/entities/celebrities.json')
   const dateRange = getDateRange()
 
-  const entities = uniqueByNameAndType([
-    ...readEntities(artistsPath),
-    ...readEntities(celebritiesPath),
-  ].map(normalizeEntity))
+  const entities = uniqueByNameAndType(
+    readEntities(artistsPath).map(normalizeEntity)
+  )
   const referenceEntity = entities.find((entity) => entity.name === REFERENCE_ENTITY_NAME)
 
   if (!referenceEntity) {

@@ -26,12 +26,10 @@ type EntityRecord = {
 async function main() {
   try {
     const artistsPath = resolve(process.cwd(), 'lib/entities/artists.json')
-    const celebritiesPath = resolve(process.cwd(), 'lib/entities/celebrities.json')
 
     const artists = JSON.parse(readFileSync(artistsPath, 'utf-8')) as EntityRecord[]
-    const celebrities = JSON.parse(readFileSync(celebritiesPath, 'utf-8')) as EntityRecord[]
 
-    const allEntities = [...artists, ...celebrities].map((entity) => ({
+    const allEntities = artists.map((entity) => ({
       ...entity,
       aliases: entity.aliases ?? [],
     }))

@@ -324,7 +324,7 @@ function normalizeSuggestion(
     || isUrlOrDomainText(topic)
     || isSourceOrSeriesEntity(topic)
     || isLowSignalClusterText(topic)
-    || articleIds.length < 1
+    || articleIds.length < 2
     || cohesionScore < MIN_COHESION_SCORE
   ) {
     return null
@@ -735,7 +735,6 @@ export async function POST(req: NextRequest) {
     const { data: articles, error } = await supabase
       .from('raw_articles')
       .select('id, title, content, url, source_id, published_at')
-      .eq('is_used', false)
       .or('suggestion_state.is.null,suggestion_state.eq.new')
       .order('published_at', { ascending: false })
       .limit(limit)

@@ -123,13 +123,6 @@ export async function DELETE(
     return NextResponse.json({ error: '기사를 찾을 수 없습니다.' }, { status: 404 })
   }
 
-  if (article.published) {
-    return NextResponse.json(
-      { error: '게시된 기사는 이 화면에서 삭제할 수 없습니다.' },
-      { status: 400 }
-    )
-  }
-
   if (article.cluster_id) {
     const rawArticleUpdateError = await resetClusterRawArticlesForDraftDelete(article.cluster_id)
     if (rawArticleUpdateError) {
@@ -157,6 +150,11 @@ export async function DELETE(
 
   if (deleteError) {
     return NextResponse.json({ error: deleteError.message }, { status: 500 })
+  }
+
+  // 게시된 기사를 삭제하면 사이트에서 사라지므로 재빌드 트리거 (디바운스됨)
+  if (article.published) {
+    await triggerDeployHook()
   }
 
   return NextResponse.json({ deleted: true, article })

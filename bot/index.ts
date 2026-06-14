@@ -53,6 +53,35 @@ function formatArticleMessage(title: unknown, content: unknown): string {
   return preview ? `${safeTitle}\n\n${preview}` : safeTitle;
 }
 
+type SyncEntitiesResponse = {
+  synced?: number;
+  error?: string;
+};
+
+type UpdateWeightsResponse = {
+  updated?: number;
+  top5?: Array<{
+    name?: string;
+    korean_name?: string | null;
+    weight?: number;
+  }>;
+  error?: string;
+};
+
+function formatTopWeights(top5: UpdateWeightsResponse["top5"]) {
+  if (!Array.isArray(top5) || top5.length === 0) {
+    return "상위 가중치 결과가 없습니다.";
+  }
+
+  return top5
+    .map((entity, index) => {
+      const displayName = entity.korean_name || entity.name || "Unknown";
+      const weight = typeof entity.weight === "number" ? entity.weight.toFixed(2) : "0.00";
+      return `${index + 1}. ${displayName} (${entity.name ?? "-"}) - ${weight}`;
+    })
+    .join("\n");
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function replyWithTopicCards(ctx: any, suggestions: any[]) {
   for (const s of suggestions) {
@@ -103,6 +132,8 @@ bot.command("start", async (ctx) => {
     "/topics - 제안된 토픽 목록\n" +
     "/clear_topics - pending 토픽 제안 전체 삭제\n" +
     "/articles - 기사 초안 목록\n" +
+    "/sync_entities - 엔티티 동기화\n" +
+    "/update_weights - 가중치 업데이트\n" +
     "/deploy - 사이트 배포 트리거"
   );
 });
@@ -147,6 +178,54 @@ bot.command("deploy", async (ctx) => {
     }
   } catch (e) {
     console.error("배포 트리거 실패:", e);
+    await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `오류 발생: ${e}`);
+  }
+});
+
+// /sync_entities
+bot.command("sync_entities", async (ctx) => {
+  console.log("/sync_entities 진입:", ctx.from?.id);
+  const msg = await ctx.reply("엔티티 동기화 중...");
+
+  try {
+    const res = await fetch(`${LOCAL_API}/api/sync-entities`, { method: "POST" });
+    const data = await res.json().catch(() => ({})) as SyncEntitiesResponse;
+
+    if (!res.ok || data.error) {
+      throw new Error(`엔티티 동기화 실패 (status ${res.status}): ${data.error ?? res.statusText}`);
+    }
+
+    await ctx.api.editMessageText(
+      ctx.chat.id,
+      msg.message_id,
+      `엔티티 동기화 완료\n동기화: ${data.synced ?? 0}개`
+    );
+  } catch (e) {
+    console.error("엔티티 동기화 실패:", e);
+    await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `오류 발생: ${e}`);
+  }
+});
+
+// /update_weights
+bot.command("update_weights", async (ctx) => {
+  console.log("/update_weights 진입:", ctx.from?.id);
+  const msg = await ctx.reply("가중치 업데이트 중...");
+
+  try {
+    const res = await fetch(`${LOCAL_API}/api/update-weights`, { method: "POST" });
+    const data = await res.json().catch(() => ({})) as UpdateWeightsResponse;
+
+    if (!res.ok || data.error) {
+      throw new Error(`가중치 업데이트 실패 (status ${res.status}): ${data.error ?? res.statusText}`);
+    }
+
+    await ctx.api.editMessageText(
+      ctx.chat.id,
+      msg.message_id,
+      `가중치 업데이트 완료\n업데이트: ${data.updated ?? 0}개\n\nTop 5\n${formatTopWeights(data.top5)}`
+    );
+  } catch (e) {
+    console.error("가중치 업데이트 실패:", e);
     await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `오류 발생: ${e}`);
   }
 });
@@ -211,7 +290,7 @@ bot.command("collect", async (ctx) => {
 
     if (failures.length > 0) {
       resultText += `\n실패 소스:\n`;
-      failures.slice(0, 5).forEach((f: any) => {
+      failures.slice(0, 5).forEach((f: { source?: unknown; error?: unknown }) => {
         let errStr = String(f.error).split('\n')[0];
         if (errStr.length > 50) errStr = errStr.substring(0, 50) + "...";
         resultText += `- ${f.source}: ${errStr}\n`;
@@ -438,6 +517,8 @@ async function main() {
       { command: "topics", description: "제안된 토픽 목록" },
       { command: "clear_topics", description: "pending 토픽 제안 전체 삭제" },
       { command: "articles", description: "기사 초안 목록" },
+      { command: "sync_entities", description: "엔티티 동기화" },
+      { command: "update_weights", description: "가중치 업데이트" },
       { command: "deploy", description: "사이트 배포 트리거" },
     ]);
 

@@ -20,7 +20,7 @@ type GeneratedImageArticle = {
 
 const ALLOWED_CATEGORIES = ['뉴스', '공연', '아티스트']
 const DEFAULT_CATEGORY = '뉴스'
-const SLUG_MAX_LENGTH = 30
+const SLUG_MAX_LENGTH = 60
 const BUCKET_NAME = 'image-sources'
 const MAX_BASE64_LENGTH = 14_000_000
 

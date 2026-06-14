@@ -100,7 +100,9 @@ type GeneratedArticle = {
   entities: string[]
 }
 
-const SLUG_MAX_LENGTH = 30
+const SLUG_MIN_LENGTH = 40
+const SLUG_MAX_LENGTH = 60
+const SLUG_MIN_FILLER = 'generated-article-story-from-today-artist-life'
 const DEFAULT_CATEGORY = 'news'
 
 type ClusterArticleRow = {
@@ -262,14 +264,37 @@ function parseGeneratedArticle(response: string): GeneratedArticle | null {
   }
 }
 
-function normalizeSlug(raw: string): string {
+function slugify(raw: string): string {
   return raw
     .toLowerCase()
     .replace(/[^a-z0-9-]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
-    .slice(0, SLUG_MAX_LENGTH)
+}
+
+function limitSlugLength(slug: string, maxLength = SLUG_MAX_LENGTH): string {
+  return slug
+    .slice(0, maxLength)
     .replace(/-+$/, '')
+}
+
+function ensureMinimumSlugLength(slug: string): string {
+  if (slug.length >= SLUG_MIN_LENGTH) return slug
+
+  return limitSlugLength(
+    slug ? `${slug}-${SLUG_MIN_FILLER}` : SLUG_MIN_FILLER
+  )
+}
+
+function normalizeSlug(raw: string, fallback = ''): string {
+  const primary = slugify(raw)
+
+  if (primary.length >= SLUG_MIN_LENGTH || !fallback) {
+    return ensureMinimumSlugLength(limitSlugLength(primary))
+  }
+
+  const expanded = slugify(`${primary}-${fallback}`)
+  return ensureMinimumSlugLength(limitSlugLength(expanded || primary))
 }
 
 function normalizeCategory(raw: string): string {
@@ -278,7 +303,9 @@ function normalizeCategory(raw: string): string {
 }
 
 async function ensureUniqueSlug(base: string): Promise<string> {
-  const safeBase = base || `article-${Date.now().toString(36)}`
+  const safeBase = ensureMinimumSlugLength(
+    limitSlugLength(base || `article-${Date.now().toString(36)}`)
+  )
   let candidate = safeBase
   for (let suffix = 2; suffix < 100; suffix++) {
     const { data } = await supabase
@@ -287,9 +314,11 @@ async function ensureUniqueSlug(base: string): Promise<string> {
       .eq('slug', candidate)
       .maybeSingle()
     if (!data) return candidate
-    candidate = `${safeBase}-${suffix}`
+    const suffixText = `-${suffix}`
+    candidate = `${limitSlugLength(safeBase, SLUG_MAX_LENGTH - suffixText.length)}${suffixText}`
   }
-  return `${safeBase}-${Date.now().toString(36)}`
+  const suffixText = `-${Date.now().toString(36)}`
+  return `${limitSlugLength(safeBase, SLUG_MAX_LENGTH - suffixText.length)}${suffixText}`
 }
 
 function validateKoreanArticle(article: GeneratedArticle): string | null {
@@ -464,7 +493,8 @@ export async function POST(req: NextRequest) {
         ? Array.from(new Set(generated.entities))
         : fallbackMatchedEntities.map((e) => e.name)
 
-      const slug = await ensureUniqueSlug(normalizeSlug(generated.slug))
+      const slugFallback = usableArticles.map((article) => article.title).join(' ')
+      const slug = await ensureUniqueSlug(normalizeSlug(generated.slug, slugFallback))
       const category = normalizeCategory(generated.category)
       const content = appendSingleSourceAttribution(generated.content, typedRawArticles, sourceMeta)
 
@@ -597,6 +627,21 @@ export async function POST(req: NextRequest) {
           }
         } catch (imgErr) {
           console.error('Error in article_images linking:', imgErr)
+        }
+      }
+
+      if (data?.id && rawArticleIds.length > 0) {
+        try {
+          const { error: usedError } = await supabase
+            .from('raw_articles')
+            .update({ is_used: true })
+            .in('id', rawArticleIds)
+
+          if (usedError) {
+            console.error('Failed to update raw_articles is_used:', usedError.message)
+          }
+        } catch (usedErr) {
+          console.error('Error updating raw_articles is_used:', usedErr)
         }
       }
 

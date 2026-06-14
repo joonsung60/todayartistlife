@@ -331,7 +331,15 @@ function SuggestTab() {
   const [isLoading, setIsLoading] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState('')
-  const [processing, setProcessing] = useState<string | null>(null)
+  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set())
+  const startProcessing = (id: string) =>
+    setProcessingIds((prev) => new Set(prev).add(id))
+  const stopProcessing = (id: string) =>
+    setProcessingIds((prev) => {
+      const next = new Set(prev)
+      next.delete(id)
+      return next
+    })
   const [removingKeyword, setRemovingKeyword] = useState<string | null>(null)
   const [results, setResults] = useState<Record<string, ProcessingState>>({})
   const [lastGenSummary, setLastGenSummary] = useState('')
@@ -436,81 +444,56 @@ function SuggestTab() {
   }
 
   const handleApprove = async (s: PersistedSuggestion) => {
-    setProcessing(s.id)
-    setResults((r) => ({ ...r, [s.id]: { state: 'pending', message: '승인 처리 중...' } }))
+    startProcessing(s.id)
+    setResults((r) => {
+      const next = { ...r }
+      delete next[s.id]
+      return next
+    })
 
     try {
       const approveRes = await patchStatus(s.id, { status: 'approved' })
       if (approveRes.error) {
         setResults((r) => ({ ...r, [s.id]: { state: 'error', message: approveRes.error } }))
-        setProcessing(null)
+        stopProcessing(s.id)
         return
       }
 
-      setResults((r) => ({ ...r, [s.id]: { state: 'pending', message: '클러스터 생성 중...' } }))
-
-      const clusterRes = await fetch('/api/cluster', {
+      const jobRes = await fetch('/api/jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          topic: s.topic,
-          keywords: s.keywords,
-          articleIds: s.articleIds,
+          job_type: 'generate_from_suggestion',
+          payload: { suggestionId: s.id },
         }),
       })
-      const clusterData = await clusterRes.json()
-      if (!clusterData.success) {
+      const jobData = await jobRes.json()
+      if (!jobRes.ok || !jobData.jobId) {
         await patchStatus(s.id, { status: 'pending' })
         setResults((r) => ({
           ...r,
-          [s.id]: { state: 'error', message: clusterData.error ?? '클러스터 생성 실패' },
+          [s.id]: { state: 'error', message: jobData.error ?? '잡 등록 실패' },
         }))
-        setProcessing(null)
+        stopProcessing(s.id)
         return
       }
 
-      setResults((r) => ({
-        ...r,
-        [s.id]: {
-          state: 'pending',
-          message: `클러스터 생성됨 (${clusterData.matched}개 매칭). 기사 생성 중...`,
-        },
-      }))
-
-      const genRes = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clusterIds: [clusterData.clusterId] }),
+      // 잡 등록 성공 → 해당 토픽 카드를 목록에서 제거
+      setSuggestions((prev) => prev.filter((x) => x.id !== s.id))
+      setResults((r) => {
+        const next = { ...r }
+        delete next[s.id]
+        return next
       })
-      const genData = await genRes.json()
-      const result = genData.results?.[0] as GenerateResult | undefined
-
-      if (result?.success) {
-        await patchStatus(s.id, {
-          status: 'published',
-          clusterId: clusterData.clusterId,
-        })
-        setResults((r) => ({
-          ...r,
-          [s.id]: { state: 'success', message: `완료: ${result.article?.title ?? ''}` },
-        }))
-        await load(subTab)
-      } else {
-        await patchStatus(s.id, { status: 'pending' })
-        setResults((r) => ({
-          ...r,
-          [s.id]: { state: 'error', message: result?.error ?? '기사 생성 실패' },
-        }))
-      }
     } catch (err) {
       await patchStatus(s.id, { status: 'pending' }).catch(() => undefined)
       setResults((r) => ({ ...r, [s.id]: { state: 'error', message: String(err) } }))
     }
-    setProcessing(null)
+    stopProcessing(s.id)
   }
 
   const handleRegenerate = async (s: PersistedSuggestion) => {
-    setProcessing(s.id)
+    startProcessing(s.id)
     setResults((r) => ({ ...r, [s.id]: { state: 'pending', message: '기사 재생성 중...' } }))
 
     try {
@@ -532,7 +515,7 @@ function SuggestTab() {
             ...r,
             [s.id]: { state: 'error', message: clusterData.error ?? '클러스터 생성 실패' },
           }))
-          setProcessing(null)
+          stopProcessing(s.id)
           return
         }
         currentClusterId = clusterData.clusterId
@@ -565,11 +548,11 @@ function SuggestTab() {
     } catch (err) {
       setResults((r) => ({ ...r, [s.id]: { state: 'error', message: String(err) } }))
     }
-    setProcessing(null)
+    stopProcessing(s.id)
   }
 
   const handleReject = async (s: PersistedSuggestion) => {
-    setProcessing(s.id)
+    startProcessing(s.id)
     try {
       const data = await patchStatus(s.id, { status: 'rejected', hideRawArticles: true })
       if (data.error) {
@@ -580,7 +563,7 @@ function SuggestTab() {
     } catch (err) {
       setResults((r) => ({ ...r, [s.id]: { state: 'error', message: String(err) } }))
     }
-    setProcessing(null)
+    stopProcessing(s.id)
   }
 
   const handleRejectAll = async () => {
@@ -872,7 +855,7 @@ function SuggestTab() {
         {subTab === 'pending' && suggestions.length > 0 && (
           <button
             onClick={handleRejectAll}
-            disabled={isGenerating || processing !== null || isRejectingAll}
+            disabled={isGenerating || processingIds.size > 0 || isRejectingAll}
             className="px-6 py-3 border border-red-300 text-red-600 rounded font-semibold hover:bg-red-50 disabled:opacity-50"
           >
             {isRejectingAll ? '처리 중...' : '미처리 전체 거절'}
@@ -913,7 +896,7 @@ function SuggestTab() {
         <div className="space-y-4">
           {suggestions.map((s) => {
             const result = results[s.id]
-            const isProcessing = processing === s.id
+            const isProcessing = processingIds.has(s.id)
             return (
               <div key={s.id} className="border rounded p-4">
                 <div className="flex items-start justify-between gap-4 mb-3">
@@ -935,7 +918,7 @@ function SuggestTab() {
                             <button
                               type="button"
                               onClick={() => handleRemoveKeyword(s.id, k)}
-                              disabled={removingKeyword !== null || processing !== null}
+                              disabled={removingKeyword !== null || isProcessing}
                               title={`${k} 엔티티 제거`}
                               aria-label={`${k} 엔티티 제거`}
                               className="rounded px-1 text-gray-400 hover:bg-gray-200 hover:text-red-600 disabled:opacity-40"
@@ -952,14 +935,14 @@ function SuggestTab() {
                     <div className="flex gap-2 whitespace-nowrap">
                       <button
                         onClick={() => handleApprove(s)}
-                        disabled={processing !== null || isRejectingAll}
+                        disabled={isProcessing || isRejectingAll}
                         className="px-3 py-2 bg-black text-white text-sm rounded font-semibold disabled:opacity-50"
                       >
-                        {isProcessing ? '처리 중...' : '승인 & 기사 생성'}
+                        {isProcessing ? '처리 중...' : '승인'}
                       </button>
                       <button
                         onClick={() => handleReject(s)}
-                        disabled={processing !== null || isRejectingAll}
+                        disabled={isProcessing || isRejectingAll}
                         className="px-3 py-2 border border-gray-300 text-gray-600 text-sm rounded font-semibold hover:bg-gray-50 disabled:opacity-50"
                       >
                         거절
@@ -974,7 +957,7 @@ function SuggestTab() {
                       </span>
                       <button
                         onClick={() => handleRegenerate(s)}
-                        disabled={processing !== null || isRejectingAll}
+                        disabled={isProcessing || isRejectingAll}
                         className="px-3 py-2 bg-black text-white text-sm rounded font-semibold disabled:opacity-50"
                       >
                         {isProcessing ? '처리 중...' : '재생성'}
@@ -1260,6 +1243,34 @@ function ArticlesReviewTab() {
       } else {
         setMessage(`삭제 완료: ${data.article?.title ?? article.title}`)
         await load(subTab)
+      }
+    } catch {
+      setError('삭제 중 오류가 발생했습니다.')
+    }
+
+    setProcessing(null)
+  }
+
+  const handleDeletePublished = async (article: AdminArticle) => {
+    const ok = window.confirm('이 기사를 삭제하시겠습니까?')
+    if (!ok) return
+
+    setProcessing(article.id)
+    setError('')
+    setMessage('')
+
+    try {
+      const res = await fetch(`/api/articles/${article.id}`, {
+        method: 'DELETE',
+      })
+      const data = await res.json()
+
+      if (data.error) {
+        setError(data.error)
+      } else {
+        // 성공 → 해당 기사 카드를 목록에서 제거 (재빌드는 서버에서 트리거됨)
+        setArticles((prev) => prev.filter((a) => a.id !== article.id))
+        setMessage(`삭제 완료: ${article.title}`)
       }
     } catch {
       setError('삭제 중 오류가 발생했습니다.')
@@ -1738,6 +1749,15 @@ function ArticlesReviewTab() {
                               {processing === article.id ? '처리 중...' : '삭제'}
                             </button>
                           </>
+                        )}
+                        {subTab === 'published' && (
+                          <button
+                            onClick={() => handleDeletePublished(article)}
+                            disabled={processing !== null || editingId !== null || replacingId !== null}
+                            className="px-3 py-2 border border-red-300 text-red-600 text-sm rounded font-semibold hover:bg-red-50 disabled:opacity-50 whitespace-nowrap"
+                          >
+                            {processing === article.id ? '처리 중...' : '삭제'}
+                          </button>
                         )}
                       </>
                     )}

@@ -99,7 +99,7 @@ type GeneratedArticle = {
   entities: string[]
 }
 
-const SLUG_MAX_LENGTH = 30
+const SLUG_MAX_LENGTH = 60
 const DEFAULT_CATEGORY = 'news'
 
 type ClusterArticleRow = {

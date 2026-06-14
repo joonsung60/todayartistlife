@@ -28,10 +28,12 @@ export const metadata: Metadata = {
 
 const NAV_ITEMS = [
   { label: "홈", href: "/" },
-  ...CATEGORY_NAV.map((item) => ({
-    label: item.label,
-    href: `/category/${item.slug}`,
-  })),
+  ...CATEGORY_NAV
+    .filter((item) => item.slug !== "event")
+    .map((item) => ({
+      label: item.label,
+      href: `/category/${item.slug}`,
+    })),
 ];
 
 const showAdminLink = process.env.BUILD_STATIC !== "1";

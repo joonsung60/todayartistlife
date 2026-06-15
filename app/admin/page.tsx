@@ -330,6 +330,7 @@ function SuggestTab() {
   const [suggestions, setSuggestions] = useState<PersistedSuggestion[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [isGeneratingExtended, setIsGeneratingExtended] = useState(false)
   const [error, setError] = useState('')
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set())
   const startProcessing = (id: string) =>
@@ -441,6 +442,39 @@ function SuggestTab() {
       setError('오류가 발생했습니다.')
     }
     setIsGenerating(false)
+  }
+
+  const handleGenerateExtended = async () => {
+    setIsGeneratingExtended(true)
+    setError('')
+    setLastGenSummary('')
+    try {
+      const res = await fetch('/api/suggest-clusters/extended', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      })
+      const data = await res.json()
+      if (data.error) {
+        setError(data.error)
+      } else {
+        const saved = data.saved ?? 0
+        const total = data.total ?? 0
+        const llmCount = data.llmSuggestionCount ?? 0
+        const normalizedCount = data.normalizedSuggestionCount ?? 0
+        const modelLabel = data.model ? ` / ${data.model}` : ''
+        const debugLabel = ` / LLM ${llmCount}개, 통과 ${normalizedCount}개${modelLabel}`
+        setLastGenSummary(`[확장] ${total}개 기사 분석 → ${saved}개 신규 제안 저장${debugLabel}`)
+        if (subTab === 'pending') {
+          await load('pending')
+        } else {
+          setSubTab('pending')
+        }
+      }
+    } catch {
+      setError('오류가 발생했습니다.')
+    }
+    setIsGeneratingExtended(false)
   }
 
   const handleApprove = async (s: PersistedSuggestion) => {
@@ -876,6 +910,13 @@ function SuggestTab() {
           className="px-6 py-3 bg-black text-white rounded font-semibold disabled:opacity-50"
         >
           {isGenerating ? '분석 중...' : '토픽 제안 받기'}
+        </button>
+        <button
+          onClick={handleGenerateExtended}
+          disabled={isGeneratingExtended || isGenerating || isRejectingAll}
+          className="px-6 py-3 border border-black text-black rounded font-semibold disabled:opacity-50"
+        >
+          {isGeneratingExtended ? '분석 중...' : '토픽 확장 제안'}
         </button>
         {subTab === 'pending' && suggestions.length > 0 && (
           <button

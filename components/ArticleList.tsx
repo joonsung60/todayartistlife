@@ -47,7 +47,7 @@ export function ArticleList({
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <CategoryBadges category={article.category} genre={article.genre} />
+              <CategoryBadges genre={article.genre} />
               <h3 className="text-base sm:text-lg font-semibold leading-snug line-clamp-2 group-hover:underline">
                 {article.title}
               </h3>
@@ -94,25 +94,16 @@ export function PopularList({ articles }: { articles: ArticleListItem[] }) {
 }
 
 function CategoryBadges({
-  category,
   genre,
 }: {
-  category?: string | null
   genre?: string | null
 }) {
-  if (!category && !genre) return null
+  if (!genre) return null
   return (
     <div className="mb-1.5 flex flex-wrap items-center gap-1.5 text-xs">
-      {category && (
-        <span className="px-2 py-0.5 rounded bg-zinc-900 text-white font-medium">
-          {category}
-        </span>
-      )}
-      {genre && (
-        <span className="px-2 py-0.5 rounded border border-zinc-300 text-zinc-700">
-          {genre}
-        </span>
-      )}
+      <span className="px-2 py-0.5 rounded border border-zinc-300 text-zinc-700">
+        {genre}
+      </span>
     </div>
   )
 }

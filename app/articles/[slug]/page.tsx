@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { isUsableImageUrl, loadClusterImageUrl } from "@/lib/articles";
+import {
+  isUsableImageUrl,
+  loadClusterImageUrl,
+  loadRelatedArticles,
+} from "@/lib/articles";
+import type { ArticleListItem } from "@/lib/articles";
 
 // ── 원본 유지 — 데이터/유틸 ───────────────────────────
 
@@ -271,6 +276,9 @@ export default async function ArticlePage({
   const article = data;
   const entities = await loadArticleEntities(article.id);
   const articleImages = await loadArticleImages(article.id);
+  const { articles: relatedArticles } = await loadRelatedArticles(article.id, {
+    limit: 4,
+  });
 
   const thumbnailImage =
     articleImages.find((img) => img.is_thumbnail) ?? null;
@@ -298,76 +306,53 @@ export default async function ArticlePage({
 
   return (
     <div className="max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12">
-      <BackLink />
+      <article className="max-w-[720px]">
+        {/* 날짜 + 카테고리/장르 배지 — 한 줄 (날짜 왼쪽, 배지 오른쪽) */}
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+            {article.published_at ? (
+              <time>발행 {formatDate(article.published_at)}</time>
+            ) : (
+              <time>생성 {formatDate(article.created_at)}</time>
+            )}
+            {showUpdated && article.updated_at && (
+              <span className="text-gray-400">
+                · 수정됨 {formatDate(article.updated_at)}
+              </span>
+            )}
+            {!article.published && (
+              <span className="px-1.5 py-0.5 bg-gray-200 text-gray-600 text-[11px] font-medium">
+                초안
+              </span>
+            )}
+          </div>
 
-      <article className="mt-6 max-w-[720px]">
-        {/* 날짜 + 초안 뱃지 */}
-        <div className="flex flex-wrap items-center gap-2 mb-4 text-xs text-gray-500">
-          {article.published_at ? (
-            <time>발행 {formatDate(article.published_at)}</time>
-          ) : (
-            <time>생성 {formatDate(article.created_at)}</time>
-          )}
-          {showUpdated && article.updated_at && (
-            <span className="text-gray-400">
-              · 수정됨 {formatDate(article.updated_at)}
-            </span>
-          )}
-          {!article.published && (
-            <span className="px-1.5 py-0.5 bg-gray-200 text-gray-600 text-[11px] font-medium">
-              초안
-            </span>
+          {(article.category || article.genre) && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {article.category && (
+                <span
+                  className={`inline-block px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white ${badgeCls(article.category)}`}
+                  style={{ fontFamily: "var(--font-display), sans-serif" }}
+                >
+                  {article.category}
+                </span>
+              )}
+              {article.genre && (
+                <span
+                  className="inline-block px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider border border-gray-300 text-gray-600"
+                  style={{ fontFamily: "var(--font-display), sans-serif" }}
+                >
+                  {article.genre}
+                </span>
+              )}
+            </div>
           )}
         </div>
 
-        {/* 카테고리 + 장르 배지 */}
-        {(article.category || article.genre) && (
-          <div className="flex flex-wrap items-center gap-1.5 mb-4">
-            {article.category && (
-              <span
-                className={`inline-block px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white ${badgeCls(article.category)}`}
-                style={{ fontFamily: "var(--font-display), sans-serif" }}
-              >
-                {article.category}
-              </span>
-            )}
-            {article.genre && (
-              <span
-                className="inline-block px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider border border-gray-300 text-gray-600"
-                style={{ fontFamily: "var(--font-display), sans-serif" }}
-              >
-                {article.genre}
-              </span>
-            )}
-          </div>
-        )}
-
         {/* 제목 */}
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight tracking-tight mb-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight tracking-tight mb-6">
           {article.title}
         </h1>
-
-        {/* 아티스트/셀럽 태그 */}
-        {entities.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2 mb-6">
-            {entities.map((entity) => {
-              const isArtist = entity.type === "artist";
-              return (
-                <Link
-                  key={entity.name}
-                  href={artistHref(entity.name)}
-                  className={
-                    isArtist
-                      ? "inline-flex items-center rounded-full px-3 py-1 text-sm font-medium bg-black text-white hover:opacity-70 transition-opacity"
-                      : "inline-flex items-center rounded-full px-3 py-1 text-sm font-medium border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white transition-colors"
-                  }
-                >
-                  {entity.korean_name}
-                </Link>
-              );
-            })}
-          </div>
-        )}
 
         {/* 발행인 구분선 */}
         <div className="mb-8 pb-4 border-b border-gray-200 text-sm">
@@ -399,6 +384,36 @@ export default async function ArticlePage({
           })}
         </div>
 
+        {/* 아티스트/셀럽 태그 — 본문 하단 */}
+        {entities.length > 0 && (
+          <div className="mt-10 pt-6 border-t border-gray-200">
+            <h2
+              className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-3"
+              style={{ fontFamily: "var(--font-display), sans-serif" }}
+            >
+              관련 아티스트
+            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              {entities.map((entity) => {
+                const isArtist = entity.type === "artist";
+                return (
+                  <Link
+                    key={entity.name}
+                    href={artistHref(entity.name)}
+                    className={
+                      isArtist
+                        ? "inline-flex items-center rounded-full px-3 py-1 text-sm font-medium bg-black text-white hover:opacity-70 transition-opacity"
+                        : "inline-flex items-center rounded-full px-3 py-1 text-sm font-medium border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white transition-colors"
+                    }
+                  >
+                    {entity.korean_name}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* 관련 이미지 갤러리 */}
         {galleryImages.length > 0 && (
           <section className="mt-12 pt-8 border-t border-gray-200">
@@ -423,6 +438,23 @@ export default async function ArticlePage({
           </section>
         )}
 
+        {/* 관련 기사 */}
+        {relatedArticles.length > 0 && (
+          <section className="mt-12 pt-8 border-t border-gray-200">
+            <h2
+              className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4"
+              style={{ fontFamily: "var(--font-display), sans-serif" }}
+            >
+              관련 기사
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8">
+              {relatedArticles.map((related) => (
+                <RelatedCard key={related.id} article={related} />
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* 하단 */}
         <div className="mt-12 pt-8 border-t border-gray-200">
           <BackLink />
@@ -440,5 +472,57 @@ function BackLink() {
     >
       ← 목록으로
     </Link>
+  );
+}
+
+// ── 관련 기사 카드 (홈 LATEST 카드 스타일) ─────────────
+
+function relatedHref(a: ArticleListItem): string {
+  return `/articles/${a.slug ?? a.id}`;
+}
+
+function relatedDate(value: string | null): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+}
+
+function RelatedCard({ article }: { article: ArticleListItem }) {
+  const formatted = relatedDate(article.published_at);
+  return (
+    <article className="group">
+      <Link href={relatedHref(article)} className="block">
+        <div className="relative aspect-[16/9] overflow-hidden bg-gray-900">
+          {article.imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={article.imageUrl}
+              alt={article.title}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
+              {article.category && (
+                <span
+                  className="text-xs font-bold uppercase tracking-widest text-white/30"
+                  style={{ fontFamily: "var(--font-display), sans-serif" }}
+                >
+                  {article.category}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="pt-3">
+          <h3 className="text-base font-bold leading-snug group-hover:text-blue-600 transition-colors">
+            {article.title}
+          </h3>
+          {formatted && (
+            <time className="text-xs text-gray-500 mt-1 block">{formatted}</time>
+          )}
+        </div>
+      </Link>
+    </article>
   );
 }

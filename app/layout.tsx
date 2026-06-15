@@ -28,10 +28,11 @@ export const metadata: Metadata = {
 
 const NAV_ITEMS = [
   { label: "홈", href: "/" },
+  { label: "K-POP", href: "/kpop" },
   ...CATEGORY_NAV
     .filter((item) => item.slug !== "event")
     .map((item) => ({
-      label: item.label,
+      label: item.slug === "news" ? "최신 뉴스" : item.label,
       href: `/category/${item.slug}`,
     })),
 ];

@@ -460,10 +460,9 @@
   },
   {
     "name": "Kanye West",
-    "korean_name": "카니예 웨스트",
+    "korean_name": "칸예 웨스트",
     "type": "artist",
     "aliases": [
-      "Ye",
       "Yeezy"
     ],
     "is_korean": false
@@ -879,6 +878,633 @@
     "type": "artist",
     "aliases": [
       "Jung Ji-hoon"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "Shania Twain",
+    "korean_name": "샤니아 트웨인",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Gorillaz",
+    "korean_name": "고릴라즈",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Bruce Springsteen",
+    "korean_name": "브루스 스프링스틴",
+    "type": "artist",
+    "aliases": [
+      "The Boss"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Adele",
+    "korean_name": "아델",
+    "type": "artist",
+    "aliases": [
+      "Adele Adkins"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "P!nk",
+    "korean_name": "핑크",
+    "type": "artist",
+    "aliases": [
+      "Pink",
+      "Alecia Moore"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Elton John",
+    "korean_name": "엘튼 존",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Queen",
+    "korean_name": "퀸",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "The Beatles",
+    "korean_name": "비틀즈",
+    "type": "artist",
+    "aliases": [
+      "Beatles"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Michael Jackson",
+    "korean_name": "마이클 잭슨",
+    "type": "artist",
+    "aliases": [
+      "MJ",
+      "King of Pop"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Whitney Houston",
+    "korean_name": "휘트니 휴스턴",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Mariah Carey",
+    "korean_name": "머라이어 캐리",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Prince",
+    "korean_name": "프린스",
+    "type": "artist",
+    "aliases": [
+      "The Artist"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "David Bowie",
+    "korean_name": "데이비드 보위",
+    "type": "artist",
+    "aliases": [
+      "Ziggy Stardust"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Nirvana",
+    "korean_name": "너바나",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Radiohead",
+    "korean_name": "라디오헤드",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Foo Fighters",
+    "korean_name": "푸 파이터스",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Red Hot Chili Peppers",
+    "korean_name": "레드 핫 칠리 페퍼스",
+    "type": "artist",
+    "aliases": [
+      "RHCP"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Metallica",
+    "korean_name": "메탈리카",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Green Day",
+    "korean_name": "그린 데이",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Paramore",
+    "korean_name": "패러모어",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "My Chemical Romance",
+    "korean_name": "마이 케미컬 로맨스",
+    "type": "artist",
+    "aliases": [
+      "MCR"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Fall Out Boy",
+    "korean_name": "폴 아웃 보이",
+    "type": "artist",
+    "aliases": [
+      "FOB"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Twenty One Pilots",
+    "korean_name": "트웬티 원 파일럿츠",
+    "type": "artist",
+    "aliases": [
+      "21 Pilots"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Liam Gallagher",
+    "korean_name": "리암 갤러거",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Noel Gallagher",
+    "korean_name": "노엘 갤러거",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Usher",
+    "korean_name": "어셔",
+    "type": "artist",
+    "aliases": [
+      "Usher Raymond"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Chris Brown",
+    "korean_name": "크리스 브라운",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Alicia Keys",
+    "korean_name": "알리샤 키스",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "John Legend",
+    "korean_name": "존 레전드",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Amy Winehouse",
+    "korean_name": "에이미 와인하우스",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Pharrell Williams",
+    "korean_name": "퍼렐 윌리엄스",
+    "type": "artist",
+    "aliases": [
+      "Pharrell"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Doechii",
+    "korean_name": "도치",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "GloRilla",
+    "korean_name": "글로릴라",
+    "type": "artist",
+    "aliases": [
+      "Glorilla"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Ice Spice",
+    "korean_name": "아이스 스파이스",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Lil Baby",
+    "korean_name": "릴 베이비",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Future",
+    "korean_name": "퓨처",
+    "type": "artist",
+    "aliases": [
+      "Future Hendrix"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "21 Savage",
+    "korean_name": "21 새비지",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Jack Harlow",
+    "korean_name": "잭 할로우",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Burna Boy",
+    "korean_name": "버나 보이",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Tems",
+    "korean_name": "템스",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Brent Faiyaz",
+    "korean_name": "브렌트 파이야즈",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Summer Walker",
+    "korean_name": "서머 워커",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Kehlani",
+    "korean_name": "케라니",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Tinashe",
+    "korean_name": "티나쉐",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Normani",
+    "korean_name": "노르마니",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Halle Bailey",
+    "korean_name": "할리 베일리",
+    "type": "artist",
+    "aliases": [
+      "Halle"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Victoria Monet",
+    "korean_name": "빅토리아 모네",
+    "type": "artist",
+    "aliases": [
+      "Victoria Monét"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Little Simz",
+    "korean_name": "리틀 심즈",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Yasiin Bey",
+    "korean_name": "야신 베이",
+    "type": "artist",
+    "aliases": [
+      "Mos Def"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Wu-Tang Clan",
+    "korean_name": "우탱 클랜",
+    "type": "artist",
+    "aliases": [
+      "Wu Tang Clan",
+      "Wu-Tang"
+    ],
+    "is_korean": false
+  },
+  {
+    "name": "Keke Palmer",
+    "korean_name": "키키 파머",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Rosé",
+    "korean_name": "로제",
+    "type": "artist",
+    "aliases": [
+      "Rose",
+      "Park Chaeyoung",
+      "BLACKPINK Rosé",
+      "BLACKPINK Rose"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "Jennie",
+    "korean_name": "제니",
+    "type": "artist",
+    "aliases": [
+      "Jennie Kim",
+      "BLACKPINK Jennie"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "EXO",
+    "korean_name": "엑소",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": true
+  },
+  {
+    "name": "NCT 127",
+    "korean_name": "NCT 127",
+    "type": "artist",
+    "aliases": [
+      "NCT127"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "NCT Dream",
+    "korean_name": "NCT 드림",
+    "type": "artist",
+    "aliases": [
+      "NCT DREAM"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "MONSTA X",
+    "korean_name": "몬스타엑스",
+    "type": "artist",
+    "aliases": [
+      "Monsta X"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "GOT7",
+    "korean_name": "갓세븐",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": true
+  },
+  {
+    "name": "SHINee",
+    "korean_name": "샤이니",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": true
+  },
+  {
+    "name": "MAMAMOO",
+    "korean_name": "마마무",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": true
+  },
+  {
+    "name": "Red Velvet",
+    "korean_name": "레드벨벳",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": true
+  },
+  {
+    "name": "Girls' Generation",
+    "korean_name": "소녀시대",
+    "type": "artist",
+    "aliases": [
+      "SNSD",
+      "Girls Generation"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "2NE1",
+    "korean_name": "투애니원",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": true
+  },
+  {
+    "name": "BIGBANG",
+    "korean_name": "빅뱅",
+    "type": "artist",
+    "aliases": [
+      "Big Bang"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "G-Dragon",
+    "korean_name": "지드래곤",
+    "type": "artist",
+    "aliases": [
+      "GD",
+      "Kwon Jiyong"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "TOMORROW X TOGETHER",
+    "korean_name": "투모로우바이투게더",
+    "type": "artist",
+    "aliases": [
+      "TXT"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "ENHYPEN",
+    "korean_name": "엔하이픈",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": true
+  },
+  {
+    "name": "LE SSERAFIM",
+    "korean_name": "르세라핌",
+    "type": "artist",
+    "aliases": [
+      "Le Sserafim",
+      "LESSERAFIM"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "(G)I-DLE",
+    "korean_name": "(여자)아이들",
+    "type": "artist",
+    "aliases": [
+      "G-IDLE",
+      "GIDLE"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "ITZY",
+    "korean_name": "있지",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": true
+  },
+  {
+    "name": "IU",
+    "korean_name": "아이유",
+    "type": "artist",
+    "aliases": [
+      "Lee Jieun"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "Taeyeon",
+    "korean_name": "태연",
+    "type": "artist",
+    "aliases": [
+      "Kim Taeyeon",
+      "SNSD Taeyeon"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "ZICO",
+    "korean_name": "지코",
+    "type": "artist",
+    "aliases": [
+      "Zico",
+      "Woo Jiho"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "CL",
+    "korean_name": "씨엘",
+    "type": "artist",
+    "aliases": [
+      "Lee Chaerin"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "HyunA",
+    "korean_name": "현아",
+    "type": "artist",
+    "aliases": [
+      "Hyuna",
+      "Kim Hyuna"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "BoA",
+    "korean_name": "보아",
+    "type": "artist",
+    "aliases": [
+      "Boa"
+    ],
+    "is_korean": true
+  },
+  {
+    "name": "Jay Park",
+    "korean_name": "박재범",
+    "type": "artist",
+    "aliases": [
+      "Park Jaebeom"
     ],
     "is_korean": true
   }

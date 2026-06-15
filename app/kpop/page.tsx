@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { loadPublishedArticles } from "@/lib/articles";
+import { loadKpopArticles } from "@/lib/articles";
 import type { ArticleListItem } from "@/lib/articles";
 
 // ── 유틸 ──────────────────────────────────────────────
@@ -130,9 +130,8 @@ function ErrorBanner({ message }: { message: string }) {
 
 // ── 페이지 ────────────────────────────────────────────
 
-export default async function Home() {
-  // 기존 시그니처 그대로 유지
-  const { articles, error } = await loadPublishedArticles({ limit: 20 });
+export default async function KpopPage() {
+  const { articles, error } = await loadKpopArticles({ limit: 20 });
 
   const [featuredMain, ...featuredRest] = articles.slice(0, 5);
   const latest = articles.slice(5);
@@ -171,7 +170,7 @@ export default async function Home() {
       )}
 
       {!featuredMain && !error && (
-        <p className="text-sm text-gray-400">아직 발행된 기사가 없습니다.</p>
+        <p className="text-sm text-gray-400">아직 K-POP 기사가 없습니다.</p>
       )}
     </div>
   );

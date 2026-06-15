@@ -58,16 +58,20 @@ export default function RootLayout({
             {/* 상단 바 — 로고 + 슬로건 + 우측 액션 */}
             <div className="flex items-center justify-between gap-4 py-3 md:py-4">
               <div className="min-w-0">
-                <Link
-                  href="/"
-                  className="block text-2xl md:text-3xl font-black leading-none tracking-tight uppercase hover:text-[#0052D4] transition-colors"
-                  style={{ fontFamily: "var(--font-body), sans-serif" }}
-                >
-                  투아라
+                <Link href="/" className="group block transition-colors">
+                  <span
+                    className="block text-3xl md:text-4xl font-black leading-none tracking-tight uppercase text-[#0A0A0A] group-hover:text-black"
+                    style={{ fontFamily: "var(--font-body), sans-serif" }}
+                  >
+                    투아라
+                  </span>
+                  <span
+                    className="mt-1.5 block text-xs font-bold uppercase tracking-[0.15em] text-gray-500 group-hover:text-black"
+                    style={{ fontFamily: "var(--font-display), sans-serif" }}
+                  >
+                    TODAY ARTIST LIFE
+                  </span>
                 </Link>
-                <p className="mt-1 text-xs font-medium text-gray-500 uppercase" style={{ fontFamily: "var(--font-display), sans-serif" }}>
-                  Today Artist Life
-                </p>
               </div>
               <div className="flex items-center gap-2">
                 <Link

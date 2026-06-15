@@ -69,6 +69,7 @@ function normalizeEntity(entity) {
     type: entity.type,
     aliases: entity.aliases ?? [],
     query: entity.korean_name || entity.name,
+    is_korean: entity.is_korean === true,
   }
 }
 
@@ -223,11 +224,37 @@ async function main() {
     }
   }
 
+  weightedEntities.sort((a, b) => b.weight - a.weight)
+
+  const nonKoreanEntities = weightedEntities.filter(e => !e.is_korean)
+  const top10NonKorean = nonKoreanEntities.slice(0, 10)
+  const minNonKoreanWeight = top10NonKorean.length > 0
+    ? top10NonKorean[Math.min(9, top10NonKorean.length - 1)].weight
+    : 0
+
+  const cappedLog = []
+  if (minNonKoreanWeight > 0) {
+    const capThreshold = Number(Math.max(0, minNonKoreanWeight - 0.01).toFixed(2))
+    for (const entity of weightedEntities) {
+      if (entity.is_korean && entity.weight >= capThreshold) {
+        cappedLog.push(`${entity.name}: ${entity.weight} -> ${capThreshold}`)
+        entity.weight = capThreshold
+      }
+    }
+  }
+
+  weightedEntities.sort((a, b) => b.weight - a.weight)
+
+  if (cappedLog.length > 0) {
+    console.log('\n[Weight Caps Applied]')
+    console.log('Capped the following Korean artists to keep top 10 non-Korean:')
+    cappedLog.forEach(log => console.log(` - ${log}`))
+    console.log('')
+  }
+
   await updateSupabaseWeights(weightedEntities)
 
-  const topEntities = [...weightedEntities]
-    .sort((a, b) => b.weight - a.weight)
-    .slice(0, 10)
+  const topEntities = weightedEntities.slice(0, 10)
 
   console.log(`Updated ${weightedEntities.length} entity weights in Supabase.`)
   console.log('Top 10 by weight:')

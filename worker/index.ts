@@ -6,23 +6,12 @@ import { setDefaultResultOrder } from 'node:dns'
 import { createClient } from '@supabase/supabase-js'
 import { generateFromCluster } from '../lib/jobs/generate-from-cluster'
 import { generateFromSuggestion } from '../lib/jobs/generate-from-suggestion'
+import { sendTelegramMessage } from '../lib/telegram'
 
 // WSL2에서 api.telegram.org가 IPv6로 풀려 SYN이 막히는 케이스가 있어 IPv4 우선.
 setDefaultResultOrder('ipv4first')
 
 const POLL_INTERVAL_MS = 3000
-
-const BOT_TOKEN = process.env.BOT_TOKEN
-const ALLOWED_USERS = (process.env.ALLOWED_USERS?.split(',') ?? [])
-  .map((id) => id.trim())
-  .filter((id) => id.length > 0)
-const NOTIFY_ENABLED = Boolean(BOT_TOKEN && ALLOWED_USERS.length > 0)
-
-if (!NOTIFY_ENABLED) {
-  console.warn(
-    '[worker] BOT_TOKEN 또는 ALLOWED_USERS 미설정 — 텔레그램 알림 비활성화'
-  )
-}
 
 const supabaseUrl =
   process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -106,32 +95,6 @@ async function markFailed(jobId: string, errorMessage: string): Promise<void> {
   }
 }
 
-async function sendTelegramMessage(chatId: string, text: string): Promise<void> {
-  const res = await fetch(
-    `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text }),
-    }
-  )
-  if (!res.ok) {
-    const body = await res.text().catch(() => '')
-    throw new Error(`telegram sendMessage ${res.status}: ${body}`)
-  }
-}
-
-async function notifyUsers(text: string): Promise<void> {
-  if (!NOTIFY_ENABLED) return
-  for (const chatId of ALLOWED_USERS) {
-    try {
-      await sendTelegramMessage(chatId, text)
-    } catch (e) {
-      console.error(`[worker] 텔레그램 알림 실패 (chat_id=${chatId}):`, e)
-    }
-  }
-}
-
 function extractArticleTitle(result: unknown): string | null {
   if (Array.isArray(result)) {
     for (const item of result) {
@@ -170,13 +133,10 @@ async function processOne(): Promise<void> {
     console.log(`[worker] 처리 완료: ${job.job_type} (${job.id})`)
 
     const title = extractArticleTitle(result)
-    const successMessage = title
-      ? `✅ ${job.job_type} 완료\n${title}`
-      : `✅ ${job.job_type} 완료`
-    try {
-      await notifyUsers(successMessage)
-    } catch (e) {
-      console.error('[worker] 완료 알림 실패:', e)
+    if (title) {
+      await sendTelegramMessage(`✅ 기사 생성 완료: ${title}`)
+    } else {
+      await sendTelegramMessage(`✅ ${job.job_type} 완료`)
     }
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err)
@@ -184,11 +144,7 @@ async function processOne(): Promise<void> {
     console.error(err)
     await markFailed(job.id, errorMessage)
 
-    try {
-      await notifyUsers(`❌ ${job.job_type} 실패\n${errorMessage}`)
-    } catch (e) {
-      console.error('[worker] 실패 알림 실패:', e)
-    }
+    await sendTelegramMessage(`❌ ${job.job_type} 실패\n${errorMessage}`)
   }
 }
 

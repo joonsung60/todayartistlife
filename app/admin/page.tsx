@@ -459,32 +459,56 @@ function SuggestTab() {
         return
       }
 
-      const jobRes = await fetch('/api/jobs', {
+      setResults((r) => ({ ...r, [s.id]: { state: 'pending', message: '클러스터 생성 중...' } }))
+
+      const clusterRes = await fetch('/api/cluster', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          job_type: 'generate_from_suggestion',
-          payload: { suggestionId: s.id },
+          topic: s.topic,
+          keywords: s.keywords,
+          articleIds: s.articleIds,
         }),
       })
-      const jobData = await jobRes.json()
-      if (!jobRes.ok || !jobData.jobId) {
+      const clusterData = await clusterRes.json()
+      if (!clusterRes.ok || !clusterData.success) {
         await patchStatus(s.id, { status: 'pending' })
         setResults((r) => ({
           ...r,
-          [s.id]: { state: 'error', message: jobData.error ?? '잡 등록 실패' },
+          [s.id]: { state: 'error', message: clusterData.error ?? '클러스터 생성 실패' },
         }))
         stopProcessing(s.id)
         return
       }
 
-      // 잡 등록 성공 → 해당 토픽 카드를 목록에서 제거
-      setSuggestions((prev) => prev.filter((x) => x.id !== s.id))
-      setResults((r) => {
-        const next = { ...r }
-        delete next[s.id]
-        return next
+      const clusterId = clusterData.clusterId
+      setResults((r) => ({ ...r, [s.id]: { state: 'pending', message: '기사 생성 중...' } }))
+
+      const genRes = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clusterIds: [clusterId] }),
       })
+      const genData = await genRes.json()
+      const result = genData.results?.[0] as GenerateResult | undefined
+
+      if (result?.success) {
+        await patchStatus(s.id, {
+          status: 'published',
+          clusterId,
+        })
+        setResults((r) => ({
+          ...r,
+          [s.id]: { state: 'success', message: `기사 생성 완료: ${result.article?.title ?? ''}` },
+        }))
+        await load(subTab)
+      } else {
+        await patchStatus(s.id, { status: 'pending' })
+        setResults((r) => ({
+          ...r,
+          [s.id]: { state: 'error', message: result?.error ?? genData.error ?? '기사 생성 실패' },
+        }))
+      }
     } catch (err) {
       await patchStatus(s.id, { status: 'pending' }).catch(() => undefined)
       setResults((r) => ({ ...r, [s.id]: { state: 'error', message: String(err) } }))
@@ -567,21 +591,22 @@ function SuggestTab() {
   }
 
   const handleRejectAll = async () => {
-    if (!window.confirm(`미처리 토픽 ${suggestions.length}개를 모두 거절하시겠습니까?`)) {
+    if (!window.confirm(`미처리 토픽 ${suggestions.length}개를 모두 제거하시겠습니까?`)) {
       return
     }
 
     setIsRejectingAll(true)
     setError('')
     try {
-      const res = await fetch('/api/suggest-clusters/reject-all', {
-        method: 'POST',
+      const res = await fetch('/api/suggest-clusters?status=pending', {
+        method: 'DELETE',
       })
       const data = await res.json()
       if (data.error) {
         setError(data.error)
       } else {
-        await load('pending')
+        // 전체 pending 삭제 성공 → 목록을 즉시 비운다 (refetch 캐시에 의존하지 않음)
+        setSuggestions([])
       }
     } catch (err) {
       setError(String(err))
@@ -858,7 +883,7 @@ function SuggestTab() {
             disabled={isGenerating || processingIds.size > 0 || isRejectingAll}
             className="px-6 py-3 border border-red-300 text-red-600 rounded font-semibold hover:bg-red-50 disabled:opacity-50"
           >
-            {isRejectingAll ? '처리 중...' : '미처리 전체 거절'}
+            {isRejectingAll ? '처리 중...' : '미처리 전체 제거'}
           </button>
         )}
         {lastGenSummary && <p className="text-sm text-gray-500">{lastGenSummary}</p>}

@@ -471,7 +471,7 @@ async function loadExistingTopicKeys(): Promise<Set<string>> {
   const { data: existingSuggestionRows, error: existingSuggestionError } = await supabase
     .from('suggested_clusters')
     .select('topic')
-    .in('status', ['pending', 'rejected'])
+    .eq('status', 'pending')
 
   if (existingSuggestionError) {
     throw new Error(`기존 제안 토픽 조회 실패: ${existingSuggestionError.message}`)
@@ -939,6 +939,70 @@ export async function POST(req: NextRequest) {
       llmSuggestionCount,
       normalizedSuggestionCount: normalized.length,
       duplicateSkipCount,
+    })
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 })
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const status = req.nextUrl.searchParams.get('status')
+
+    if (status !== 'pending') {
+      return NextResponse.json(
+        { error: 'status=pending 삭제만 지원합니다.' },
+        { status: 400 }
+      )
+    }
+
+    const { data: pendingSuggestions, error: fetchError } = await supabase
+      .from('suggested_clusters')
+      .select('id, article_ids')
+      .eq('status', 'pending')
+
+    if (fetchError) {
+      return NextResponse.json({ error: fetchError.message }, { status: 500 })
+    }
+
+    if (!pendingSuggestions || pendingSuggestions.length === 0) {
+      return NextResponse.json({ success: true, deleted: 0, resetRawArticles: 0 })
+    }
+
+    const suggestionIds = pendingSuggestions.map((suggestion) => suggestion.id)
+    const articleIds = Array.from(new Set(
+      pendingSuggestions.flatMap((suggestion) =>
+        Array.isArray(suggestion.article_ids) ? suggestion.article_ids : []
+      )
+    ))
+
+    if (articleIds.length > 0) {
+      const { error: rawUpdateError } = await supabase
+        .from('raw_articles')
+        .update({
+          suggestion_state: 'new',
+          suggestion_rejected_at: null,
+        })
+        .in('id', articleIds)
+
+      if (rawUpdateError) {
+        return NextResponse.json({ error: rawUpdateError.message }, { status: 500 })
+      }
+    }
+
+    const { error: deleteError } = await supabase
+      .from('suggested_clusters')
+      .delete()
+      .in('id', suggestionIds)
+
+    if (deleteError) {
+      return NextResponse.json({ error: deleteError.message }, { status: 500 })
+    }
+
+    return NextResponse.json({
+      success: true,
+      deleted: suggestionIds.length,
+      resetRawArticles: articleIds.length,
     })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })

@@ -3,6 +3,7 @@ import path from 'node:path'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { cleanArticleText } from '@/lib/article-extraction'
+import { sendTelegramMessage } from '@/lib/telegram'
 
 const SUGGEST_SYSTEM = `당신은 해외 팝, 케이팝, EDM, 힙합, 배우 등 글로벌 아티스트와 유명인들의 라이프, 가십, 신보 소식을 다루는 에디터입니다. 다국어로 된 뉴스 원문을 한 편 또는 여러 편 받아 한국어 기사로 작성할 만한 소재인지 판단합니다.
 
@@ -925,6 +926,8 @@ export async function POST(req: NextRequest) {
 
     const persisted = await hydrateSuggestions((inserted ?? []) as DbSuggestedCluster[])
     console.log(`[suggest-clusters] 저장: ${persisted.length}건`)
+
+    sendTelegramMessage(`📋 토픽 제안 완료: ${persisted.length}개 생성됨`)
 
     return NextResponse.json({
       suggestions: persisted,

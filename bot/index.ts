@@ -317,6 +317,7 @@ bot.command("collect", async (ctx) => {
 
 // /suggest
 bot.command("suggest", async (ctx) => {
+  console.log("/suggest 진입:", ctx.from?.id);
   const msg = await ctx.reply("토픽 제안 생성 중... (시간이 걸릴 수 있어요)");
   try {
     const res = await fetch(`${LOCAL_API}/api/suggest-clusters`, { method: "POST" });
@@ -337,6 +338,7 @@ bot.command("suggest", async (ctx) => {
     // 각 제안을 카드로 표시
     await replyWithTopicCards(ctx, suggestions);
   } catch (e) {
+    console.error("토픽 제안 시작 실패:", e);
     await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `오류 발생: ${e}`);
   }
 });
@@ -344,23 +346,15 @@ bot.command("suggest", async (ctx) => {
 // /suggest2
 bot.command("suggest2", async (ctx) => {
   console.log("/suggest2 진입:", ctx.from?.id);
-  const msg = await ctx.reply("토픽 확장 제안 시작 중...");
+  const msg = await ctx.reply("토픽 제안을 시작했습니다. 완료되면 알림을 보내드릴게요.");
   try {
-    const res = await fetch(`${LOCAL_API}/api/suggest-clusters/extended`, {
+    fetch(`${LOCAL_API}/api/suggest-clusters/extended`, {
       method: "POST",
+    }).catch(e => {
+      console.error("토픽 제안 백그라운드 fetch 에러:", e);
     });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || data.error) {
-      throw new Error(`토픽 확장 제안 실패 (status ${res.status}): ${data.error ?? res.statusText}`);
-    }
-
-    await ctx.api.editMessageText(
-      ctx.chat.id,
-      msg.message_id,
-      "토픽 확장 제안을 시작했습니다.\n완료 후 /topics로 제안 목록을 확인하세요."
-    );
   } catch (e) {
-    console.error("토픽 확장 제안 실패:", e);
+    console.error("토픽 제안 시작 실패:", e);
     await ctx.api.editMessageText(ctx.chat.id, msg.message_id, `오류 발생: ${e}`);
   }
 });

@@ -103,6 +103,26 @@ function LatestCard({ article }: { article: ArticleListItem }) {
   );
 }
 
+// ── MORE NEWS 카드 (가로형 소형 리스트) ────────────────
+
+function MoreNewsCard({ article }: { article: ArticleListItem }) {
+  return (
+    <article className="group">
+      <Link href={articleHref(article)} className="flex gap-3">
+        <div className="w-24 shrink-0">
+          <CardImage article={article} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm font-bold leading-snug group-hover:text-blue-600 transition-colors">
+            {article.title}
+          </h3>
+          <ArticleDate value={article.published_at} />
+        </div>
+      </Link>
+    </article>
+  );
+}
+
 // ── 섹션 라벨 ─────────────────────────────────────────
 
 function SectionLabel({ label }: { label: string }) {
@@ -135,7 +155,8 @@ export default async function Home() {
   const { articles, error } = await loadPublishedArticles({ limit: 20 });
 
   const [featuredMain, ...featuredRest] = articles.slice(0, 5);
-  const latest = articles.slice(5);
+  const latest = articles.slice(5, 9);
+  const moreNews = articles.slice(9);
 
   return (
     <div className="max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8">
@@ -165,6 +186,18 @@ export default async function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
             {latest.map((article) => (
               <LatestCard key={article.id} article={article} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* MORE NEWS */}
+      {moreNews.length > 0 && (
+        <section className="mt-12 md:mt-16">
+          <SectionLabel label="MORE NEWS" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6">
+            {moreNews.map((article) => (
+              <MoreNewsCard key={article.id} article={article} />
             ))}
           </div>
         </section>

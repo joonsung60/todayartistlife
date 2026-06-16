@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 export type ArtistEntity = {
   name: string;
   korean_name: string | null;
+  profile_image_url: string | null;
 };
 
 function artistSlug(name: string) {
@@ -18,6 +19,11 @@ function artistSlug(name: string) {
 
 function normalizeSearchText(value: string | null | undefined) {
   return (value ?? "").trim().toLowerCase();
+}
+
+function initial(displayName: string) {
+  const trimmed = displayName.trim();
+  return trimmed ? Array.from(trimmed)[0].toUpperCase() : "?";
 }
 
 export function ArtistDirectory({ artists }: { artists: ArtistEntity[] }) {
@@ -58,7 +64,7 @@ export function ArtistDirectory({ artists }: { artists: ArtistEntity[] }) {
           검색 결과가 없습니다.
         </p>
       ) : (
-        <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ul className="mt-8 grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
           {filteredArtists.map((artist) => {
             const displayName = artist.korean_name || artist.name;
 
@@ -66,13 +72,28 @@ export function ArtistDirectory({ artists }: { artists: ArtistEntity[] }) {
               <li key={artist.name}>
                 <Link
                   href={`/artist/${artistSlug(artist.name)}`}
-                  className="group block min-h-32 border border-gray-200 bg-white p-5 transition-colors hover:border-black hover:bg-black hover:text-white"
+                  className="group flex flex-col items-center text-center"
                 >
-                  <h2 className="text-2xl font-black leading-tight tracking-tight">
+                  {artist.profile_image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={artist.profile_image_url}
+                      alt={displayName}
+                      loading="lazy"
+                      className="aspect-square w-full max-w-[140px] rounded-full border border-gray-200 object-cover transition-transform group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex aspect-square w-full max-w-[140px] items-center justify-center rounded-full border border-gray-200 bg-gray-200 transition-transform group-hover:scale-105">
+                      <span className="text-3xl font-black text-gray-500">
+                        {initial(displayName)}
+                      </span>
+                    </div>
+                  )}
+                  <h2 className="mt-3 text-sm font-black leading-tight tracking-tight group-hover:text-[#0052D4] sm:text-base">
                     {displayName}
                   </h2>
                   <p
-                    className="mt-3 text-sm font-bold uppercase tracking-[0.12em] text-gray-500 transition-colors group-hover:text-gray-300"
+                    className="mt-1 text-[11px] font-bold uppercase tracking-[0.1em] text-gray-400"
                     style={{ fontFamily: "var(--font-display), sans-serif" }}
                   >
                     {artist.name}

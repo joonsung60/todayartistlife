@@ -1,13 +1,13 @@
+import { setDefaultResultOrder } from "node:dns";
+setDefaultResultOrder("ipv4first");
+
 import { config as loadEnv } from "dotenv";
 import path from "node:path";
-import { setDefaultResultOrder } from "node:dns";
 import { Agent } from "node:https";
 import { Bot, InlineKeyboard } from "grammy";
 
 loadEnv({ path: path.resolve(__dirname, "../.env.local") });
 loadEnv({ path: path.resolve(__dirname, ".env") });
-
-setDefaultResultOrder("ipv4first");
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const ALLOWED_USERS = (process.env.ALLOWED_USERS?.split(",") ?? [])

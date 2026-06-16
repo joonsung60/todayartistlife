@@ -56,8 +56,8 @@ type SuggestionStatus = 'pending' | 'approved' | 'rejected' | 'published'
 
 const ALLOWED_STATUSES: SuggestionStatus[] = ['pending', 'approved', 'rejected', 'published']
 const MIN_COHESION_SCORE = 20
-const DEFAULT_ANALYSIS_LIMIT = 200
-const MAX_ANALYSIS_LIMIT = 200
+const DEFAULT_ANALYSIS_LIMIT = 300
+const MAX_ANALYSIS_LIMIT = 300
 const STAGE2_DEFAULT_COHESION = 50
 const LLM_INPUT_MAX = 120
 const LLM_BATCH_SIZE = 20

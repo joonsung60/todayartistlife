@@ -40,8 +40,11 @@ async function claimNextJob(): Promise<JobRow | null> {
     console.error(error)
     return null
   }
-  const rows = (data ?? []) as JobRow[]
-  return rows[0] ?? null
+  const job = data as JobRow | null
+  if (job && job.id) {
+    return job
+  }
+  return null
 }
 
 async function runJob(job: JobRow): Promise<unknown> {

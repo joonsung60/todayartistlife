@@ -21,7 +21,7 @@ async function loadArtists(): Promise<{
   const supabase = createSupabaseClient();
   const { data, error } = await supabase
     .from("entities")
-    .select("name, korean_name")
+    .select("name, korean_name, profile_image_url")
     .eq("type", "artist")
     .order("korean_name", { ascending: true, nullsFirst: false });
 

@@ -5,6 +5,11 @@ import { supabase } from '@/lib/supabase'
 import { cleanArticleText, extractArticleText } from '@/lib/article-extraction'
 import { findCategory } from '@/lib/taxonomy'
 import { SYSTEM_PROMPT_A } from '@/lib/prompts'
+import {
+  limitSlugLength,
+  normalizeSlug,
+  SLUG_MAX_LENGTH,
+} from '@/lib/slug'
 
 type SimpleEntity = { name: string; korean_name: string; type: string; aliases?: string[] }
 
@@ -100,9 +105,6 @@ type GeneratedArticle = {
   entities: string[]
 }
 
-const SLUG_MIN_LENGTH = 40
-const SLUG_MAX_LENGTH = 60
-const SLUG_MIN_FILLER = 'generated-article-story-from-today-artist-life'
 const DEFAULT_CATEGORY = 'news'
 
 type ClusterArticleRow = {
@@ -264,48 +266,13 @@ function parseGeneratedArticle(response: string): GeneratedArticle | null {
   }
 }
 
-function slugify(raw: string): string {
-  return raw
-    .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-}
-
-function limitSlugLength(slug: string, maxLength = SLUG_MAX_LENGTH): string {
-  return slug
-    .slice(0, maxLength)
-    .replace(/-+$/, '')
-}
-
-function ensureMinimumSlugLength(slug: string): string {
-  if (slug.length >= SLUG_MIN_LENGTH) return slug
-
-  return limitSlugLength(
-    slug ? `${slug}-${SLUG_MIN_FILLER}` : SLUG_MIN_FILLER
-  )
-}
-
-function normalizeSlug(raw: string, fallback = ''): string {
-  const primary = slugify(raw)
-
-  if (primary.length >= SLUG_MIN_LENGTH || !fallback) {
-    return ensureMinimumSlugLength(limitSlugLength(primary))
-  }
-
-  const expanded = slugify(`${primary}-${fallback}`)
-  return ensureMinimumSlugLength(limitSlugLength(expanded || primary))
-}
-
 function normalizeCategory(raw: string): string {
   const category = findCategory(raw)
   return category?.slug ?? DEFAULT_CATEGORY
 }
 
 async function ensureUniqueSlug(base: string): Promise<string> {
-  const safeBase = ensureMinimumSlugLength(
-    limitSlugLength(base || `article-${Date.now().toString(36)}`)
-  )
+  const safeBase = limitSlugLength(base || `article-${Date.now().toString(36)}`)
   let candidate = safeBase
   for (let suffix = 2; suffix < 100; suffix++) {
     const { data } = await supabase
@@ -314,7 +281,7 @@ async function ensureUniqueSlug(base: string): Promise<string> {
       .eq('slug', candidate)
       .maybeSingle()
     if (!data) return candidate
-    const suffixText = `-${suffix}`
+    const suffixText = `-from-today-artist-life-${suffix}`
     candidate = `${limitSlugLength(safeBase, SLUG_MAX_LENGTH - suffixText.length)}${suffixText}`
   }
   const suffixText = `-${Date.now().toString(36)}`

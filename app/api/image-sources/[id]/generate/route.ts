@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { SYSTEM_PROMPT_A } from '@/lib/prompts'
+import { limitSlugLength, normalizeSlug, SLUG_MAX_LENGTH } from '@/lib/slug'
 
 type ImageSourceRow = {
   id: string
@@ -20,7 +21,6 @@ type GeneratedImageArticle = {
 
 const ALLOWED_CATEGORIES = ['뉴스', '공연', '아티스트']
 const DEFAULT_CATEGORY = '뉴스'
-const SLUG_MAX_LENGTH = 60
 const BUCKET_NAME = 'image-sources'
 const MAX_BASE64_LENGTH = 14_000_000
 
@@ -101,16 +101,6 @@ async function uploadArticleImage(
   return { imageUrl: data.publicUrl, imagePath }
 }
 
-function normalizeSlug(raw: string): string {
-  return raw
-    .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-    .slice(0, SLUG_MAX_LENGTH)
-    .replace(/-+$/, '')
-}
-
 function normalizeCategory(raw: string): string {
   const trimmed = raw.trim()
   return ALLOWED_CATEGORIES.includes(trimmed) ? trimmed : DEFAULT_CATEGORY
@@ -126,9 +116,11 @@ async function ensureUniqueSlug(base: string): Promise<string> {
       .eq('slug', candidate)
       .maybeSingle()
     if (!data) return candidate
-    candidate = `${safeBase}-${suffix}`
+    const suffixText = `-from-today-artist-life-${suffix}`
+    candidate = `${limitSlugLength(safeBase, SLUG_MAX_LENGTH - suffixText.length)}${suffixText}`
   }
-  return `${safeBase}-${Date.now().toString(36)}`
+  const suffixText = `-${Date.now().toString(36)}`
+  return `${limitSlugLength(safeBase, SLUG_MAX_LENGTH - suffixText.length)}${suffixText}`
 }
 
 function parseGeneratedArticle(response: string): GeneratedImageArticle | null {

@@ -14,7 +14,7 @@ const COMPARISON_BATCH_SIZE = MAX_KEYWORD_GROUPS - 1
 
 const requiredEnv = {
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   NAVER_DATALAB_CLIENT_ID: process.env.NAVER_DATALAB_CLIENT_ID,
   NAVER_DATALAB_CLIENT_SECRET: process.env.NAVER_DATALAB_CLIENT_SECRET,
 }
@@ -30,7 +30,7 @@ if (missingEnv.length > 0) {
 
 const supabase = createClient(
   requiredEnv.NEXT_PUBLIC_SUPABASE_URL,
-  requiredEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  requiredEnv.SUPABASE_SERVICE_ROLE_KEY
 )
 
 const sleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms))

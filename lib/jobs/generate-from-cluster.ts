@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import { cleanArticleText, extractArticleText } from '@/lib/article-extraction'
 import { findCategory } from '@/lib/taxonomy'
 import { SYSTEM_PROMPT_A } from '@/lib/prompts'
+import { limitSlugLength, normalizeSlug, SLUG_MAX_LENGTH } from '@/lib/slug'
 
 type SimpleEntity = { name: string; korean_name: string; type: string; aliases?: string[] }
 
@@ -99,7 +100,6 @@ type GeneratedArticle = {
   entities: string[]
 }
 
-const SLUG_MAX_LENGTH = 60
 const DEFAULT_CATEGORY = 'news'
 
 type ClusterArticleRow = {
@@ -261,16 +261,6 @@ function parseGeneratedArticle(response: string): GeneratedArticle | null {
   }
 }
 
-function normalizeSlug(raw: string): string {
-  return raw
-    .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-    .slice(0, SLUG_MAX_LENGTH)
-    .replace(/-+$/, '')
-}
-
 function normalizeCategory(raw: string): string {
   const category = findCategory(raw)
   return category?.slug ?? DEFAULT_CATEGORY
@@ -286,9 +276,11 @@ async function ensureUniqueSlug(base: string): Promise<string> {
       .eq('slug', candidate)
       .maybeSingle()
     if (!data) return candidate
-    candidate = `${safeBase}-${suffix}`
+    const suffixText = `-from-today-artist-life-${suffix}`
+    candidate = `${limitSlugLength(safeBase, SLUG_MAX_LENGTH - suffixText.length)}${suffixText}`
   }
-  return `${safeBase}-${Date.now().toString(36)}`
+  const suffixText = `-${Date.now().toString(36)}`
+  return `${limitSlugLength(safeBase, SLUG_MAX_LENGTH - suffixText.length)}${suffixText}`
 }
 
 function validateKoreanArticle(article: GeneratedArticle): string | null {

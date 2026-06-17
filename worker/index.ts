@@ -15,16 +15,17 @@ const POLL_INTERVAL_MS = 3000
 
 const supabaseUrl =
   process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey =
-  process.env.SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+// 백엔드 파이프라인은 RLS를 우회해야 하므로 service_role 키를 사용한다.
+// anon 키로의 폴백은 두지 않는다(조용히 권한이 낮은 키로 동작하는 것을 방지).
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!supabaseUrl || !supabaseServiceRoleKey) {
   throw new Error(
-    'SUPABASE_URL / SUPABASE_ANON_KEY 환경변수가 없습니다.'
+    'SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY 환경변수가 없습니다.'
   )
 }
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+const supabase = createClient(supabaseUrl, supabaseServiceRoleKey)
 
 type JobRow = {
   id: string

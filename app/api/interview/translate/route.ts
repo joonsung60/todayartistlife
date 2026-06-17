@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { cleanArticleText, extractArticleText } from '@/lib/article-extraction'
 import displayNames from '@/lib/display-names.json'
 import { SYSTEM_PROMPT_B } from '@/lib/prompts'
+import { limitSlugLength, normalizeSlug, SLUG_MAX_LENGTH } from '@/lib/slug'
 import Anthropic from '@anthropic-ai/sdk'
 
 const displayNameRules = Object.entries(displayNames as Record<string, string>)
@@ -178,17 +179,6 @@ function cleanInterviewSourceText(text: string): string {
     .join('\n')
 }
 
-const SLUG_MAX_LENGTH = 60
-function normalizeSlug(raw: string): string {
-  return raw
-    .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-    .slice(0, SLUG_MAX_LENGTH)
-    .replace(/-+$/, '')
-}
-
 async function ensureUniqueSlug(base: string): Promise<string> {
   const safeBase = base || `article-${Date.now().toString(36)}`
   let candidate = safeBase
@@ -199,9 +189,11 @@ async function ensureUniqueSlug(base: string): Promise<string> {
       .eq('slug', candidate)
       .maybeSingle()
     if (!data) return candidate
-    candidate = `${safeBase}-${suffix}`
+    const suffixText = `-from-today-artist-life-${suffix}`
+    candidate = `${limitSlugLength(safeBase, SLUG_MAX_LENGTH - suffixText.length)}${suffixText}`
   }
-  return `${safeBase}-${Date.now().toString(36)}`
+  const suffixText = `-${Date.now().toString(36)}`
+  return `${limitSlugLength(safeBase, SLUG_MAX_LENGTH - suffixText.length)}${suffixText}`
 }
 
 export async function POST(req: NextRequest) {

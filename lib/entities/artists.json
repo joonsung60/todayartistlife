@@ -759,13 +759,19 @@
     "is_korean": true
   },
   {
-    "name": "Jin",
+    "name": "BTS Jin",
     "korean_name": "진",
     "type": "artist",
     "aliases": [
-      "Kim Seokjin",
-      "BTS Jin"
+      "Kim Seokjin"
     ],
+    "is_korean": true
+  },
+  {
+    "name": "BTS V",
+    "korean_name": "뷔",
+    "type": "artist",
+    "aliases": ["Taehyung", "Kim Taehyung", "V of BTS"],
     "is_korean": true
   },
   {
@@ -931,13 +937,6 @@
     "is_korean": false
   },
   {
-    "name": "Queen",
-    "korean_name": "퀸",
-    "type": "artist",
-    "aliases": [],
-    "is_korean": false
-  },
-  {
     "name": "The Beatles",
     "korean_name": "비틀즈",
     "type": "artist",
@@ -968,15 +967,6 @@
     "korean_name": "머라이어 캐리",
     "type": "artist",
     "aliases": [],
-    "is_korean": false
-  },
-  {
-    "name": "Prince",
-    "korean_name": "프린스",
-    "type": "artist",
-    "aliases": [
-      "The Artist"
-    ],
     "is_korean": false
   },
   {
@@ -1154,15 +1144,6 @@
     "korean_name": "릴 베이비",
     "type": "artist",
     "aliases": [],
-    "is_korean": false
-  },
-  {
-    "name": "Future",
-    "korean_name": "퓨처",
-    "type": "artist",
-    "aliases": [
-      "Future Hendrix"
-    ],
     "is_korean": false
   },
   {
@@ -1507,5 +1488,33 @@
       "Park Jaebeom"
     ],
     "is_korean": true
+  },
+  {
+    "name": "Jelly Roll",
+    "korean_name": "젤리 롤",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Ludacris",
+    "korean_name": "루다크리스",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Zendaya",
+    "korean_name": "젠다야",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
+  },
+  {
+    "name": "Travis Barker",
+    "korean_name": "트래비스 바커",
+    "type": "artist",
+    "aliases": [],
+    "is_korean": false
   }
 ]

@@ -24,6 +24,11 @@ if (ALLOWED_USERS.length === 0) {
   throw new Error("ALLOWED_USERS 환경변수가 없습니다. 허용할 Telegram user id를 설정하세요.");
 }
 
+// Telegram 콜백 데이터는 64바이트 제한이 있어 articleId+entityId를 그대로 실으면 초과한다.
+// shortId → {articleId, entityId} 매핑을 봇 메모리에 저장해 콜백 데이터를 짧게 유지한다.
+const entityActionMap = new Map<string, { articleId: string; entityId: string }>();
+let entityActionCounter = 0;
+
 // WSL2 환경에서 api.telegram.org의 IPv6 주소로 SYN이 빠져나가지 못해 ETIMEDOUT으로
 // 죽는 케이스가 있다. family: 4를 강제해 socket이 무조건 IPv4로만 열리게 한다.
 const ipv4Agent = new Agent({ family: 4, keepAlive: true });
@@ -465,7 +470,8 @@ bot.command("articles", async (ctx) => {
     for (const a of articles.slice(0, 10)) {
       const keyboard = new InlineKeyboard()
         .text("게시", `publish:${a.id}`)
-        .text("삭제", `delete:${a.id}`);
+        .text("삭제", `delete:${a.id}`)
+        .text("엔티티", `entities:${a.id}`);
       await ctx.reply(formatArticleMessage(a.title, a.content), { reply_markup: keyboard });
     }
   } catch (e) {
@@ -496,6 +502,55 @@ bot.callbackQuery(/^delete:(.+)$/, async (ctx) => {
     await ctx.reply("삭제 완료");
   } catch (e) {
     await ctx.reply(`오류 발생: ${e}`);
+  }
+});
+
+// 엔티티 조회 버튼
+bot.callbackQuery(/^entities:(.+)$/, async (ctx) => {
+  const articleId = ctx.match[1];
+  await ctx.answerCallbackQuery();
+  try {
+    const res = await fetch(`${LOCAL_API}/api/article-entities?article_id=${articleId}`);
+    const data = await res.json().catch(() => ({}));
+    const entities = data.entities ?? [];
+    if (entities.length === 0) {
+      await ctx.reply("매칭된 엔티티가 없습니다.");
+      return;
+    }
+    const keyboard = new InlineKeyboard();
+    for (const e of entities) {
+      const shortId = String(++entityActionCounter);
+      entityActionMap.set(shortId, { articleId, entityId: e.entity_id });
+      const label = e.korean_name ? `${e.korean_name} (${e.name})` : e.name;
+      keyboard.text(`❌ ${label}`, `re:${shortId}`).row();
+    }
+    const text = entities.map((e: {name: string, korean_name: string}) => e.korean_name || e.name).join(", ");
+    await ctx.reply(`엔티티 목록:\n${text}`, { reply_markup: keyboard });
+  } catch (err) {
+    await ctx.reply(`오류 발생: ${err}`);
+  }
+});
+
+// 엔티티 삭제 버튼
+bot.callbackQuery(/^re:(.+)$/, async (ctx) => {
+  const shortId = ctx.match[1];
+  await ctx.answerCallbackQuery();
+  const action = entityActionMap.get(shortId);
+  if (!action) {
+    await ctx.reply("만료된 버튼입니다. /articles를 다시 실행해주세요.");
+    return;
+  }
+  try {
+    const res = await fetch(
+      `${LOCAL_API}/api/article-entities/${action.entityId}?article_id=${action.articleId}`,
+      { method: "DELETE" }
+    );
+    if (!res.ok) throw new Error(`삭제 실패 (status ${res.status})`);
+    entityActionMap.delete(shortId);
+    await ctx.editMessageReplyMarkup({ reply_markup: new InlineKeyboard() });
+    await ctx.reply("엔티티 삭제 완료");
+  } catch (err) {
+    await ctx.reply(`오류 발생: ${err}`);
   }
 });
 

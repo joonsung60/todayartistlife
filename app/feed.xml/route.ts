@@ -1,6 +1,6 @@
 import { loadPublishedArticles } from '@/lib/articles'
 
-const SITE_URL = 'https://edmstarnews.com'
+const SITE_URL = 'https://todayartistlife.com'
 const FEED_CONTENT_TYPE = 'application/rss+xml; charset=utf-8'
 
 export const dynamic = 'force-static'
@@ -34,9 +34,9 @@ export async function GET() {
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<rss version="2.0">',
     '<channel>',
-    '<title>EDM Star News</title>',
+    '<title>투아라 (Today Artist Life)</title>',
     `<link>${SITE_URL}</link>`,
-    '<description>한국어 EDM 뉴스 종합</description>',
+    '<description>해외 아티스트 소식을 한국어로</description>',
     '<language>ko</language>',
     items,
     '</channel>',

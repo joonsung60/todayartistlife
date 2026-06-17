@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   description: "한국인 대상 해외 아티스트/연예인 라이프·가십·스토리 미디어",
   verification: {
     google: "dBSG9LfIn9zB1n1Hu13rgD_RqKS5GeEknVNf9a2PlMg",
+    other: {
+      "naver-site-verification": "ba2b73d636e94bf1af8e0a21acc0b955bd6498b5",
+    },
   },
 };
 

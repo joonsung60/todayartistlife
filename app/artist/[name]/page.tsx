@@ -2,14 +2,28 @@ import fs from 'fs'
 import path from 'path'
 import { notFound } from 'next/navigation'
 import { ArticleList } from '@/components/ArticleList'
+import { ArtistProfile, type ArtistProfileData } from './ArtistProfile'
 import { isUsableImageUrl, loadClusterImageUrl, type ArticleListItem } from '@/lib/articles'
 import { supabase } from '@/lib/supabase'
+
+type RelatedArtist = {
+  name: string
+  common_tags?: string[] | null
+}
 
 type Entity = {
   id: string
   name: string
   korean_name: string
   type: string
+  profile_image_url: string | null
+  bio: string | null
+  bio_source: string | null
+  genres: string[] | null
+  active_period: string[] | null
+  related_artists: RelatedArtist[] | null
+  external_links: Record<string, string> | null
+  awards: unknown
 }
 
 type ArticleRow = {
@@ -24,6 +38,9 @@ type ArticleRow = {
   genre: string | null
 }
 
+const ENTITY_SELECT =
+  'id, name, korean_name, type, profile_image_url, bio, bio_source, genres, active_period, related_artists, external_links, awards'
+
 function entitySlug(name: string): string {
   return name
     .toLowerCase()
@@ -34,10 +51,10 @@ function entitySlug(name: string): string {
 
 export async function generateStaticParams() {
   let entities: { name: string }[] = []
-  
+
   const artistsPath = path.join(process.cwd(), 'lib/entities/artists.json')
   const celebritiesPath = path.join(process.cwd(), 'lib/entities/celebrities.json')
-  
+
   if (fs.existsSync(artistsPath)) {
     try {
       const data = fs.readFileSync(artistsPath, 'utf8')
@@ -46,7 +63,7 @@ export async function generateStaticParams() {
       console.warn('Failed to parse artists.json', e)
     }
   }
-  
+
   if (fs.existsSync(celebritiesPath)) {
     try {
       const data = fs.readFileSync(celebritiesPath, 'utf8')
@@ -66,7 +83,7 @@ export async function generateStaticParams() {
 async function loadEntity(slug: string): Promise<Entity | null> {
   const { data, error } = await supabase
     .from('entities')
-    .select('id, name, korean_name, type')
+    .select(ENTITY_SELECT)
 
   if (error) throw new Error(error.message)
 
@@ -128,6 +145,36 @@ async function loadEntityArticles(entityId: string): Promise<{
   return { articles, error: null }
 }
 
+// awards 컬럼은 jsonb 라 형태가 유동적이다. 화면에 표시 가능한 문자열 배열로 정규화한다.
+function normalizeAwards(value: unknown): string[] {
+  if (!value) return []
+  if (Array.isArray(value)) {
+    return value
+      .map((item) =>
+        typeof item === 'string' ? item : typeof item?.name === 'string' ? item.name : ''
+      )
+      .filter((item): item is string => item.length > 0)
+  }
+  return []
+}
+
+function toProfile(entity: Entity): ArtistProfileData {
+  return {
+    name: entity.name,
+    koreanName: entity.korean_name,
+    type: entity.type,
+    profileImageUrl: entity.profile_image_url,
+    bio: entity.bio,
+    genres: (entity.genres ?? []).filter(Boolean),
+    activePeriod: (entity.active_period ?? []).filter(Boolean),
+    externalLinks: entity.external_links ?? {},
+    awards: normalizeAwards(entity.awards),
+    relatedArtists: (entity.related_artists ?? [])
+      .filter((r) => r && typeof r.name === 'string')
+      .map((r) => ({ name: r.name, commonTags: (r.common_tags ?? []).filter(Boolean) })),
+  }
+}
+
 export default async function ArtistPage({
   params,
 }: {
@@ -142,16 +189,18 @@ export default async function ArtistPage({
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-8">
-      <header className="mb-6 border-b-2 border-zinc-900 pb-3">
-        <p className="text-sm font-medium text-zinc-500">{entity.type}</p>
-        <h1 className="mt-1 text-2xl font-bold">{entity.korean_name}</h1>
-      </header>
+      <ArtistProfile profile={toProfile(entity)} />
 
-      <ArticleList
-        articles={articles}
-        error={error}
-        emptyMessage={`${entity.korean_name} 관련 게시 기사가 아직 없습니다.`}
-      />
+      <section>
+        <h2 className="mb-4 border-b-2 border-zinc-900 pb-2 text-lg font-bold">
+          관련 기사
+        </h2>
+        <ArticleList
+          articles={articles}
+          error={error}
+          emptyMessage={`${entity.korean_name} 관련 게시 기사가 아직 없습니다.`}
+        />
+      </section>
     </div>
   )
 }

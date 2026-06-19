@@ -50,6 +50,7 @@ export function ArtistProfile({ profile }: { profile: ArtistProfileData }) {
           <img
             src={profile.profileImageUrl}
             alt={displayName}
+            style={{ objectPosition: 'top center' }}
             className="h-32 w-32 flex-shrink-0 rounded-full border border-zinc-200 object-cover sm:h-40 sm:w-40"
           />
         ) : (
